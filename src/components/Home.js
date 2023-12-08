@@ -17,7 +17,7 @@ const Home = () => {
     <section>
       <h1>Home</h1>
       <br />
-      <Link to="/customer">Customer</Link>
+      <Link to="/customermanagement">Customer</Link>
       <br />
       <Link to="/case">Case</Link>
       <br />
