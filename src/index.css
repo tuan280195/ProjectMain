@@ -134,16 +134,12 @@ li {
 }
 
 /* Customer */
-
-.label-section {
-  line-height: 1;
-}
-
 .item-section {
   margin-bottom: 10px;
 }
 
-input[type="section-input"],
+input.section-input,
+textarea,
 select {
   font-family: "Nunito", sans-serif;
   font-size: 20px;
@@ -152,7 +148,7 @@ select {
   width: 100%;
 }
 
-input[name="range"] {
+input[name*="range"] {
   width: 46.5%;
 }
 
