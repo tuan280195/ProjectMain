@@ -1,15 +1,14 @@
 import { useState } from "react";
 import axios from "../api/axios";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
+import LoadingSpinner from "./until/LoadingSpinner";
 
 const CustomerDetail = () => {
   const [latestData, setLatestData] = useState({
     customerNumber: "auto filled",
     customerName: "Toyota",
     phoneNumber: "081917199",
-    postCode1: "",
-    postCode2: "",
+    postCode1: "100",
+    postCode2: "0005",
     stateProvince: "Tokyo",
     city: "Tokyo",
     street: "Test",
@@ -20,19 +19,11 @@ const CustomerDetail = () => {
 
   const [loading, setLoading] = useState(false);
 
-  function getOption() {
-    return (
-      <>
-        <option value="Yoshaka">Yoshaka</option>
-        <option value="Tokyo">Tokyo</option>
-        <option value="東京都">東京都</option>
-      </>
-    );
-  }
-
   const handleClick = () => {
+    setLoading(true);
     console.log(latestData);
     console.log(latestData["postalCode1"]);
+    setLoading(false);
   };
 
   const handleSubmit = async (e) => {
@@ -44,7 +35,6 @@ const CustomerDetail = () => {
     const response = await axios.get(
       `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${getPostCode}`
     );
-    setLoading(false);
 
     console.log(JSON.stringify(response?.data));
     setLatestData((value) => {
@@ -54,6 +44,7 @@ const CustomerDetail = () => {
         city: response?.data.results[0].address2,
       };
     });
+    setLoading(false);
   };
 
   return (
@@ -93,7 +84,6 @@ const CustomerDetail = () => {
           <input
             value={latestData.phoneNumber}
             type="text"
-            pattern=""
             onChange={(e) => {
               setLatestData((value) => {
                 return { ...value, phoneNumber: e.target.value };
@@ -156,16 +146,16 @@ const CustomerDetail = () => {
         </div>
         <div className="item-section">
           <label className="label-section">State/Province</label>
-          <select
+          <input
+            type="text"
+            className="section-input"
             value={latestData.stateProvince}
             onChange={(e) =>
               setLatestData((value) => {
                 return { ...value, stateProvince: e.target.value };
               })
             }
-          >
-            {getOption()}
-          </select>
+          ></input>
         </div>
         <div className="item-section">
           <label className="label-section">City</label>
@@ -233,12 +223,7 @@ const CustomerDetail = () => {
         </div>
         <button onClick={handleClick}>Submit</button>
       </form>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      <LoadingSpinner loading={loading}></LoadingSpinner>
     </section>
   );
 };

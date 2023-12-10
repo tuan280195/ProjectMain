@@ -156,3 +156,17 @@ input[name*="range"] {
   display: flex;
   justify-content: space-between;
 }
+
+/* Search */
+ul {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1rem;
+  background-color: rgba(47, 47, 47, 0.4);
+}
+li.search-result {
+  display: flex;
+  justify-content: space-between;
+}
