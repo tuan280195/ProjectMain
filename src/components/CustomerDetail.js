@@ -9,17 +9,9 @@ const CustomerDetail = () => {
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  useEffect( async () => {
-    setLoading(true);
-    // e.preventDefault();
-    // add moree event
-    try {
-      const response = await axios.get('https://localhost:7265/api/Customer?id='+ id);
-      setLatestData(response.data);
-    } catch (error) {
-      console.log(error)
-    }
-    setLoading(false); 
+
+  useEffect(async () => {
+    await getCustomerDetail();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -27,25 +19,26 @@ const CustomerDetail = () => {
     e.preventDefault();
     // add moree event
     try {
-      if(latestData.id) {
-        await axios.put('https://localhost:7265/api/Customer/'+latestData.id, latestData);
-      }else{
+      if (latestData.id) {
+        await axios.put('https://localhost:7265/api/Customer/' + latestData.id, latestData);
+      } else {
         await axios.post('https://localhost:7265/api/Customer', latestData);
       }
     } catch (error) {
       console.log(error)
     }
-    
-    setLoading(false); 
+
+    setLoading(false);
   };
 
   const handleCancel = async (e) => {
-    setLoading(true);
     // call api set all items back
     e.preventDefault();
-    const response = await axios.get('https://localhost:7265/api/Customer?id='+ id);
-      setLatestData(response.data);
-    setLoading(false);
+    if(!id){
+      window.location.reload();
+    }else{
+      await getCustomerDetail();
+    }
   };
 
   const handleAddress = async (getPostCode) => {
@@ -62,6 +55,19 @@ const CustomerDetail = () => {
           city: response?.data.results[0].address2,
         };
       });
+    }
+    setLoading(false);
+  };
+
+  const getCustomerDetail = async () => {
+    setLoading(true);
+    try {
+      if (id) {
+        const response = await axios.get('https://localhost:7265/api/Customer?id=' + id);
+        setLatestData(response.data);
+      }
+    } catch (error) {
+      console.log(error)
     }
     setLoading(false);
   };

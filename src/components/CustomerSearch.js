@@ -10,26 +10,9 @@ const CustomerSearch = () => {
   const [listItem, setListItem] = useState([{id: null, customerName: null, phoneNumber: null}]);
   const [loading, setLoading] = useState(false);
 
-  const handleClickEdit = (id) => {
-    setLoading(true);
-    //call API
-    //save to context
-    window.location.href ="customerdetail?id="+id;
-    setLoading(false);
-  };
-
-  const handleClickDelete = () => {
-    setLoading(true);
-    // call API Delete
-    setLoading(false);
-  };
-
-  const handleClickSearch = async (e) => {
+  const getCustomers = async () => {
     setLoading(true);
     //call API Search
-    
-    e.preventDefault();
-    // add moree event
     try {
       var searchURL = 'https://localhost:7265/api/Customer/getAll';
       searchURL = (data.customerName && data.phoneNumber) ? searchURL + `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}` 
@@ -53,6 +36,33 @@ const CustomerSearch = () => {
     setLoading(false);
   };
 
+  const handleClickEdit = (id) => {
+    setLoading(true);
+    //call API
+    //save to context
+    window.location.href ="customerdetail?id="+id;
+    setLoading(false);
+  };
+
+  const handleClickDelete = async (id) => {
+    setLoading(true);
+    try {
+      // call API Delete
+      var deleteURL = 'https://localhost:7265/api/Customer/' + id;
+      await axios.delete(deleteURL);
+      await getCustomers();
+    } catch (error) {
+      console.log(error)
+    }
+    
+    setLoading(false);
+  };
+
+  const handleClickSearch = async (e) => {
+    e.preventDefault();
+    await getCustomers();
+  };
+
   const handleChange = (event, item) => {
     let newData = data;
     if (item == "customerName") newData.customerName = event.target.value;
@@ -72,7 +82,7 @@ const CustomerSearch = () => {
                 <Link
                   className="search-delete"
                   to=""
-                  onClick={() => handleClickDelete()}
+                  onClick={() => handleClickDelete(item.id)}
                 >
                   Delete
                 </Link>{" "}
