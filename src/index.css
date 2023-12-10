@@ -67,6 +67,7 @@ button {
 
 button {
   padding: 0.5rem;
+  min-width: 7rem;
 }
 
 button:hover {
@@ -155,6 +156,10 @@ input[name*="range"] {
 .section-range {
   display: flex;
   justify-content: space-between;
+}
+.handle-button {
+  display: flex;
+  justify-content: space-around;
 }
 
 /* Search */

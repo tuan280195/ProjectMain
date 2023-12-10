@@ -19,15 +19,18 @@ const CustomerDetail = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleClick = () => {
+  const handleSubmit = async (e) => {
     setLoading(true);
-    console.log(latestData);
-    console.log(latestData["postalCode1"]);
+    e.preventDefault();
+    // add moree event
     setLoading(false);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleCancel = async (e) => {
+    setLoading(true);
+    // call api set all items back
+
+    setLoading(false);
   };
 
   const handleAddress = async (getPostCode) => {
@@ -221,7 +224,10 @@ const CustomerDetail = () => {
             className="section-input"
           ></textarea>
         </div>
-        <button onClick={handleClick}>Submit</button>
+        <div className="handle-button">
+          <button onClick={handleSubmit}>Submit</button>
+          <button onClick={handleCancel}>Cancel</button>
+        </div>
       </form>
       <LoadingSpinner loading={loading}></LoadingSpinner>
     </section>

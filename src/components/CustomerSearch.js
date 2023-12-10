@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import LoadingSpinner from "./until/LoadingSpinner";
 
 const CustomerSearch = () => {
   const [data, setData] = useState({ customerName: null, phoneNumber: null });
   const [showList, setShowList] = useState(false);
   const [listItem, setListItem] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const customer = [
     "Customer 1",
@@ -15,15 +17,19 @@ const CustomerSearch = () => {
   ];
 
   const handleClickEdit = () => {
+    setLoading(true);
     //call API
     //save to context
+    setLoading(false);
   };
 
   const handleClickSearch = () => {
+    setLoading(true);
     //call API Search
     //set result = response array
     setListItem(["item1", "item2"]); /*set result list item here*/
     setShowList(true);
+    setLoading(false);
   };
 
   const handleChange = (event, item) => {
@@ -79,6 +85,7 @@ const CustomerSearch = () => {
       {showList ? <Results /> : null}
       <br></br>
       <button onClick={handleClickSearch}>Search</button>
+      <LoadingSpinner loading={loading}></LoadingSpinner>
     </section>
   );
 };
