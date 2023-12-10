@@ -1,20 +1,20 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingSpinner from "./until/LoadingSpinner";
+import Truncate from "./until/Truncate";
 
 const CustomerSearch = () => {
   const [data, setData] = useState({ customerName: null, phoneNumber: null });
   const [showList, setShowList] = useState(false);
   const [listItem, setListItem] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const customer = [
+  const [customer, setCustomer] = useState([
     "Customer 1",
     "Customer 2",
     "Customer 3",
     "Customer 4",
     "Customer 5",
-  ];
+  ]);
 
   const handleClickEdit = () => {
     setLoading(true);
@@ -23,11 +23,20 @@ const CustomerSearch = () => {
     setLoading(false);
   };
 
+  const handleClickDelete = () => {
+    setLoading(true);
+    // call API Delete
+    setLoading(false);
+  };
+
   const handleClickSearch = () => {
     setLoading(true);
     //call API Search
     //set result = response array
-    setListItem(["item1", "item2"]); /*set result list item here*/
+    setListItem([
+      "item1-testing-longasdfafsddfa",
+      "item2",
+    ]); /*set result list item here*/
     setShowList(true);
     setLoading(false);
   };
@@ -46,14 +55,23 @@ const CustomerSearch = () => {
         {listItem.map((item, index) => {
           return (
             <li className="search-result" key={item + "-" + index}>
-              {item}
-              <Link
-                className="search-edit"
-                to="../customermanagement/customerdetail"
-                onClick={() => handleClickEdit()}
-              >
-                Edit
-              </Link>
+              <Truncate str={item} />
+              <div className="search-action">
+                <Link
+                  className="search-delete"
+                  to=""
+                  onClick={() => handleClickDelete()}
+                >
+                  Delete
+                </Link>{" "}
+                <Link
+                  className="search-edit"
+                  to="../customermanagement/customerdetail"
+                  onClick={() => handleClickEdit()}
+                >
+                  Edit
+                </Link>
+              </div>
             </li>
           );
         })}
@@ -67,11 +85,11 @@ const CustomerSearch = () => {
       <br></br>
       <div className="item-section">
         <label className="label-section">Customer Name</label>
-        <select onChange={(e) => handleChange(e, "customerName")}>
-          {customer.map((item, index) => {
-            return <option key={item + "-" + index}>{item}</option>;
-          })}
-        </select>
+        <input
+          className="section-input"
+          type="text"
+          onChange={(e) => handleChange(e, "customerName")}
+        ></input>
       </div>
       <div className="item-section">
         <label className="label-section">Phone Number</label>
