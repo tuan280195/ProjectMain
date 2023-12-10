@@ -39,14 +39,15 @@ const CustomerDetail = () => {
       `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${getPostCode}`
     );
 
-    console.log(JSON.stringify(response?.data));
-    setLatestData((value) => {
-      return {
-        ...value,
-        stateProvince: response?.data.results[0].address1,
-        city: response?.data.results[0].address2,
-      };
-    });
+    if (response?.data.results != null) {
+      setLatestData((value) => {
+        return {
+          ...value,
+          stateProvince: response?.data.results[0].address1,
+          city: response?.data.results[0].address2,
+        };
+      });
+    }
     setLoading(false);
   };
 
