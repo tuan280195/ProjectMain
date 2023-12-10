@@ -8,13 +8,6 @@ const CustomerSearch = () => {
   const [showList, setShowList] = useState(false);
   const [listItem, setListItem] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [customer, setCustomer] = useState([
-    "Customer 1",
-    "Customer 2",
-    "Customer 3",
-    "Customer 4",
-    "Customer 5",
-  ]);
 
   const handleClickEdit = () => {
     setLoading(true);
