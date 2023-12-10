@@ -2,24 +2,19 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoadingSpinner from "./until/LoadingSpinner";
 import Truncate from "./until/Truncate";
+import axios from "../api/axios";
 
 const CustomerSearch = () => {
-  const [data, setData] = useState({ customerName: null, phoneNumber: null });
+  const [data, setData] = useState({});
   const [showList, setShowList] = useState(false);
-  const [listItem, setListItem] = useState([]);
+  const [listItem, setListItem] = useState([{id: null, customerName: null, phoneNumber: null}]);
   const [loading, setLoading] = useState(false);
-  const [customer, setCustomer] = useState([
-    "Customer 1",
-    "Customer 2",
-    "Customer 3",
-    "Customer 4",
-    "Customer 5",
-  ]);
 
-  const handleClickEdit = () => {
+  const handleClickEdit = (id) => {
     setLoading(true);
     //call API
     //save to context
+    window.location.href ="customerdetail?id="+id;
     setLoading(false);
   };
 
@@ -29,15 +24,32 @@ const CustomerSearch = () => {
     setLoading(false);
   };
 
-  const handleClickSearch = () => {
+  const handleClickSearch = async (e) => {
     setLoading(true);
     //call API Search
-    //set result = response array
-    setListItem([
-      "item1-testing-longasdfafsddfa",
-      "item2",
-    ]); /*set result list item here*/
-    setShowList(true);
+    
+    e.preventDefault();
+    // add moree event
+    try {
+      var searchURL = 'https://localhost:7265/api/Customer/getAll';
+      searchURL = (data.customerName && data.phoneNumber) ? searchURL + `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}` 
+      : data.phoneNumber ? searchURL + `?phoneNumber=${data.phoneNumber}` : data.customerName ? searchURL + `?customerName=${data.customerName}` : searchURL; 
+      const response = await axios.get(searchURL);
+
+      var result = [];
+      response.data.forEach(element => {
+        result.push({
+          id: element.id,
+          customerName: element.name,
+          phoneNumber: element.phoneNumber
+        })
+      });
+      setListItem(result); /*set result list item here*/
+      setShowList(true);
+    } catch (error) {
+      console.log(error)
+    }
+    
     setLoading(false);
   };
 
@@ -52,10 +64,10 @@ const CustomerSearch = () => {
   const Results = () => {
     return (
       <ul id="results" className="search-results">
-        {listItem.map((item, index) => {
+        {listItem && listItem.length > 0 ? listItem.map((item, index) => {
           return (
             <li className="search-result" key={item + "-" + index}>
-              <Truncate str={item} />
+              <Truncate str={item.customerName} />
               <div className="search-action">
                 <Link
                   className="search-delete"
@@ -66,15 +78,17 @@ const CustomerSearch = () => {
                 </Link>{" "}
                 <Link
                   className="search-edit"
-                  to="../customermanagement/customerdetail"
-                  onClick={() => handleClickEdit()}
+                  to=""
+                  onClick={() => handleClickEdit(item.id)}
                 >
                   Edit
                 </Link>
               </div>
             </li>
           );
-        })}
+        }):<li>
+          <p>Not found</p>
+        </li> }
       </ul>
     );
   };
@@ -86,6 +100,7 @@ const CustomerSearch = () => {
       <div className="item-section">
         <label className="label-section">Customer Name</label>
         <input
+          value={data.customerName}
           className="section-input"
           type="text"
           onChange={(e) => handleChange(e, "customerName")}
@@ -94,6 +109,7 @@ const CustomerSearch = () => {
       <div className="item-section">
         <label className="label-section">Phone Number</label>
         <input
+          value={data.phoneNumber}
           className="section-input"
           type="text"
           maxLength={11}

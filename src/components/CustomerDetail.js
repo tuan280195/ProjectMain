@@ -1,35 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "../api/axios";
 import LoadingSpinner from "./until/LoadingSpinner";
+import { useSearchParams } from 'react-router-dom';
 
 const CustomerDetail = () => {
-  const [latestData, setLatestData] = useState({
-    customerNumber: "auto filled",
-    customerName: "Toyota",
-    phoneNumber: "081917199",
-    postCode1: "100",
-    postCode2: "0005",
-    stateProvince: "Tokyo",
-    city: "Tokyo",
-    street: "Test",
-    buildingName: "Granda",
-    roomNumber: "502",
-    note: "No Note",
-  });
+  const [latestData, setLatestData] = useState({});
 
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
+  useEffect( async () => {
+    setLoading(true);
+    // e.preventDefault();
+    // add moree event
+    try {
+      const response = await axios.get('https://localhost:7265/api/Customer?id='+ id);
+      setLatestData(response.data);
+    } catch (error) {
+      console.log(error)
+    }
+    setLoading(false); 
+  }, []);
 
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
     // add moree event
-    setLoading(false);
+    try {
+      if(latestData.id) {
+        await axios.put('https://localhost:7265/api/Customer/'+latestData.id, latestData);
+      }else{
+        await axios.post('https://localhost:7265/api/Customer', latestData);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    
+    setLoading(false); 
   };
 
   const handleCancel = async (e) => {
     setLoading(true);
     // call api set all items back
-
+    e.preventDefault();
+    const response = await axios.get('https://localhost:7265/api/Customer?id='+ id);
+      setLatestData(response.data);
     setLoading(false);
   };
 
@@ -52,14 +67,14 @@ const CustomerDetail = () => {
   };
 
   return (
-    <section className="customer" onSubmit={handleSubmit}>
+    <section className="customer">
       <h1>Customer</h1>
       <br></br>
       <form>
         <div className="item-section">
           <label>Customer Number: </label>
           <input
-            value={latestData.customerNumber}
+            value={latestData.id}
             disabled
             className="section-input"
           ></input>
@@ -67,11 +82,11 @@ const CustomerDetail = () => {
         <div className="item-section">
           <label>Customer Name: </label>
           <input
-            value={latestData.customerName}
+            value={latestData.name}
             onChange={(e) =>
               setLatestData((value) => {
                 e.target.setCustomValidity("");
-                return { ...value, customerName: e.target.value };
+                return { ...value, name: e.target.value };
               })
             }
             className="section-input"
