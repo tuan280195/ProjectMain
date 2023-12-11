@@ -89,7 +89,7 @@ const Register = () => {
   return (
     <>
       {success ? (
-        <section>
+        <section className="select-form">
           <h1>Success!</h1>
           <p>
             <a href="#">Sign In</a>

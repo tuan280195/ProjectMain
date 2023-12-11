@@ -62,7 +62,7 @@ const Login = () => {
   };
 
   return (
-    <section>
+    <section className="select-form">
       <p
         ref={errRef}
         className={errMsg ? "errmsg" : "offscreen"}

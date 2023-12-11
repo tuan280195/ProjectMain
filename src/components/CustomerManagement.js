@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
 
-const buttonItems = ["Create", "Search"];
-
 const CustomerManagement = () => {
   const navigate = useNavigate();
 
@@ -9,7 +7,7 @@ const CustomerManagement = () => {
     navigate(link);
   };
   return (
-    <section>
+    <section className="select-form">
       <h1>Customer Mangement</h1>
       <br></br>
       <br></br>

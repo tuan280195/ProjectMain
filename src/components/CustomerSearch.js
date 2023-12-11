@@ -14,8 +14,9 @@ const CustomerSearch = () => {
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-  const getCustomers = async () => {
+  const getCustomers = async (e) => {
     setLoading(true);
+    e.preventDefault();
     //call API Search
     try {
       var searchURL = "https://localhost:7265/api/Customer/getAll";
@@ -55,8 +56,9 @@ const CustomerSearch = () => {
     setLoading(false);
   };
 
-  const handleClickDelete = async (id) => {
+  const handleClickDelete = async (e, id) => {
     setLoading(true);
+    e.preventDefault();
     try {
       // call API Delete
       var deleteURL = "https://localhost:7265/api/Customer/" + id;
@@ -70,8 +72,7 @@ const CustomerSearch = () => {
   };
 
   const handleClickSearch = async (e) => {
-    e.preventDefault();
-    await getCustomers();
+    await getCustomers(e);
   };
 
   const handleChange = (event, item) => {
@@ -129,7 +130,7 @@ const CustomerSearch = () => {
   };
 
   return (
-    <section>
+    <section className="select-form">
       <h1>Customer Search</h1>
       <br></br>
       <div className="item-section">

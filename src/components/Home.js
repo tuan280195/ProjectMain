@@ -14,7 +14,7 @@ const Home = () => {
   };
 
   return (
-    <section>
+    <section className="select-form">
       <h1>Home</h1>
       <br />
       <Link to="/customermanagement">Customer</Link>

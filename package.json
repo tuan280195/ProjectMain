@@ -8,6 +8,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.16",
+    "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.20",
     "axios": "^0.24.0",
     "react": "^17.0.2",

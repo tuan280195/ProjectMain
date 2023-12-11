@@ -17,6 +17,16 @@ body {
   background-color: dodgerblue;
 }
 
+header.app-header {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  text-align: center;
+  /* display: flex;
+  justify-content: space-between; */
+}
+
 .App {
   display: flex;
   flex-direction: column;
@@ -28,13 +38,19 @@ body {
 
 section {
   width: 100%;
-  max-width: 420px;
+  max-width: 700px;
   min-height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   padding: 1rem;
   background-color: rgba(0, 0, 0, 0.4);
+  margin-top: 4rem;
+}
+
+section.select-form {
+  max-width: 460px;
+  margin-top: 0;
 }
 
 form {
