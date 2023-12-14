@@ -3,7 +3,7 @@ import { useState } from "react";
 import LoadingSpinner from "./until/LoadingSpinner";
 import Truncate from "./until/Truncate";
 import axios from "../api/axios";
-import { Alert } from "@mui/material";
+import ConfirmDialog from "./until/ConfirmBox";
 
 const CustomerSearch = () => {
   const [data, setData] = useState({});
@@ -13,11 +13,15 @@ const CustomerSearch = () => {
   ]);
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [deleteItem, setDeleteItem] = useState({
+    id: null,
+    customerName: null,
+    phoneNumber: null,
+  });
 
   const getCustomers = async (e) => {
     setLoading(true);
     e.preventDefault();
-    //call API Search
     try {
       var searchURL = "https://localhost:7265/api/Customer/getAll";
       searchURL =
@@ -45,6 +49,8 @@ const CustomerSearch = () => {
       console.log(error);
     }
 
+    setShowList(true);
+
     setLoading(false);
   };
 
@@ -56,12 +62,11 @@ const CustomerSearch = () => {
     setLoading(false);
   };
 
-  const handleClickDelete = async (e, id) => {
+  const handleClickDelete = async () => {
     setLoading(true);
-    e.preventDefault();
     try {
       // call API Delete
-      var deleteURL = "https://localhost:7265/api/Customer/" + id;
+      var deleteURL = "https://localhost:7265/api/Customer/" + deleteItem.id;
       await axios.delete(deleteURL);
       await getCustomers();
     } catch (error) {
@@ -96,7 +101,10 @@ const CustomerSearch = () => {
                     <Link
                       className="search-delete"
                       to=""
-                      onClick={() => setShowAlert(true)}
+                      onClick={() => {
+                        setShowAlert(true);
+                        setDeleteItem(item);
+                      }}
                     >
                       Delete
                     </Link>{" "}
@@ -109,14 +117,6 @@ const CustomerSearch = () => {
                     </Link>
                   </div>
                 </li>
-                <Alert
-                  isOpen={showAlert}
-                  title="Delete"
-                  description="Are you sure you want to delete?"
-                  confirmBtnLabel="Yes"
-                  onConfirm={handleClickDelete(item.id)}
-                  onClose={() => setShowAlert(false)}
-                />
               </>
             );
           })
@@ -156,6 +156,12 @@ const CustomerSearch = () => {
       <br></br>
       <button onClick={handleClickSearch}>Search</button>
       <LoadingSpinner loading={loading}></LoadingSpinner>
+      <ConfirmDialog
+        open={showAlert}
+        closeDialog={() => setShowAlert(false)}
+        item={deleteItem.customerName}
+        deleteFunction={handleClickDelete}
+      ></ConfirmDialog>
     </section>
   );
 };

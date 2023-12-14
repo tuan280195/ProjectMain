@@ -82,7 +82,6 @@ const Login = () => {
           value={user}
           required
         />
-
         <label htmlFor="password">Password:</label>
         <input
           type="password"

@@ -19,7 +19,9 @@ const Home = () => {
       <br />
       <Link to="/customermanagement">Customer</Link>
       <br />
-      <Link to="/case">Case</Link>
+      <Link to="/casemanagement">Case</Link>
+      <br />
+      <Link to="/company">Company</Link>
       <br />
       <Link to="/document">Document Search</Link>
       <div className="flexGrow">
