@@ -82,56 +82,59 @@ const CustomerDetail = () => {
       <h1>Customer</h1>
       <br></br>
       <form>
-        <div className="section-item">
-          <label>Customer Number</label>
-          <input
-            value={latestData.id}
-            disabled
-            className="section-input"
-          ></input>
-        </div>
-        <div className="section-item">
-          <label className="label-section">Customer Name</label>
-          <input
-            value={latestData.name}
-            type="text"
-            onChange={(e) =>
-              setLatestData((value) => {
-                e.target.setCustomValidity("");
-                return { ...value, name: e.target.value };
-              })
-            }
-            className="section-input"
-            required
-            onInvalid={(e) => {
-              e.target.setCustomValidity(
-                "error msg: Please enter Customer Name"
-              );
-            }}
-          ></input>
-        </div>
-        <div className="section-item">
-          <label className="label-section">Phone No</label>
-          <input
-            value={latestData.phoneNumber}
-            type="text"
-            onChange={(e) => {
-              setLatestData((value) => {
-                e.target.setCustomValidity("");
-                return { ...value, phoneNumber: e.target.value };
-              });
-            }}
-            className="section-input"
-            required
-            onInvalid={(e) => {
-              e.target.setCustomValidity(
-                "error msg: Please enter Customer Name"
-              );
-            }}
-            maxLength={11}
-          ></input>
-        </div>
-        <Grid container spacing={10}>
+        <Grid container spacing={5}>
+          <Grid item xs={12}>
+            {" "}
+            <div className="section-item">
+              <label>Customer Number</label>
+              <input
+                value={latestData.id}
+                disabled
+                className="section-input"
+              ></input>
+            </div>
+            <div className="section-item">
+              <label className="label-section">Customer Name</label>
+              <input
+                value={latestData.name}
+                type="text"
+                onChange={(e) =>
+                  setLatestData((value) => {
+                    e.target.setCustomValidity("");
+                    return { ...value, name: e.target.value };
+                  })
+                }
+                className="section-input"
+                required
+                onInvalid={(e) => {
+                  e.target.setCustomValidity(
+                    "error msg: Please enter Customer Name"
+                  );
+                }}
+              ></input>
+            </div>
+            <div className="section-item">
+              <label className="label-section">Phone No</label>
+              <input
+                value={latestData.phoneNumber}
+                type="text"
+                onChange={(e) => {
+                  setLatestData((value) => {
+                    e.target.setCustomValidity("");
+                    return { ...value, phoneNumber: e.target.value };
+                  });
+                }}
+                className="section-input"
+                required
+                onInvalid={(e) => {
+                  e.target.setCustomValidity(
+                    "error msg: Please enter Customer Name"
+                  );
+                }}
+                maxLength={11}
+              ></input>
+            </div>
+          </Grid>
           <Grid item xs={6}>
             <div className="section-item">
               <label className="label-section">Postal Code</label>
@@ -249,20 +252,22 @@ const CustomerDetail = () => {
               ></input>
             </div>
           </Grid>
+          <Grid item xs={12}>
+            <div className="section-item">
+              <label className="label-section">Note</label>
+              <textarea
+                value={latestData.note}
+                onChange={(e) =>
+                  setLatestData((value) => {
+                    return { ...value, note: e.target.value };
+                  })
+                }
+                className="section-input"
+              ></textarea>
+            </div>
+          </Grid>
         </Grid>
 
-        <div className="section-item">
-          <label className="label-section">Note</label>
-          <textarea
-            value={latestData.note}
-            onChange={(e) =>
-              setLatestData((value) => {
-                return { ...value, note: e.target.value };
-              })
-            }
-            className="section-input"
-          ></textarea>
-        </div>
         <div className="handle-button">
           <button className="button-confirm" onClick={handleSubmit}>
             Submit
