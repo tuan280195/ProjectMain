@@ -44,7 +44,6 @@ const CustomerSearch = () => {
         });
       });
       setListItem(result); /*set result list item here*/
-      setShowList(true);
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +56,6 @@ const CustomerSearch = () => {
   const handleClickEdit = (id) => {
     setLoading(true);
     //call API
-    //save to context
     window.location.href = "customerdetail?id=" + id;
     setLoading(false);
   };
@@ -67,8 +65,10 @@ const CustomerSearch = () => {
     try {
       // call API Delete
       var deleteURL = "https://localhost:7265/api/Customer/" + deleteItem.id;
-      await axios.delete(deleteURL);
-      await getCustomers();
+      await axios.delete(deleteURL).then(async (res) => {
+        await getCustomers();
+        setShowAlert(false);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -82,7 +82,7 @@ const CustomerSearch = () => {
 
   const handleChange = (event, item) => {
     let newData = data;
-    if (item == "customerName") newData.customerName = event.target.value;
+    if (item === "customerName") newData.customerName = event.target.value;
     else newData.phoneNumber = event.target.value;
 
     setData(newData);
@@ -91,7 +91,7 @@ const CustomerSearch = () => {
   const Results = () => {
     return (
       <ul id="results" className="search-results">
-        {listItem && listItem.length > 0 ? (
+        {listItem && listItem[0].id != null ? (
           listItem.map((item, index) => {
             return (
               <>
@@ -133,7 +133,7 @@ const CustomerSearch = () => {
     <section className="select-form">
       <h1>Customer Search</h1>
       <br></br>
-      <div className="item-section">
+      <div className="section-item">
         <label className="label-section">Customer Name</label>
         <input
           value={data.customerName}
@@ -142,7 +142,7 @@ const CustomerSearch = () => {
           onChange={(e) => handleChange(e, "customerName")}
         ></input>
       </div>
-      <div className="item-section">
+      <div className="section-item">
         <label className="label-section">Phone Number</label>
         <input
           value={data.phoneNumber}

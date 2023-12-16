@@ -1,4 +1,3 @@
-import { Title } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -23,8 +22,10 @@ const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
           onClick={closeDialog}
           sx={{
             position: "absolute",
-            right: "0rem",
+            right: "1rem",
             top: "0.5rem",
+            width: "2rem",
+            height: "2rem",
           }}
         >
           X

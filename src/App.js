@@ -12,6 +12,7 @@ import CustomerManagement from "./components/CustomerManagement";
 import { Routes, Route } from "react-router-dom";
 import CustomerSearch from "./components/CustomerSearch";
 import CaseManagement from "./components/CaseManagement";
+import CaseSearch from "./components/CaseSearch";
 
 const ROLES = {
   User: 2001,
@@ -39,6 +40,10 @@ function App() {
           element={<CustomerSearch />}
         />
         <Route path="/casemanagement" element={<CaseManagement />}></Route>
+        <Route
+          path="/casemanagement/casesearch"
+          element={<CaseSearch />}
+        ></Route>
         {/* we want to protect these routes */}
         <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
           <Route path="/" element={<Home />} />
