@@ -41,7 +41,7 @@ const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
               }}
             >
               <Typography variant="h5">Delete {item}</Typography>
-              <Typography variant="body1">
+              <Typography variant="main-body">
                 Are you sure you want to delete this {item}?
               </Typography>
             </Box>

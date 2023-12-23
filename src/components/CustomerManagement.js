@@ -8,9 +8,6 @@ const CustomerManagement = () => {
   };
   return (
     <section className="select-form">
-      <h1>Customer Mangement</h1>
-      <br></br>
-      <br></br>
       <button onClick={() => handleClick("customerdetail")}>Create</button>
       <button onClick={() => handleClick("customersearch")}>Search</button>
     </section>

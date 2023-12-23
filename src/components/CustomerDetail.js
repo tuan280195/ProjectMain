@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "../api/axios";
 import LoadingSpinner from "./until/LoadingSpinner";
+import FormInput from "./until/FormInput";
 import { useSearchParams } from "react-router-dom";
 import { Grid } from "@mui/material";
+import FormButton from "./until/FormButton";
 
 const CustomerDetail = () => {
   const [latestData, setLatestData] = useState({});
@@ -79,65 +81,40 @@ const CustomerDetail = () => {
 
   return (
     <section className="customer">
-      <h1>Customer</h1>
-      <br></br>
-      <form>
-        <Grid container spacing={5}>
-          <Grid item xs={12}>
-            {" "}
-            <div className="section-item">
-              <label>Customer Number</label>
-              <input
-                value={latestData.id}
-                disabled
-                className="section-input"
-              ></input>
-            </div>
-            <div className="section-item">
-              <label className="label-section">Customer Name</label>
-              <input
-                value={latestData.name}
-                type="text"
-                onChange={(e) =>
-                  setLatestData((value) => {
-                    e.target.setCustomValidity("");
-                    return { ...value, name: e.target.value };
-                  })
-                }
-                className="section-input"
-                required
-                onInvalid={(e) => {
-                  e.target.setCustomValidity(
-                    "error msg: Please enter Customer Name"
-                  );
-                }}
-              ></input>
-            </div>
-            <div className="section-item">
-              <label className="label-section">Phone No</label>
-              <input
-                value={latestData.phoneNumber}
-                type="text"
-                onChange={(e) => {
-                  setLatestData((value) => {
-                    e.target.setCustomValidity("");
-                    return { ...value, phoneNumber: e.target.value };
-                  });
-                }}
-                className="section-input"
-                required
-                onInvalid={(e) => {
-                  e.target.setCustomValidity(
-                    "error msg: Please enter Customer Name"
-                  );
-                }}
-                maxLength={11}
-              ></input>
-            </div>
+      <form onSubmit={handleSubmit}>
+        <Grid container columnSpacing={5} rowSpacing={3}>
+          <Grid item xs={6}>
+            <FormInput
+              label="Customer Name"
+              value={latestData.name}
+              type="text"
+              onChange={(e) =>
+                setLatestData((value) => {
+                  return { ...value, name: e.target.value };
+                })
+              }
+              className="section-input"
+              required
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <FormInput
+              label="Phone Number"
+              value={latestData.phoneNumber}
+              type="text"
+              className="section-input"
+              required
+              maxLength={11}
+              onChange={(e) => {
+                setLatestData((value) => {
+                  return { ...value, phoneNumber: e.target.value };
+                });
+              }}
+            />
           </Grid>
           <Grid item xs={6}>
             <div className="section-item">
-              <label className="label-section">Postal Code</label>
+              <label className="section-label">Postal Code</label>
               <div className="section-range">
                 <input
                   type="text"
@@ -185,7 +162,7 @@ const CustomerDetail = () => {
               </div>
             </div>
             <div className="section-item">
-              <label className="label-section">State/Province</label>
+              <label className="section-label">State/Province</label>
               <input
                 type="text"
                 className="section-input"
@@ -198,7 +175,7 @@ const CustomerDetail = () => {
               ></input>
             </div>
             <div className="section-item">
-              <label className="label-section">City</label>
+              <label className="section-label">City</label>
               <input
                 value={latestData.city}
                 type="text"
@@ -213,7 +190,7 @@ const CustomerDetail = () => {
           </Grid>
           <Grid item xs={6}>
             <div className="section-item">
-              <label className="label-section">Street</label>
+              <label className="section-label">Street</label>
               <input
                 value={latestData.street}
                 type="text"
@@ -226,7 +203,7 @@ const CustomerDetail = () => {
               ></input>
             </div>
             <div className="section-item">
-              <label className="label-section">Building Name</label>
+              <label className="section-label">Building Name</label>
               <input
                 value={latestData.buildingName}
                 type="text"
@@ -239,7 +216,7 @@ const CustomerDetail = () => {
               ></input>
             </div>
             <div className="section-item">
-              <label className="label-section">Room Name</label>
+              <label className="section-label">Room Name</label>
               <input
                 value={latestData.roomNumber}
                 type="text"
@@ -254,7 +231,7 @@ const CustomerDetail = () => {
           </Grid>
           <Grid item xs={12}>
             <div className="section-item">
-              <label className="label-section">Note</label>
+              <label className="section-label">Note</label>
               <textarea
                 value={latestData.note}
                 onChange={(e) =>
@@ -266,16 +243,12 @@ const CustomerDetail = () => {
               ></textarea>
             </div>
           </Grid>
+          <Grid item xs={12}>
+            <div className="handle-button">
+              <FormButton onClick={handleSubmit} itemName="Submit" />
+            </div>
+          </Grid>
         </Grid>
-
-        <div className="handle-button">
-          <button className="button-confirm" onClick={handleSubmit}>
-            Submit
-          </button>
-          <button className="button-confirm" onClick={handleCancel}>
-            Cancel
-          </button>
-        </div>
       </form>
       <LoadingSpinner loading={loading}></LoadingSpinner>
     </section>

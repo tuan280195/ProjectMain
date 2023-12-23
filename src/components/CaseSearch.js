@@ -2,7 +2,19 @@ import { useState } from "react";
 import GenericItems from "./until/GenericItems";
 import LoadingSpinner from "./until/LoadingSpinner";
 import ConfirmDialog from "./until/ConfirmBox";
-import { Grid, Item } from "@mui/material";
+import {
+  Button,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import Truncate from "./until/Truncate";
+import FormButton from "./until/FormButton";
 
 const CaseSearch = () => {
   const [template, setTemplate] = useState([
@@ -17,7 +29,7 @@ const CaseSearch = () => {
     {
       keywordId: "receptionDate",
       keywordName: "Reception Date",
-      typeName: "datetime",
+      typeName: "daterange",
       order: 3,
       roleName: "user",
       searchable: 1,
@@ -82,13 +94,31 @@ const CaseSearch = () => {
   const [data, setData] = useState([
     { keywordId: "customer", value: "test 1" },
     { keywordId: "phoneNo", value: "0819177199" },
-    { keywordId: "receptionDate", value: "12/15/2023-12/21/2023" },
+    { keywordId: "receptionDate", value: "2023-12-15/2023-12-21" },
     { keywordId: "requestType", value: "" },
     { keywordId: "pic", value: "" },
     { keywordId: "paymentStatus", value: "" },
     { keywordId: "invoiceDate", value: "" },
     { keywordId: "arrivalDate", value: "" },
     { keywordId: "paymentDate", value: "" },
+  ]);
+  const [searchData, setSearchData] = useState([
+    {
+      caseKey: "1",
+      caseName: "Test123456781232112321",
+      customerName: "Toyota",
+      requestType: "abc",
+      status: "in-progress",
+      pic: "TuanDQ7",
+    },
+    {
+      caseKey: "2",
+      caseName: "Test2",
+      customerName: "Hitachi",
+      requestType: "def",
+      status: "Done",
+      pic: "TanBC1",
+    },
   ]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -100,16 +130,77 @@ const CaseSearch = () => {
   });
   const [options, setOptions] = useState(["item1", "item2"]);
 
-  const handleClickSearch = () => {};
-  const Results = () => {};
+  const handleClickSearch = async () => {
+    setLoading(true);
+    // call api
+    setShowList(true);
+    setLoading(false);
+  };
+  const Results = () => {
+    return (
+      <>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Case Name</TableCell>
+                <TableCell>Customer Name</TableCell>
+                <TableCell>Request Type</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>PIC</TableCell>
+                <TableCell align="center">Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {searchData.map((row) => {
+                return (
+                  <TableRow
+                    key={row.caseKey}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell>
+                      <Truncate str={row.caseName} maxlength={15} />
+                    </TableCell>
+                    <TableCell>
+                      <Truncate str={row.customerName} maxlength={15} />
+                    </TableCell>
+                    <TableCell>{row.requestType}</TableCell>
+                    <TableCell>{row.status}</TableCell>
+                    <TableCell>{row.pic}</TableCell>
+                    <TableCell align="center">
+                      <Button
+                        className="search-close"
+                        // onClick={() => {
+                        //   setShowAlert(true);
+                        //   setDeleteItem(item);
+                        // }}
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        className="search-edit"
+                        // onClick={() => handleClickEdit(item.id)}
+                      >
+                        Edit
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </>
+    );
+  };
   const handleClickDelete = () => {};
 
   const dynamicGenerate = (item, templateItem) => {
     return (
       <GenericItems
         value={item.value}
-        value1={item.value.split("-")[0]}
-        value2={item.value.split("-")[1]}
+        value1={item.value.split("/")[0]}
+        value2={item.value.split("/")[1]}
         label={templateItem.keywordName}
         type={templateItem.typeName}
         key={templateItem.order}
@@ -122,26 +213,22 @@ const CaseSearch = () => {
           setData(newState);
         }}
         // using for date range
-        handleInput1={(newVlue) => {
+        handleInput1={(e) => {
           const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
-              const item2 = item.value.split("-")[1];
-              newVlue = newVlue.format("MM/DD/YYYY").toString();
-              return { ...value, value: newVlue + "-" + item2 };
+              const item2 = item.value.split("/")[1];
+              return { ...value, value: e.target.value + "/" + item2 };
             } else return { ...value };
           });
-          console.log(newState);
           setData(newState);
         }}
-        handleInput2={(newVlue) => {
+        handleInput2={(e) => {
           const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
-              const item1 = item.value.split("-")[0];
-              newVlue = newVlue.format("MM/DD/YYYY").toString();
-              return { ...value, value: item1 + "-" + newVlue };
+              const item1 = item.value.split("/")[0];
+              return { ...value, value: item1 + "/" + e.target.value };
             } else return { ...value };
           });
-          console.log(newState);
           setData(newState);
         }}
       >
@@ -193,15 +280,25 @@ const CaseSearch = () => {
 
   return (
     <section>
-      <h1>Case Search</h1>
-      <br></br>
-      <Grid container spacing={2}>
+      <Grid container spacing={5}>
         {generateCode()}
+        {showList ? (
+          <Grid item xs={12}>
+            <Results />
+          </Grid>
+        ) : null}
+        <Grid
+          item
+          xs={12}
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          <FormButton
+            onClick={handleClickSearch}
+            itemName="Search"
+          ></FormButton>
+        </Grid>
       </Grid>
 
-      {showList ? <Results /> : null}
-      <br></br>
-      <button onClick={handleClickSearch}>Search</button>
       <LoadingSpinner loading={loading}></LoadingSpinner>
       <ConfirmDialog
         open={showAlert}

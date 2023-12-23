@@ -1,67 +1,65 @@
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import FormInput from "./FormInput";
 
-function GenericItems({ label, type, index, ...props }) {
+function GenericItems({ label, type, ...props }) {
   switch (type) {
     case "textbox":
       return (
-        <div className="section-item">
-          <label className="label-section">{label}</label>
-          <input
-            value={props.value}
-            className="section-input"
-            type="text"
-            onChange={props.handleInput}
-          ></input>
-        </div>
+        <FormInput
+          label={label}
+          className="section-input"
+          type="text"
+          onChange={props.handleInput}
+          value={props.value}
+        />
       );
     case "combobox":
       return (
         <div className="section-item">
-          <label className="label-section">{label}</label>
-          <select
-            value={props.value}
+          <label className="section-label">{label}</label>
+          <input
+            type="text"
+            list="items"
             className="section-input"
             onChange={props.handleInput}
-          >
-            {props.children}
-          </select>
+            value={props.value}
+          />
+          <datalist id="items">{props.children}</datalist>
+        </div>
+      );
+    case "daterange":
+      return (
+        <div className="section-item">
+          <label className="section-label">{label}</label>
+          <div className="section-range" style={{ marginBottom: 10 }}>
+            <input
+              value={props.value1}
+              type="date"
+              onChange={props.handleInput1}
+              className="section-input"
+              style={{ marginRight: "10px" }}
+            ></input>
+            -
+            <input
+              value={props.value2}
+              type="date"
+              onChange={props.handleInput2}
+              className="section-input"
+              style={{ marginLeft: "10px" }}
+            ></input>
+          </div>
         </div>
       );
     case "datetime":
       return (
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en">
-          <label className="label-section">{label}</label>
-          <div className="section-range" style={{ marginBottom: 10 }}>
-            <div
-              className="range-from"
-              style={{
-                borderRadius: 10,
-                background: "#ffffff",
-                marginRight: 10,
-              }}
-            >
-              <DatePicker
-                value={dayjs(props.value1)}
-                onChange={props.handleInput1}
-              ></DatePicker>
-            </div>{" "}
-            -{" "}
-            <div
-              style={{
-                borderRadius: 10,
-                background: "#ffffff",
-                marginLeft: 10,
-              }}
-            >
-              <DatePicker
-                value={dayjs(props.value2)}
-                onChange={props.handleInput2}
-              ></DatePicker>
-            </div>
-          </div>
-        </LocalizationProvider>
+        <div className="section-item">
+          <label className="section-label">{label}</label>
+          <input
+            value={props.value}
+            type="date"
+            onChange={props.handleInput}
+            className="section-input"
+          ></input>
+        </div>
       );
     default:
       return <></>;
