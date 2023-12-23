@@ -29,22 +29,24 @@ function App() {
         <Route path="linkpage" element={<LinkPage />} />
         <Route path="unauthorized" element={<Unauthorized />} />
         <Route path="/" element={<Home />} />
-        <Route path="/customermanagement" element={<CustomerManagement />} />
-        <Route
-          path="/customermanagement/customerdetail"
-          element={<CustomerDetail />}
-        />
-        <Route
-          path="/customermanagement/customersearch"
-          element={<CustomerSearch />}
-        />
-        <Route path="/casemanagement" element={<CaseManagement />}></Route>
+
         {/* we want to protect these routes */}
         <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
           <Route path="/" element={<Home />} />
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+         
+          <Route path="/customermanagement" element={<CustomerManagement />} />
+          <Route
+            path="/customermanagement/customerdetail"
+            element={<CustomerDetail />}
+          />
+          <Route
+            path="/customermanagement/customersearch"
+            element={<CustomerSearch />}
+          />
+          <Route path="/casemanagement" element={<CaseManagement />} />
           <Route path="admin" element={<Admin />} />
         </Route>
         {/* catch all */}

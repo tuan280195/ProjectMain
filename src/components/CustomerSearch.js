@@ -4,6 +4,7 @@ import LoadingSpinner from "./until/LoadingSpinner";
 import Truncate from "./until/Truncate";
 import axios from "../api/axios";
 import ConfirmDialog from "./until/ConfirmBox";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const CustomerSearch = () => {
   const [data, setData] = useState({});
@@ -18,12 +19,38 @@ const CustomerSearch = () => {
     customerName: null,
     phoneNumber: null,
   });
+  const axiosPrivate = useAxiosPrivate();
+  const controller = new AbortController();
+
+    
+
+    // const getUsers = async () => {
+    //   let isMounted = true;
+    //   const controller = new AbortController();
+    //   try {
+    //     console.log("api/Customer/getAll");
+    //     const response = await axiosPrivate.get("/api/Customer/getAll", {
+    //       signal: controller.signal,
+    //     });
+    //     console.log(response.data);
+    //     isMounted && setUsers(response.data);
+    //   } catch (err) {
+    //     console.error(err);
+    //     navigate("/api/account/login", { state: { from: location }, replace: true });
+    //   }
+    // };
+
+    // getUsers();
+
+
 
   const getCustomers = async (e) => {
     setLoading(true);
     e.preventDefault();
+
     try {
-      var searchURL = "https://localhost:7265/api/Customer/getAll";
+      
+      let searchURL = "/api/Customer/getAll";
       searchURL =
         data.customerName && data.phoneNumber
           ? searchURL +
@@ -33,9 +60,13 @@ const CustomerSearch = () => {
           : data.customerName
           ? searchURL + `?customerName=${data.customerName}`
           : searchURL;
-      const response = await axios.get(searchURL);
 
-      var result = [];
+          console.log("searchURL:" + searchURL)
+      const response = await axiosPrivate.get(searchURL, {
+        signal: controller.signal,
+      });
+
+      let result = [];
       response.data.forEach((element) => {
         result.push({
           id: element.id,

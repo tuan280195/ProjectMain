@@ -3,7 +3,7 @@ import useAuth from "../hooks/useAuth";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import axios from "../api/axios";
-const LOGIN_URL = "/auth";
+const LOGIN_URL = "/api/Account/login";
 
 const Login = () => {
   const { setAuth } = useAuth();
@@ -15,8 +15,8 @@ const Login = () => {
   const userRef = useRef();
   const errRef = useRef();
 
-  const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
+  const [username, setUser] = useState("");
+  const [password, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
@@ -25,29 +25,43 @@ const Login = () => {
 
   useEffect(() => {
     setErrMsg("");
-  }, [user, pwd]);
+  }, [username, password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      console.log("response")
       const response = await axios.post(
         LOGIN_URL,
-        JSON.stringify({ user, pwd }),
+        JSON.stringify({ username, password }),
         {
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+          },
           withCredentials: true,
         }
       );
+      console.log(response)
       console.log(JSON.stringify(response?.data));
       //console.log(JSON.stringify(response));
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
-      setAuth({ user, pwd, roles, accessToken });
+      var tokenStorage = {
+        accessToken: accessToken,
+        roles: roles,
+        username: username,
+        password: password
+      };
+      localStorage.setItem("AuthToken", JSON.stringify(tokenStorage))
+      setAuth({ username, password, roles, accessToken });
       setUser("");
       setPwd("");
+      console.log("from")
+      console.log(from)
       navigate(from, { replace: true });
     } catch (err) {
+      console.log(err.response)
       if (!err?.response) {
         setErrMsg("No Server Response");
       } else if (err.response?.status === 400) {
@@ -79,7 +93,7 @@ const Login = () => {
           ref={userRef}
           autoComplete="off"
           onChange={(e) => setUser(e.target.value)}
-          value={user}
+          value={username}
           required
         />
         <label htmlFor="password">Password:</label>
@@ -87,7 +101,7 @@ const Login = () => {
           type="password"
           id="password"
           onChange={(e) => setPwd(e.target.value)}
-          value={pwd}
+          value={password}
           required
         />
         <button>Sign In</button>
