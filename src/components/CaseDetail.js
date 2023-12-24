@@ -180,7 +180,7 @@ const CaseDetail = () => {
                 Attach
               </Button>
               <div>
-                <FormButton itemName="Confirm" />
+                <FormButton itemName="Confirm" type="submit" />
               </div>
             </div>
           </Grid>
