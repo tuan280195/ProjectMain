@@ -38,7 +38,7 @@ const Users = () => {
     <article>
       <h2>Users List</h2>
       {users?.length ? (
-        <ul>
+        <ul className="search-results">
           {users.map((user, i) => (
             <li key={i}>{user?.username}</li>
           ))}

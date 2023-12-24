@@ -1,4 +1,3 @@
-import { Title } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -23,8 +22,10 @@ const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
           onClick={closeDialog}
           sx={{
             position: "absolute",
-            right: "0rem",
+            right: "1rem",
             top: "0.5rem",
+            width: "2rem",
+            height: "2rem",
           }}
         >
           X
@@ -40,7 +41,7 @@ const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
               }}
             >
               <Typography variant="h5">Delete {item}</Typography>
-              <Typography variant="body1">
+              <Typography variant="main-body">
                 Are you sure you want to delete this {item}?
               </Typography>
             </Box>

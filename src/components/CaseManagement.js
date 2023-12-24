@@ -8,9 +8,6 @@ const CaseManagement = () => {
   };
   return (
     <section className="select-form">
-      <h1>Customer Mangement</h1>
-      <br></br>
-      <br></br>
       <button onClick={() => handleClick("casedetail")}>Create</button>
       <button onClick={() => handleClick("casesearch")}>Search</button>
     </section>
