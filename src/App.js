@@ -11,6 +11,8 @@ import { Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import CustomerSearch from "./components/CustomerSearch";
 import CustomerDetail from "./components/CustomerDetail";
+import CustomerManagement from "./components/CustomerManagement";
+import Casemanagement from "./components/CaseManagement";
 
 const ROLES = {
   User: 2001,
@@ -46,7 +48,7 @@ function App() {
             path="/customermanagement/customersearch"
             element={<CustomerSearch />}
           />
-          <Route path="/casemanagement" element={<CaseManagement />} />
+          <Route path="/casemanagement" element={<Casemanagement />} />
           <Route path="admin" element={<Admin />} />
         </Route>
         {/* catch all */}

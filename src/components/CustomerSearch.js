@@ -4,6 +4,8 @@ import LoadingSpinner from "./until/LoadingSpinner";
 import Truncate from "./until/Truncate";
 import axios from "../api/axios";
 import ConfirmDialog from "./until/ConfirmBox";
+import { Grid, Button } from "@mui/material";
+import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const CustomerSearch = () => {
@@ -98,7 +100,7 @@ const CustomerSearch = () => {
     try {
       // call API Delete
       var deleteURL = "https://localhost:7265/api/Customer/" + deleteItem.id;
-      await axios.delete(deleteURL);
+      await axiosPrivate.delete(deleteURL);
       await getCustomers();
     } catch (error) {
       console.log(error);
