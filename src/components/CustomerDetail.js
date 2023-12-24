@@ -245,7 +245,7 @@ const CustomerDetail = () => {
           </Grid>
           <Grid item xs={12}>
             <div className="handle-button">
-              <FormButton onClick={handleSubmit} itemName="Submit" />
+              <FormButton itemName="Submit" type="submit" />
             </div>
           </Grid>
         </Grid>
