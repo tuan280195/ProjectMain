@@ -99,7 +99,7 @@ const CustomerSearch = () => {
     setLoading(true);
     try {
       // call API Delete
-      var deleteURL = "https://localhost:7265/api/Customer/" + deleteItem.id;
+      var deleteURL = "/api/Customer/" + deleteItem.id;
       await axiosPrivate.delete(deleteURL);
       await getCustomers();
     } catch (error) {

@@ -34,6 +34,7 @@ const Sidebar = () => {
     setMobileOpen(!mobileOpen);
   };
   const handleClick = (item) => {
+    console.log(item)
     switch (item) {
       case "Customer":
         setCustomerOpen(!customerOpen);

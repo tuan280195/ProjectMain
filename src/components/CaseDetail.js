@@ -189,7 +189,7 @@ const CaseDetail = () => {
       <DialogHandle
         open={showDialog}
         closeDialog={() => setShowDialog(false)}
-        title="Attach Dialog"
+        title="Attach Files"
         // item={deleteItem.customerName}
         // deleteFunction={handleClickDelete}
       ></DialogHandle>

@@ -9,10 +9,7 @@ import LinkPage from "./components/LinkPage";
 import RequireAuth from "./components/RequireAuth";
 import { Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import CustomerSearch from "./components/CustomerSearch";
-import CustomerDetail from "./components/CustomerDetail";
-import CustomerManagement from "./components/CustomerManagement";
-import Casemanagement from "./components/CaseManagement";
+
 
 const ROLES = {
   User: 2001,
@@ -29,26 +26,18 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="linkpage" element={<LinkPage />} />
         <Route path="unauthorized" element={<Unauthorized />} />
-        <Route path="customersearch" element={<CustomerSearch />} />
-        <Route path="customerdetail" element={<CustomerDetail />} />
-        <Route path="/main" element={<Sidebar />} />
+        {/* <Route path="customersearch" element={<CustomerSearch />} />
+        <Route path="customerdetail" element={<CustomerDetail />} /> */}
+        
         {/* we want to protect these routes */}
-        <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
+        {/* <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
           <Route path="/" element={<Home />} />
-        </Route>
+        </Route> */}
 
-        <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
-         
-          <Route path="/customermanagement" element={<CustomerManagement />} />
-          <Route
-            path="/customermanagement/customerdetail"
-            element={<CustomerDetail />}
-          />
-          <Route
-            path="/customermanagement/customersearch"
-            element={<CustomerSearch />}
-          />
-          <Route path="/casemanagement" element={<Casemanagement />} />
+        <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.User]} />}>
+          <Route path="/" element={<Sidebar />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/main" element={<Sidebar />} />
           <Route path="admin" element={<Admin />} />
         </Route>
         {/* catch all */}
