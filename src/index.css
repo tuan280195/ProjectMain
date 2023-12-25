@@ -84,10 +84,6 @@ button {
   margin-top: 1rem;
 }
 
-button.button-confirm {
-  min-width: 7rem;
-}
-
 button:hover {
   background-color: rgb(249, 223, 245);
 }
