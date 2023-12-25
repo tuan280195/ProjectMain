@@ -6,6 +6,7 @@ import axios from "../api/axios";
 import ConfirmDialog from "./until/ConfirmBox";
 import { Grid, Button } from "@mui/material";
 import FormButton from "./until/FormButton";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const CustomerSearch = () => {
   const [data, setData] = useState({});
@@ -21,12 +22,38 @@ const CustomerSearch = () => {
     phoneNumber: null,
   });
   const [condition, setCondition] = useState({ width: "400px", xs: 12 });
+  const axiosPrivate = useAxiosPrivate();
+  const controller = new AbortController();
+
+    
+
+    // const getUsers = async () => {
+    //   let isMounted = true;
+    //   const controller = new AbortController();
+    //   try {
+    //     console.log("api/Customer/getAll");
+    //     const response = await axiosPrivate.get("/api/Customer/getAll", {
+    //       signal: controller.signal,
+    //     });
+    //     console.log(response.data);
+    //     isMounted && setUsers(response.data);
+    //   } catch (err) {
+    //     console.error(err);
+    //     navigate("/api/account/login", { state: { from: location }, replace: true });
+    //   }
+    // };
+
+    // getUsers();
+
+
 
   const getCustomers = async (e) => {
     setLoading(true);
     e.preventDefault();
+
     try {
-      var searchURL = "https://localhost:7265/api/Customer/getAll";
+      
+      let searchURL = "/api/Customer/getAll";
       searchURL =
         data.customerName && data.phoneNumber
           ? searchURL +
@@ -36,9 +63,13 @@ const CustomerSearch = () => {
           : data.customerName
           ? searchURL + `?customerName=${data.customerName}`
           : searchURL;
-      const response = await axios.get(searchURL);
 
-      var result = [];
+          console.log("searchURL:" + searchURL)
+      const response = await axiosPrivate.get(searchURL, {
+        signal: controller.signal,
+      });
+
+      let result = [];
       response.data.forEach((element) => {
         result.push({
           id: element.id,
@@ -57,6 +88,7 @@ const CustomerSearch = () => {
   const handleClickEdit = (id) => {
     setLoading(true);
     //call API
+    //save to context
     window.location.href = "customerdetail?id=" + id;
     setLoading(false);
   };
@@ -65,11 +97,12 @@ const CustomerSearch = () => {
     setLoading(true);
     try {
       // call API Delete
-      var deleteURL = "https://localhost:7265/api/Customer/" + deleteItem.id;
-      await axios.delete(deleteURL).then(async (res) => {
+      var deleteURL = "/api/Customer/" + deleteItem.id;
+      await axiosPrivate.delete(deleteURL).then(async (res)=> {
         await getCustomers();
         setShowAlert(false);
       });
+      
     } catch (error) {
       console.log(error);
     }
@@ -80,7 +113,6 @@ const CustomerSearch = () => {
   const handleClickSearch = async (e) => {
     await getCustomers(e);
     setCondition({ width: "1000px", xs: 6 });
-    setShowList(true);
   };
 
   const handleChange = (event, item) => {
@@ -125,7 +157,7 @@ const CustomerSearch = () => {
           })
         ) : (
           <li>
-            <p>Not Found!</p>
+            <p>Not found</p>
           </li>
         )}
       </ul>
