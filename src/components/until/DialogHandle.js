@@ -44,7 +44,7 @@ const DialogHandle = ({ title, open, closeDialog, item, handleFunction }) => {
                 })}
               </select>
             </div>
-            {/* <Upload></Upload> */}
+            <Upload></Upload>
             <Button
               onClick={uploadFunction}
               size="medium"

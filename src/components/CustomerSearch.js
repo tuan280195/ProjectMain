@@ -21,6 +21,7 @@ const CustomerSearch = () => {
     customerName: null,
     phoneNumber: null,
   });
+  const [condition, setCondition] = useState({ width: "400px", xs: 12 });
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
@@ -77,12 +78,9 @@ const CustomerSearch = () => {
         });
       });
       setListItem(result); /*set result list item here*/
-      setShowList(true);
     } catch (error) {
       console.log(error);
     }
-
-    setShowList(true);
 
     setLoading(false);
   };
@@ -100,8 +98,11 @@ const CustomerSearch = () => {
     try {
       // call API Delete
       var deleteURL = "/api/Customer/" + deleteItem.id;
-      await axiosPrivate.delete(deleteURL);
-      await getCustomers();
+      await axiosPrivate.delete(deleteURL).then(async (res)=> {
+        await getCustomers();
+        setShowAlert(false);
+      });
+      
     } catch (error) {
       console.log(error);
     }
@@ -111,11 +112,12 @@ const CustomerSearch = () => {
 
   const handleClickSearch = async (e) => {
     await getCustomers(e);
+    setCondition({ width: "1000px", xs: 6 });
   };
 
   const handleChange = (event, item) => {
     let newData = data;
-    if (item == "customerName") newData.customerName = event.target.value;
+    if (item === "customerName") newData.customerName = event.target.value;
     else newData.phoneNumber = event.target.value;
 
     setData(newData);
@@ -123,13 +125,13 @@ const CustomerSearch = () => {
 
   const Results = () => {
     return (
-      <ul id="results" className="search-results">
-        {listItem && listItem.length > 0 ? (
+      <ul id="results" className="search-results" style={{ marginTop: 10 }}>
+        {listItem && listItem[0].id != null ? (
           listItem.map((item, index) => {
             return (
               <>
                 <li className="search-result" key={item + "-" + index}>
-                  <Truncate str={item.customerName} />
+                  <Truncate str={item.customerName} maxLength={20} />
                   <div className="search-action">
                     <Link
                       className="search-delete"
@@ -163,31 +165,43 @@ const CustomerSearch = () => {
   };
 
   return (
-    <section className="select-form">
-      <h1>Customer Search</h1>
-      <br></br>
-      <div className="item-section">
-        <label className="label-section">Customer Name</label>
-        <input
-          value={data.customerName}
-          className="section-input"
-          type="text"
-          onChange={(e) => handleChange(e, "customerName")}
-        ></input>
-      </div>
-      <div className="item-section">
-        <label className="label-section">Phone Number</label>
-        <input
-          value={data.phoneNumber}
-          className="section-input"
-          type="text"
-          maxLength={11}
-          onChange={(e) => handleChange(e, "phoneNumber")}
-        ></input>
-      </div>
-      {showList ? <Results /> : null}
-      <br></br>
-      <button onClick={handleClickSearch}>Search</button>
+    <section style={{ width: condition.width }}>
+      <Grid container columnSpacing={5} rowSpacing={5}>
+        <Grid item xs={condition.xs}>
+          <div className="section-item">
+            <label className="section-label">Customer Name</label>
+            <input
+              value={data.customerName}
+              className="section-input"
+              type="text"
+              onChange={(e) => handleChange(e, "customerName")}
+            ></input>
+          </div>
+          <div className="section-item">
+            <label className="section-label">Phone Number</label>
+            <input
+              value={data.phoneNumber}
+              className="section-input"
+              type="text"
+              maxLength={11}
+              onChange={(e) => handleChange(e, "phoneNumber")}
+            ></input>
+          </div>
+        </Grid>
+        {showList ? (
+          <Grid item xs={6}>
+            <Results />
+          </Grid>
+        ) : null}
+        <Grid
+          item
+          xs={12}
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          <FormButton itemName="Search" onClick={handleClickSearch} />
+        </Grid>
+      </Grid>
+
       <LoadingSpinner loading={loading}></LoadingSpinner>
       <ConfirmDialog
         open={showAlert}
