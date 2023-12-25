@@ -71,7 +71,11 @@ const CaseDetail = () => {
     },
   ]);
   const [showDialog, setShowDialog] = useState(false);
-  const options = ["1", "2"];
+  const options = [
+    { id: 1, label: "Tuan" },
+    { id: 2, label: "Tiep" },
+    { id: 3, label: "Tan" },
+  ];
 
   useEffect(async () => {
     await getCaseTemplate();
@@ -120,15 +124,8 @@ const CaseDetail = () => {
           console.log(newState);
           setData(newState);
         }}
-      >
-        {options.map((option, index) => {
-          return (
-            <option value={option} key={index}>
-              {option}
-            </option>
-          );
-        })}
-      </GenericItems>
+        options={options}
+      ></GenericItems>
     );
   };
   const generateCode = () => {
