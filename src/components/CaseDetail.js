@@ -13,6 +13,7 @@ const CaseDetail = () => {
       order: 1,
       roleName: "user",
       searchable: 1,
+      isRequired: true,
     },
     {
       keywordId: "adress",
@@ -21,6 +22,7 @@ const CaseDetail = () => {
       order: 2,
       roleName: "user",
       searchable: 1,
+      isRequired: true,
     },
     {
       keywordId: "phoneNo",
@@ -29,6 +31,7 @@ const CaseDetail = () => {
       order: 3,
       roleName: "user",
       searchable: 1,
+      isRequired: true,
     },
     {
       keywordId: "contactPerson",
@@ -125,7 +128,8 @@ const CaseDetail = () => {
           setData(newState);
         }}
         options={options}
-      ></GenericItems>
+        required={templateItem.isRequired}
+      />
     );
   };
   const generateCode = () => {

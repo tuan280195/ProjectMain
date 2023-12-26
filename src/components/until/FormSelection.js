@@ -21,7 +21,9 @@ const FormSelection = (props) => {
       //   { id: 2, label: "Tan" },
       //   { id: 3, label: "Tiep" },
       // ]}
-      renderInput={(params) => <TextField {...params} />}
+      renderInput={(params) => (
+        <TextField {...params} required={props.required} />
+      )}
     />
   );
 };

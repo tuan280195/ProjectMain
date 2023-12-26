@@ -11,13 +11,17 @@ function GenericItems({ label, type, options, ...props }) {
           type="text"
           onChange={props.handleInput}
           value={props.value}
+          required={props.required}
         />
       );
     case "combobox":
       return (
         <div className="section-item">
-          <label className="section-label">{label}</label>
-          <FormSelection options={options} />
+          <label className="section-label">
+            {label}
+            {props.required ? <span className="required-icon"> *</span> : null}
+          </label>
+          <FormSelection options={options} required={props.required} />
         </div>
       );
     case "daterange":
