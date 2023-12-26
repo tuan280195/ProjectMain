@@ -8,8 +8,6 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import Truncate from "./Truncate";
-import FormButton from "./FormButton";
-import FormSelection from "./FormSelection";
 
 const DialogHandle = ({ title, open, closeDialog, item, handleFunction }) => {
   const optionFileType = [

@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogContent,
   Grid,
@@ -52,27 +51,11 @@ const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
             xs={12}
             sx={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
           >
-            {/* <Button
-              onClick={closeDialog}
-              size="medium"
-              variant="contained"
-              color=""
-            >
-              Cancel
-            </Button> */}
             <FormButton
               itemName="Cancel"
               buttonType="cancel"
               onClick={closeDialog}
             />
-            {/* <Button
-              onClick={deleteFunction}
-              size="medium"
-              variant="contained"
-              color="primary"
-            >
-              Delete
-            </Button>{" "} */}
             <FormButton
               itemName="Delete"
               buttonType="delete"
