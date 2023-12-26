@@ -1,22 +1,48 @@
 import { Button } from "@mui/material";
 
-const FormButton = ({ itemName, style, ...props }) => {
-  const styleButton = {
+const FormButton = ({ itemName, buttonType = "normal", ...props }) => {
+  var styleMode = {
     backgroundColor: "#14873A",
     color: "#fff",
+    backgroundHover: "#fff",
+    colorHover: "#14873A",
+    backgroundActive: "#C0E8CE",
+    colorActive: "#fff",
+  };
+
+  switch (buttonType) {
+    case "attach":
+      styleMode = {
+        backgroundColor: "#0B78D1",
+        color: "#fff",
+        backgroundHover: "#fff",
+        colorHover: "#0B78D1",
+        backgroundActive: "#095989",
+        colorActive: "#fff",
+      };
+  }
+
+  const styleButton = {
+    backgroundColor: styleMode.backgroundColor,
+    color: styleMode.color,
     "&:hover": {
-      backgroundColor: "#2AA252",
+      backgroundColor: styleMode.backgroundHover,
+      color: styleMode.colorHover,
+      border: "1px solid " + styleMode.backgroundColor,
     },
     "&:active": {
-      backgroundColor: "#C0E8CE",
+      backgroundColor: styleMode.backgroundActive,
+      color: styleMode.colorActive,
     },
-    padding: "10px 100px",
+    padding: "10px",
     borderRadius: "5px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
     transition: "background-color 0.3s, box-shadow 0.5s",
     cursor: "pointer",
     fontSize: "30px",
     lineHeight: "1.3",
+    border: "none",
+    width: "40%",
   };
   return (
     <Button sx={styleButton} {...props}>
