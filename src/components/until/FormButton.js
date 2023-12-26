@@ -11,6 +11,7 @@ const FormButton = ({ itemName, buttonType = "normal", ...props }) => {
   };
 
   switch (buttonType) {
+    case "delete":
     case "attach":
       styleMode = {
         backgroundColor: "#0B78D1",
@@ -20,6 +21,17 @@ const FormButton = ({ itemName, buttonType = "normal", ...props }) => {
         backgroundActive: "#095989",
         colorActive: "#fff",
       };
+      break;
+    case "cancel":
+      styleMode = {
+        backgroundColor: "black",
+        color: "white",
+        backgroundHover: "white",
+        colorHover: "black",
+        backgroundActive: "#c9c9c9",
+        colorActive: "white",
+      };
+      break;
   }
 
   const styleButton = {

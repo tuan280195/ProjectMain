@@ -8,9 +8,16 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import Truncate from "./Truncate";
+import FormButton from "./FormButton";
+import FormSelection from "./FormSelection";
 
 const DialogHandle = ({ title, open, closeDialog, item, handleFunction }) => {
-  const optionFileType = ["Hoa Don", "Ban Ve", "Invoice", "Receipt"];
+  const optionFileType = [
+    { id: 1, label: "Hoa Don" },
+    { id: 2, label: "Ban Ve" },
+    { id: 3, label: "Invoice" },
+    { id: 4, label: "Receipt" },
+  ];
   const [listItem, setListItem] = useState([
     "Hoa Don",
     "Receipt",
@@ -32,27 +39,7 @@ const DialogHandle = ({ title, open, closeDialog, item, handleFunction }) => {
       <DialogContent sx={{ px: 4, py: 6, position: "relative" }}>
         <Grid container spacing={5}>
           <Grid item xs={6}>
-            <div className="section-item">
-              <label className="section-label">File Type</label>
-              <select
-                // value={props.value}
-                className="section-input"
-                // onChange={props.handleInput}
-              >
-                {optionFileType.map((item) => {
-                  <option value={item}>{item}</option>;
-                })}
-              </select>
-            </div>
-            <Upload></Upload>
-            <Button
-              onClick={uploadFunction}
-              size="medium"
-              color="primary"
-              variant="contained"
-            >
-              Upload
-            </Button>
+            <Upload optionFileType={optionFileType} />
           </Grid>
           <Grid item xs={6}>
             <ul
@@ -64,7 +51,11 @@ const DialogHandle = ({ title, open, closeDialog, item, handleFunction }) => {
                 listItem.map((item, index) => {
                   return (
                     <li className="search-result" key={item + "-" + index}>
-                      <Truncate str={item} maxLength={15}></Truncate>
+                      <Truncate
+                        str={item}
+                        maxLength={15}
+                        style={{ padding: "10px" }}
+                      ></Truncate>
                       <div className="search-action">
                         <Button
                           className="search-delete"
