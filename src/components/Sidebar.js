@@ -34,7 +34,6 @@ const Sidebar = () => {
     setMobileOpen(!mobileOpen);
   };
   const handleClick = (item) => {
-    console.log(item)
     switch (item) {
       case "Customer":
         setCustomerOpen(!customerOpen);
@@ -43,7 +42,7 @@ const Sidebar = () => {
         setHeader(item);
         break;
       case "Create Customer":
-        setHeader(item);
+        setHeader("Customer");
         break;
       case "Case":
         setCaseOpen(!caseOpen);
@@ -52,7 +51,7 @@ const Sidebar = () => {
         setHeader(item);
         break;
       case "Create Case":
-        setHeader(item);
+        setHeader("Case");
         break;
       default:
         setHeader("Home");
@@ -222,10 +221,12 @@ const Sidebar = () => {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        {header === "Search Customer" && <CustomerSearch />}
-        {header === "Create Customer" && <CustomerDetail />}
-        {header === "Search Case" && <CaseSearch />}
-        {header === "Create Case" && <CaseDetail />}
+        {header === "Search Customer" && (
+          <CustomerSearch setHeader={setHeader} />
+        )}
+        {header === "Customer" && <CustomerDetail />}
+        {header === "Search Case" && <CaseSearch setHeader={setHeader} />}
+        {header === "Case" && <CaseDetail />}
       </Box>
     </Box>
   );

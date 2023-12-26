@@ -16,7 +16,7 @@ import {
 import Truncate from "./until/Truncate";
 import FormButton from "./until/FormButton";
 
-const CaseSearch = () => {
+const CaseSearch = ({ setHeader }) => {
   const [template, setTemplate] = useState([
     {
       keywordId: "customer",
@@ -140,6 +140,13 @@ const CaseSearch = () => {
     setShowList(true);
     setLoading(false);
   };
+  const handleClickEdit = async () => {
+    setLoading(true);
+    setHeader("Case");
+
+    setLoading(false);
+  };
+
   const Results = () => {
     return (
       <>
@@ -183,7 +190,7 @@ const CaseSearch = () => {
                       </Button>
                       <Button
                         className="search-edit"
-                        // onClick={() => handleClickEdit(item.id)}
+                        onClick={() => handleClickEdit(row.caseKey)}
                       >
                         Edit
                       </Button>
