@@ -128,7 +128,11 @@ const CaseSearch = () => {
     customerName: null,
     phoneNumber: null,
   });
-  const [options, setOptions] = useState(["item1", "item2"]);
+  const [options, setOptions] = useState([
+    { id: 1, label: "Tuan" },
+    { id: 2, label: "Tiep" },
+    { id: 3, label: "Tan" },
+  ]);
 
   const handleClickSearch = async () => {
     setLoading(true);
@@ -231,15 +235,8 @@ const CaseSearch = () => {
           });
           setData(newState);
         }}
-      >
-        {options.map((option, index) => {
-          return (
-            <option value={option} key={index}>
-              {option}
-            </option>
-          );
-        })}
-      </GenericItems>
+        options={options}
+      ></GenericItems>
     );
   };
 

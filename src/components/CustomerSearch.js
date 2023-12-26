@@ -24,34 +24,29 @@ const CustomerSearch = () => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
-    
+  // const getUsers = async () => {
+  //   let isMounted = true;
+  //   const controller = new AbortController();
+  //   try {
+  //     console.log("api/Customer/getAll");
+  //     const response = await axiosPrivate.get("/api/Customer/getAll", {
+  //       signal: controller.signal,
+  //     });
+  //     console.log(response.data);
+  //     isMounted && setUsers(response.data);
+  //   } catch (err) {
+  //     console.error(err);
+  //     navigate("/api/account/login", { state: { from: location }, replace: true });
+  //   }
+  // };
 
-    // const getUsers = async () => {
-    //   let isMounted = true;
-    //   const controller = new AbortController();
-    //   try {
-    //     console.log("api/Customer/getAll");
-    //     const response = await axiosPrivate.get("/api/Customer/getAll", {
-    //       signal: controller.signal,
-    //     });
-    //     console.log(response.data);
-    //     isMounted && setUsers(response.data);
-    //   } catch (err) {
-    //     console.error(err);
-    //     navigate("/api/account/login", { state: { from: location }, replace: true });
-    //   }
-    // };
-
-    // getUsers();
-
-
+  // getUsers();
 
   const getCustomers = async (e) => {
     setLoading(true);
     e.preventDefault();
 
     try {
-      
       let searchURL = "/api/Customer/getAll";
       searchURL =
         data.customerName && data.phoneNumber
@@ -63,7 +58,7 @@ const CustomerSearch = () => {
           ? searchURL + `?customerName=${data.customerName}`
           : searchURL;
 
-          console.log("searchURL:" + searchURL)
+      console.log("searchURL:" + searchURL);
       const response = await axiosPrivate.get(searchURL, {
         signal: controller.signal,
       });
@@ -97,11 +92,10 @@ const CustomerSearch = () => {
     try {
       // call API Delete
       var deleteURL = "/api/Customer/" + deleteItem.id;
-      await axiosPrivate.delete(deleteURL).then(async (res)=> {
+      await axiosPrivate.delete(deleteURL).then(async (res) => {
         await getCustomers();
         setShowAlert(false);
       });
-      
     } catch (error) {
       console.log(error);
     }
@@ -111,7 +105,8 @@ const CustomerSearch = () => {
 
   const handleClickSearch = async (e) => {
     await getCustomers(e);
-    setCondition({ width: "1000px", xs: 6 });
+    setCondition({ width: "1000px", xs: 5 });
+    setShowList(true);
   };
 
   const handleChange = (event, item) => {
@@ -186,19 +181,14 @@ const CustomerSearch = () => {
               onChange={(e) => handleChange(e, "phoneNumber")}
             ></input>
           </div>
+          <br />
+          <FormButton itemName="Search" onClick={handleClickSearch} />
         </Grid>
         {showList ? (
-          <Grid item xs={6}>
+          <Grid item xs={7}>
             <Results />
           </Grid>
         ) : null}
-        <Grid
-          item
-          xs={12}
-          style={{ display: "flex", justifyContent: "center" }}
-        >
-          <FormButton itemName="Search" onClick={handleClickSearch} />
-        </Grid>
       </Grid>
 
       <LoadingSpinner loading={loading}></LoadingSpinner>

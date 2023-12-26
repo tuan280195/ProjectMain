@@ -31,18 +31,18 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      console.log("response")
+      console.log("response");
       const response = await axios.post(
         LOGIN_URL,
         JSON.stringify({ username, password }),
         {
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
           },
           withCredentials: true,
         }
       );
-      console.log(response)
+      console.log(response);
       console.log(JSON.stringify(response?.data));
       //console.log(JSON.stringify(response));
       const accessToken = response?.data?.accessToken;
@@ -51,17 +51,17 @@ const Login = () => {
         accessToken: accessToken,
         roles: roles,
         username: username,
-        password: password
+        password: password,
       };
-      localStorage.setItem("AuthToken", JSON.stringify(tokenStorage))
+      localStorage.setItem("AuthToken", JSON.stringify(tokenStorage));
       setAuth({ username, password, roles, accessToken });
       setUser("");
       setPwd("");
-      console.log("from")
-      console.log(from)
+      console.log("from");
+      console.log(from);
       navigate(from, { replace: true });
     } catch (err) {
-      console.log(err.response)
+      console.log(err.response);
       if (!err?.response) {
         setErrMsg("No Server Response");
       } else if (err.response?.status === 400) {
@@ -76,7 +76,7 @@ const Login = () => {
   };
 
   return (
-    <section className="select-form">
+    <section className="select-form" style={{ borderStyle: "solid" }}>
       <p
         ref={errRef}
         className={errMsg ? "errmsg" : "offscreen"}

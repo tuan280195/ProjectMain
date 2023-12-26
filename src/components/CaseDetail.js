@@ -1,5 +1,5 @@
 import { Button, Grid } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import GenericItems from "./until/GenericItems";
 import DialogHandle from "./until/DialogHandle";
 import FormButton from "./until/FormButton";
@@ -91,7 +91,20 @@ const CaseDetail = () => {
     },
   ]);
   const [showDialog, setShowDialog] = useState(false);
-  const options = ["1", "2"];
+  const options = [
+    { id: 1, label: "Tuan" },
+    { id: 2, label: "Tiep" },
+    { id: 3, label: "Tan" },
+  ];
+
+  useEffect(async () => {
+    await getCaseTemplate();
+  }, []);
+
+  const getCaseTemplate = () => {
+    // call API get template
+    // setTemplate();
+  };
 
   const getTemplate = async (e) => {
     setLoading(true);
@@ -170,15 +183,8 @@ const CaseDetail = () => {
           console.log(newState);
           setData(newState);
         }}
-      >
-        {options.map((option, index) => {
-          return (
-            <option value={option} key={index}>
-              {option}
-            </option>
-          );
-        })}
-      </GenericItems>
+        options={options}
+      ></GenericItems>
     );
   };
   const generateCode = () => {
@@ -229,7 +235,7 @@ const CaseDetail = () => {
           {generateCode()}
           <Grid item xs={12}>
             <div className="handle-button">
-              <Button
+              {/* <Button
                 onClick={handleAttach}
                 size="medium"
                 variant="contained"
@@ -237,10 +243,13 @@ const CaseDetail = () => {
                 sx={{ width: "7rem" }}
               >
                 Attach
-              </Button>
-              <div>
-                <FormButton itemName="Confirm" type="submit" />
-              </div>
+              </Button> */}
+              <FormButton
+                itemName="Attach"
+                buttonType="attach"
+                onClick={handleAttach}
+              />
+              <FormButton itemName="Confirm" type="submit" />
             </div>
           </Grid>
         </Grid>
@@ -249,8 +258,6 @@ const CaseDetail = () => {
         open={showDialog}
         closeDialog={() => setShowDialog(false)}
         title="Attach Files"
-        // item={deleteItem.customerName}
-        // deleteFunction={handleClickDelete}
       ></DialogHandle>
     </section>
   );

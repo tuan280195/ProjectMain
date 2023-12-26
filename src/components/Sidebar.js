@@ -26,8 +26,8 @@ const drawerWidth = 360;
 
 const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [customerOpen, setCustomerOpen] = React.useState(false);
-  const [caseOpen, setCaseOpen] = React.useState(false);
+  const [customerOpen, setCustomerOpen] = React.useState(true);
+  const [caseOpen, setCaseOpen] = React.useState(true);
   const [header, setHeader] = React.useState("Home");
 
   const handleDrawerToggle = () => {

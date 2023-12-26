@@ -10,7 +10,6 @@ import RequireAuth from "./components/RequireAuth";
 import { Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 
-
 const ROLES = {
   User: 'User',
   Editor: 'Editor',
@@ -27,15 +26,18 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="linkpage" element={<LinkPage />} />
         <Route path="unauthorized" element={<Unauthorized />} />
+        <Route path="/main" element={<Sidebar />} />
         {/* <Route path="customersearch" element={<CustomerSearch />} />
         <Route path="customerdetail" element={<CustomerDetail />} /> */}
-        
+
         {/* we want to protect these routes */}
         {/* <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
           <Route path="/" element={<Home />} />
         </Route> */}
 
-        <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.User]} />}>
+        <Route
+          element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.User]} />}
+        >
           <Route path="/" element={<Sidebar />} />
           <Route path="/home" element={<Home />} />
           <Route path="/main" element={<Sidebar />} />
