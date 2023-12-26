@@ -138,7 +138,10 @@ const CaseDetail = () => {
         <Grid item xs={6}>
           {template.map((templateItem) => {
             return data.map((item, index) => {
-              if (item.keywordId === templateItem.keywordId && index <= mid) {
+              if (
+                item.keywordId === templateItem.keywordId &&
+                index + 1 <= mid
+              ) {
                 return dynamicGenerate(item, templateItem);
               } else return null;
             });
@@ -147,7 +150,10 @@ const CaseDetail = () => {
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
             return data.map((item) => {
-              if (item.keywordId === templateItem.keywordId && index > mid) {
+              if (
+                item.keywordId === templateItem.keywordId &&
+                index + 1 > mid
+              ) {
                 return dynamicGenerate(item, templateItem);
               } else return null;
             });

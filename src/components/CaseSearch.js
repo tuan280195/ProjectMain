@@ -252,12 +252,18 @@ const CaseSearch = ({ setHeader }) => {
       a.order > b.order ? 1 : b.order > a.order ? -1 : 0
     );
     const mid = (template.length + 1) / 2;
+    console.log("template Length" + template.length);
     return (
       <>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
             return data.map((item) => {
-              if (item.keywordId === templateItem.keywordId && index <= mid) {
+              if (
+                item.keywordId === templateItem.keywordId &&
+                index + 1 <= mid
+              ) {
+                console.log(index);
+                console.log("mid: " + mid);
                 return dynamicGenerate(item, templateItem);
               } else return null;
             });
@@ -266,7 +272,10 @@ const CaseSearch = ({ setHeader }) => {
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
             return data.map((item) => {
-              if (item.keywordId === templateItem.keywordId && index > mid) {
+              if (
+                item.keywordId === templateItem.keywordId &&
+                index + 1 > mid
+              ) {
                 return dynamicGenerate(item, templateItem);
               } else return null;
             });
