@@ -137,23 +137,17 @@ const CaseDetail = () => {
       <>
         <Grid item xs={6}>
           {template.map((templateItem) => {
-            return data.map((item) => {
-              if (
-                item.keywordId === templateItem.keywordId &&
-                templateItem.order <= mid
-              ) {
+            return data.map((item, index) => {
+              if (item.keywordId === templateItem.keywordId && index <= mid) {
                 return dynamicGenerate(item, templateItem);
               } else return null;
             });
           })}
         </Grid>
         <Grid item xs={6}>
-          {template.map((templateItem) => {
+          {template.map((templateItem, index) => {
             return data.map((item) => {
-              if (
-                item.keywordId === templateItem.keywordId &&
-                templateItem.order > mid
-              ) {
+              if (item.keywordId === templateItem.keywordId && index > mid) {
                 return dynamicGenerate(item, templateItem);
               } else return null;
             });
