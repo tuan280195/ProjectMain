@@ -1,15 +1,31 @@
 import { Button, Grid } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GenericItems from "./until/GenericItems";
 import DialogHandle from "./until/DialogHandle";
 import FormButton from "./until/FormButton";
-
+import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+window.Buffer = window.Buffer || require("buffer").Buffer;
 const CaseDetail = () => {
+  const [loading, setLoading] = useState(false);
+  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
+  const controller = new AbortController();
+  console.log("-----case details")
+  console.log(auth);
+  let tokenBuffer = Buffer.from(auth.accessToken.split('.')[1], 'base64');
+  let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
+  console.log('tokenParsed',tokenParsed)
+
+  // useEffect(async () => {
+  //   await getTemplate();
+  // }, []);
+
   const [template, setTemplate] = useState([
     {
       keywordId: "customer",
       keywordName: "Customer",
-      typeName: "combobox",
+      typeName: "List (Alphanumeric)",
       order: 1,
       roleName: "user",
       searchable: 1,
@@ -50,9 +66,13 @@ const CaseDetail = () => {
   const [data, setData] = useState([
     {
       keywordId: "customer",
-      value: "111",
+      value: "111, 2323",
+      children: [
+        "Billed",
+        "Check Payment",
+        "Complete"
+      ]
     },
-
     {
       keywordId: "adress",
       value: "2222",
@@ -73,6 +93,45 @@ const CaseDetail = () => {
   const [showDialog, setShowDialog] = useState(false);
   const options = ["1", "2"];
 
+  const getTemplate = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+
+    try {
+      
+      let templateURL = "/api/Template/getAll";
+      // searchURL =
+      //   data.customerName && data.phoneNumber
+      //     ? searchURL +
+      //       `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}`
+      //     : data.phoneNumber
+      //     ? searchURL + `?phoneNumber=${data.phoneNumber}`
+      //     : data.customerName
+      //     ? searchURL + `?customerName=${data.customerName}`
+      //     : searchURL;
+
+          console.log("templateURL:" + templateURL)
+      const response = await axiosPrivate.get(templateURL, {
+        signal: controller.signal,
+      });
+
+      console.log("template--", response)
+      setTemplate(response.data);
+      // let result = [];
+      // response.data.forEach((element) => {
+      //   result.push({
+      //     id: element.id,
+      //     customerName: element.name,
+      //     phoneNumber: element.phoneNumber,
+      //   });
+      // });
+      // setListItem(result); /*set result list item here*/
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoading(false);
+  };
   const dynamicGenerate = (item, templateItem) => {
     return (
       <GenericItems
