@@ -1,16 +1,10 @@
 import { Button } from "@mui/material";
 
 const FormButton = ({ itemName, buttonType = "normal", ...props }) => {
-  var styleMode = {
-    backgroundColor: "#14873A",
-    color: "#fff",
-    backgroundHover: "#fff",
-    colorHover: "#14873A",
-    backgroundActive: "#C0E8CE",
-    colorActive: "#fff",
-  };
+  var styleMode;
 
   switch (buttonType) {
+    case "delete":
     case "attach":
       styleMode = {
         backgroundColor: "#0B78D1",
@@ -20,6 +14,27 @@ const FormButton = ({ itemName, buttonType = "normal", ...props }) => {
         backgroundActive: "#095989",
         colorActive: "#fff",
       };
+      break;
+    case "cancel":
+      styleMode = {
+        backgroundColor: "black",
+        color: "white",
+        backgroundHover: "white",
+        colorHover: "black",
+        backgroundActive: "#c9c9c9",
+        colorActive: "white",
+      };
+      break;
+    default:
+      styleMode = {
+        backgroundColor: "#14873A",
+        color: "#fff",
+        backgroundHover: "#fff",
+        colorHover: "#14873A",
+        backgroundActive: "#C0E8CE",
+        colorActive: "#fff",
+      };
+      break;
   }
 
   const styleButton = {

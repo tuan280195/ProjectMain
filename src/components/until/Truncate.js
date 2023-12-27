@@ -5,7 +5,7 @@ function Truncate(propString) {
       : str;
   }
 
-  return <span>{truncate(propString.str)}</span>;
+  return <span style={propString.style}>{truncate(propString.str)}</span>;
 }
 
 export default Truncate;

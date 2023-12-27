@@ -1,5 +1,5 @@
-import { Autocomplete, TextField } from "@mui/material";
 import FormInput from "./FormInput";
+import FormSelection from "./FormSelection";
 
 function GenericItems({ label, type, options, ...props }) {
   switch (type) {
@@ -11,6 +11,7 @@ function GenericItems({ label, type, options, ...props }) {
           type="text"
           onChange={props.handleInput}
           value={props.value}
+          required={props.required}
         />
       );
     case "List (Alphanumeric)":
@@ -41,6 +42,11 @@ function GenericItems({ label, type, options, ...props }) {
             // ]}
             renderInput={(params) => <TextField {...params} />}
           ></Autocomplete>
+          <label className="section-label">
+            {label}
+            {props.required ? <span className="required-icon"> *</span> : null}
+          </label>
+          <FormSelection options={options} required={props.required} />
         </div>
       );
     case "daterange":

@@ -17,7 +17,7 @@ import Truncate from "./until/Truncate";
 import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-const CaseSearch = () => {
+const CaseSearch = ({ setHeader }) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [template, setTemplate] = useState([
@@ -159,6 +159,13 @@ const CaseSearch = () => {
     setShowList(true);
     setLoading(false);
   };
+  const handleClickEdit = async () => {
+    setLoading(true);
+    setHeader("Case");
+
+    setLoading(false);
+  };
+
   const Results = () => {
     return (
       <>
@@ -202,7 +209,7 @@ const CaseSearch = () => {
                       </Button>
                       <Button
                         className="search-edit"
-                        // onClick={() => handleClickEdit(item.id)}
+                        onClick={() => handleClickEdit(row.caseKey)}
                       >
                         Edit
                       </Button>
@@ -255,7 +262,8 @@ const CaseSearch = () => {
           setData(newState);
         }}
         options={options}
-      ></GenericItems>
+        required={templateItem.isRequired}
+      />
     );
   };
 
@@ -264,26 +272,29 @@ const CaseSearch = () => {
       a.order > b.order ? 1 : b.order > a.order ? -1 : 0
     );
     const mid = (template.length + 1) / 2;
+    console.log("template Length" + template.length);
     return (
       <>
         <Grid item xs={6}>
-          {template.map((templateItem) => {
+          {template.map((templateItem, index) => {
             return data.map((item) => {
               if (
                 item.keywordId === templateItem.keywordId &&
-                templateItem.order <= mid
+                index + 1 <= mid
               ) {
+                console.log(index);
+                console.log("mid: " + mid);
                 return dynamicGenerate(item, templateItem);
               } else return null;
             });
           })}
         </Grid>
         <Grid item xs={6}>
-          {template.map((templateItem) => {
+          {template.map((templateItem, index) => {
             return data.map((item) => {
               if (
                 item.keywordId === templateItem.keywordId &&
-                templateItem.order > mid
+                index + 1 > mid
               ) {
                 return dynamicGenerate(item, templateItem);
               } else return null;
