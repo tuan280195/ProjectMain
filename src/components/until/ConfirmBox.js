@@ -1,12 +1,12 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogContent,
   Grid,
   IconButton,
   Typography,
 } from "@mui/material";
+import FormButton from "./FormButton";
 
 const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
   return (
@@ -51,22 +51,16 @@ const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
             xs={12}
             sx={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
           >
-            <Button
+            <FormButton
+              itemName="Cancel"
+              buttonType="cancel"
               onClick={closeDialog}
-              size="medium"
-              variant="contained"
-              color="primary"
-            >
-              Cancel
-            </Button>
-            <Button
+            />
+            <FormButton
+              itemName="Delete"
+              buttonType="delete"
               onClick={deleteFunction}
-              size="medium"
-              variant="contained"
-              color="error"
-            >
-              Delete
-            </Button>{" "}
+            />
           </Grid>
         </Grid>
       </DialogContent>

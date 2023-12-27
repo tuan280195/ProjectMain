@@ -19,7 +19,7 @@ const FormInput = (props) => {
         onChange={onChange}
         onBlur={handleFocus}
         focused={focused.toString()}
-      ></input>
+      />
     </div>
   );
 };

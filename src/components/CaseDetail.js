@@ -13,6 +13,7 @@ const CaseDetail = () => {
       order: 1,
       roleName: "user",
       searchable: 1,
+      isRequired: true,
     },
     {
       keywordId: "adress",
@@ -21,6 +22,7 @@ const CaseDetail = () => {
       order: 2,
       roleName: "user",
       searchable: 1,
+      isRequired: true,
     },
     {
       keywordId: "phoneNo",
@@ -29,6 +31,7 @@ const CaseDetail = () => {
       order: 3,
       roleName: "user",
       searchable: 1,
+      isRequired: true,
     },
     {
       keywordId: "contactPerson",
@@ -125,7 +128,8 @@ const CaseDetail = () => {
           setData(newState);
         }}
         options={options}
-      ></GenericItems>
+        required={templateItem.isRequired}
+      />
     );
   };
   const generateCode = () => {
@@ -137,10 +141,10 @@ const CaseDetail = () => {
       <>
         <Grid item xs={6}>
           {template.map((templateItem) => {
-            return data.map((item) => {
+            return data.map((item, index) => {
               if (
                 item.keywordId === templateItem.keywordId &&
-                templateItem.order <= mid
+                index + 1 <= mid
               ) {
                 return dynamicGenerate(item, templateItem);
               } else return null;
@@ -148,11 +152,11 @@ const CaseDetail = () => {
           })}
         </Grid>
         <Grid item xs={6}>
-          {template.map((templateItem) => {
+          {template.map((templateItem, index) => {
             return data.map((item) => {
               if (
                 item.keywordId === templateItem.keywordId &&
-                templateItem.order > mid
+                index + 1 > mid
               ) {
                 return dynamicGenerate(item, templateItem);
               } else return null;

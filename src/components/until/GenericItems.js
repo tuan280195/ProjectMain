@@ -1,5 +1,5 @@
-import { Autocomplete, TextField } from "@mui/material";
 import FormInput from "./FormInput";
+import FormSelection from "./FormSelection";
 
 function GenericItems({ label, type, options, ...props }) {
   switch (type) {
@@ -11,33 +11,17 @@ function GenericItems({ label, type, options, ...props }) {
           type="text"
           onChange={props.handleInput}
           value={props.value}
+          required={props.required}
         />
       );
     case "combobox":
       return (
         <div className="section-item">
-          <label className="section-label">{label}</label>
-          <Autocomplete
-            disablePortal
-            sx={{
-              "& .MuiInputBase-root": {
-                height: "2rem",
-                borderRadius: "0.3rem",
-                padding: 0,
-                paddingLeft: "5px",
-              },
-              "& .MuiAutocomplete-endAdornment": {
-                top: "auto",
-              },
-            }}
-            options={options}
-            // {[
-            //   { id: 1, label: "Tuan" },
-            //   { id: 2, label: "Tan" },
-            //   { id: 3, label: "Tiep" },
-            // ]}
-            renderInput={(params) => <TextField {...params} />}
-          ></Autocomplete>
+          <label className="section-label">
+            {label}
+            {props.required ? <span className="required-icon"> *</span> : null}
+          </label>
+          <FormSelection options={options} required={props.required} />
         </div>
       );
     case "daterange":
