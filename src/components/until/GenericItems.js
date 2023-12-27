@@ -19,7 +19,7 @@ function GenericItems({ label, type, options, ...props }) {
       return (
         
         <div className="section-item">
-          <label className="section-label">{label}</label>
+          {/* <label className="section-label">{label}</label>
           <Autocomplete
             onChange={props.handleInput3}
             disablePortal
@@ -41,12 +41,12 @@ function GenericItems({ label, type, options, ...props }) {
             //   { id: 3, label: "Tiep" },
             // ]}
             renderInput={(params) => <TextField {...params} />}
-          ></Autocomplete>
+          ></Autocomplete> */}
           <label className="section-label">
             {label}
             {props.required ? <span className="required-icon"> *</span> : null}
           </label>
-          <FormSelection options={options} required={props.required} />
+          <FormSelection options={options} required={props.required} optionSelect={props.handleInput3}/>
         </div>
       );
     case "daterange":

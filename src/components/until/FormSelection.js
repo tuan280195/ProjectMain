@@ -16,6 +16,7 @@ const FormSelection = (props) => {
         },
       }}
       options={props.options}
+      onChange={props.optionSelect}
       // {[
       //   { id: 1, label: "Tuan" },
       //   { id: 2, label: "Tan" },

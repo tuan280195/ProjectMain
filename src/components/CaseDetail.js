@@ -200,6 +200,7 @@ const CaseDetail = () => {
           setData(newState);
         }}
         handleInput3={(e) => {
+          console.log(e.target.outerText)
           const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.outerText };
