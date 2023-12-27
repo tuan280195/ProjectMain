@@ -5,7 +5,9 @@ import DialogHandle from "./until/DialogHandle";
 import FormButton from "./until/FormButton";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import FormSnackbar from "./until/FormSnackbar";
 window.Buffer = window.Buffer || require("buffer").Buffer;
+
 const CaseDetail = () => {
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
@@ -97,6 +99,11 @@ const CaseDetail = () => {
     // },
   ]);
   const [showDialog, setShowDialog] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
   const options = [
     { id: 1, label: "Tuan" },
     { id: 2, label: "Tiep" },
@@ -150,7 +157,8 @@ const CaseDetail = () => {
       signal: controller.signal,
     }).then((response) => {
       console.log(response);
-      alert('Create Case successfuly!');
+      setSnackbar({ isOpen: true, status: "success", message: "Create Case successfuly!" });
+      
       return response;
     })
       .catch((error) => {
@@ -158,6 +166,7 @@ const CaseDetail = () => {
       });
 
   };
+
   const handleAttach = () => {
     setShowDialog(true);
   };
@@ -256,15 +265,6 @@ const CaseDetail = () => {
           {generateCode()}
           <Grid item xs={12}>
             <div className="handle-button">
-              {/* <Button
-                onClick={handleAttach}
-                size="medium"
-                variant="contained"
-                color="secondary"
-                sx={{ width: "7rem" }}
-              >
-                Attach
-              </Button> */}
               <FormButton
                 itemName="Attach"
                 buttonType="attach"
@@ -279,7 +279,8 @@ const CaseDetail = () => {
         open={showDialog}
         closeDialog={() => setShowDialog(false)}
         title="Attach Files"
-      ></DialogHandle>
+      />
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>
   );
 };
