@@ -67,6 +67,9 @@ const Sidebar = () => {
     "&:active": {
       backgroundColor: "#0E563B",
     },
+    "&:hover .MuiListItemIcon-root": {
+      color: "#fff",
+    },
   };
   const hoverChildButton = { ...hoverButton, pl: 4 };
 
