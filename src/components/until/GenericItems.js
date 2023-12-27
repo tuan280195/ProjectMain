@@ -59,6 +59,17 @@ function GenericItems({ label, type, options, ...props }) {
           ></input>
         </div>
       );
+    case "currency":
+      return (
+        <FormInput
+          label={label}
+          className="section-input"
+          type="number"
+          onChange={props.handleInput}
+          value={props.value}
+          required={props.required}
+        />
+      );
     default:
       return <></>;
   }

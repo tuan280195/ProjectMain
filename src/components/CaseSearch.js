@@ -37,7 +37,7 @@ const CaseSearch = ({ setHeader }) => {
     {
       keywordId: "requestType",
       keywordName: "Request Type",
-      typeName: "combobox",
+      typeName: "currency",
       order: 4,
       roleName: "user",
       searchable: 1,
