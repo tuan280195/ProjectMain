@@ -3,7 +3,7 @@ import FormInput from "./FormInput";
 
 function GenericItems({ label, type, options, ...props }) {
   switch (type) {
-    case "textbox":
+    case "Alphanumeric":
       return (
         <FormInput
           label={label}
@@ -13,11 +13,14 @@ function GenericItems({ label, type, options, ...props }) {
           value={props.value}
         />
       );
-    case "combobox":
+    case "List (Alphanumeric)":
+      console.log("List (Alphanumeric)", options)
       return (
+        
         <div className="section-item">
           <label className="section-label">{label}</label>
           <Autocomplete
+            onChange={props.handleInput3}
             disablePortal
             sx={{
               "& .MuiInputBase-root": {
@@ -63,13 +66,25 @@ function GenericItems({ label, type, options, ...props }) {
           </div>
         </div>
       );
-    case "datetime":
+    case "Datetime":
       return (
         <div className="section-item">
           <label className="section-label">{label}</label>
           <input
             value={props.value}
             type="date"
+            onChange={props.handleInput}
+            className="section-input"
+          ></input>
+        </div>
+      );
+    case "Currency":
+      return (
+        <div className="section-item">
+          <label className="section-label">{label}</label>
+          <input
+            value={props.value}
+            type="number"
             onChange={props.handleInput}
             className="section-input"
           ></input>

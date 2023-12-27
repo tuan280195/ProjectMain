@@ -15,19 +15,22 @@ import {
 } from "@mui/material";
 import Truncate from "./until/Truncate";
 import FormButton from "./until/FormButton";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const CaseSearch = () => {
+  const axiosPrivate = useAxiosPrivate();
+  const controller = new AbortController();
   const [template, setTemplate] = useState([
     {
-      keywordId: "customer",
+      keywordId: "4CF4C518-9DCE-4338-A83B-C401F8CFF415",
       keywordName: "Customer",
-      typeName: "combobox",
+      typeName: "List (Alphanumeric)",
       order: 1,
       roleName: "user",
       searchable: 1,
     },
     {
-      keywordId: "receptionDate",
+      keywordId: "82222a12-4b57-49e3-b7e3-f3dfa9ca9c11",
       keywordName: "Reception Date",
       typeName: "daterange",
       order: 3,
@@ -75,7 +78,7 @@ const CaseSearch = () => {
       searchable: 1,
     },
     {
-      keywordId: "phoneNo",
+      keywordId: "ca788522-283f-4513-865a-04ca0908b218",
       keywordName: "Phone No",
       typeName: "textbox",
       order: 2,
@@ -92,19 +95,19 @@ const CaseSearch = () => {
     },
   ]);
   const [data, setData] = useState([
-    { keywordId: "customer", value: "test 1" },
-    { keywordId: "phoneNo", value: "0819177199" },
-    { keywordId: "receptionDate", value: "2023-12-15/2023-12-21" },
-    { keywordId: "requestType", value: "" },
-    { keywordId: "pic", value: "" },
-    { keywordId: "paymentStatus", value: "" },
-    { keywordId: "invoiceDate", value: "" },
-    { keywordId: "arrivalDate", value: "" },
-    { keywordId: "paymentDate", value: "" },
+    { keywordId: "4CF4C518-9DCE-4338-A83B-C401F8CFF415", value: "test 1" },
+    { keywordId: "ca788522-283f-4513-865a-04ca0908b218", value: "0819177199" },
+    { keywordId: "82222a12-4b57-49e3-b7e3-f3dfa9ca9c11", value: "2023-12-15/2023-12-21" },
+    // { keywordId: "requestType", value: "" },
+    // { keywordId: "pic", value: "" },
+    // { keywordId: "paymentStatus", value: "" },
+    // { keywordId: "invoiceDate", value: "" },
+    // { keywordId: "arrivalDate", value: "" },
+    // { keywordId: "paymentDate", value: "" },
   ]);
   const [searchData, setSearchData] = useState([
     {
-      caseKey: "1",
+      caseId: "1",
       caseName: "Test123456781232112321",
       customerName: "Toyota",
       requestType: "abc",
@@ -112,7 +115,7 @@ const CaseSearch = () => {
       pic: "TuanDQ7",
     },
     {
-      caseKey: "2",
+      caseId: "2",
       caseName: "Test2",
       customerName: "Hitachi",
       requestType: "def",
@@ -134,8 +137,24 @@ const CaseSearch = () => {
     { id: 3, label: "Tan" },
   ]);
 
-  const handleClickSearch = async () => {
+  const handleClickSearch = async (e) => {
     setLoading(true);
+    e.preventDefault();
+
+    const searchCaseUrl = "/api/Case/getAll";
+    const payload = {
+      keywordValues: data,
+      pageSize: 25,
+      pageNumber: 1
+    }
+    axiosPrivate.post(searchCaseUrl, payload).then((response) => {
+      console.log("response---------", response);
+      setSearchData(response.data)
+      return response;
+    })
+      .catch((error) => {
+        console.log(error);
+      });
     // call api
     setShowList(true);
     setLoading(false);
@@ -159,14 +178,14 @@ const CaseSearch = () => {
               {searchData.map((row) => {
                 return (
                   <TableRow
-                    key={row.caseKey}
+                    key={row.caseId}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell>
-                      <Truncate str={row.caseName} maxlength={15} />
+                      <Truncate str={row.keywordName} maxlength={15} />
                     </TableCell>
                     <TableCell>
-                      <Truncate str={row.customerName} maxlength={15} />
+                      <Truncate str={row.value} maxlength={15} />
                     </TableCell>
                     <TableCell>{row.requestType}</TableCell>
                     <TableCell>{row.status}</TableCell>

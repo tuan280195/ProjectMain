@@ -15,80 +15,86 @@ const CaseDetail = () => {
   console.log(auth);
   let tokenBuffer = Buffer.from(auth.accessToken.split('.')[1], 'base64');
   let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
-  console.log('tokenParsed',tokenParsed)
-
-  // useEffect(async () => {
-  //   await getTemplate();
-  // }, []);
+  console.log('tokenParsed', tokenParsed)
 
   const [template, setTemplate] = useState([
-    {
-      keywordId: "customer",
-      keywordName: "Customer",
-      typeName: "List (Alphanumeric)",
-      order: 1,
-      roleName: "user",
-      searchable: 1,
-    },
-    {
-      keywordId: "adress",
-      keywordName: "Adress",
-      typeName: "textbox",
-      order: 2,
-      roleName: "user",
-      searchable: 1,
-    },
-    {
-      keywordId: "phoneNo",
-      keywordName: "Phone No",
-      typeName: "textbox",
-      order: 3,
-      roleName: "user",
-      searchable: 1,
-    },
-    {
-      keywordId: "contactPerson",
-      keywordName: "Contact Person",
-      typeName: "textbox",
-      order: 4,
-      roleName: "user",
-      searchable: 1,
-    },
-    {
-      keywordId: "receptionDate",
-      keywordName: "Reception Date",
-      typeName: "datetime",
-      order: 5,
-      roleName: "user",
-      searchable: 1,
-    },
+    // {
+    //   keywordId: "29cfafa5-6986-4863-9997-2140a2641ab2",
+    //   keywordName: "Customer Name",
+    //   typeName: "List (Alphanumeric)",
+    //   order: 1,
+    //   roleName: "Admin",
+    //   searchable: 1,
+    // },
+    // {
+    //   keywordId: "4ba47201-0b32-4607-976c-1c60b09495d3",
+    //   keywordName: "Adress",
+    //   typeName: "textbox",
+    //   order: 2,
+    //   roleName: "Admin",
+    //   searchable: 1,
+    // },
+    // {
+    //   keywordId: "ca788522-283f-4513-865a-04ca0908b218",
+    //   keywordName: "Phone No",
+    //   typeName: "textbox",
+    //   order: 3,
+    //   roleName: "Admin",
+    //   searchable: 1,
+    // },
+    // {
+    //   keywordId: "4cf4c518-9dce-4338-a83b-c401f8cff415",
+    //   keywordName: "Customer Contact Person",
+    //   typeName: "textbox",
+    //   order: 4,
+    //   roleName: "Admin",
+    //   searchable: 1,
+    // },
+    // {
+    //   keywordId: "82222a12-4b57-49e3-b7e3-f3dfa9ca9c11",
+    //   keywordName: "Reception Date",
+    //   typeName: "datetime",
+    //   order: 5,
+    //   roleName: "Admin",
+    //   searchable: 1,
+    // },
   ]);
   const [data, setData] = useState([
-    {
-      keywordId: "customer",
-      value: "111, 2323",
-      children: [
-        "Billed",
-        "Check Payment",
-        "Complete"
-      ]
-    },
-    {
-      keywordId: "adress",
-      value: "2222",
-    },
-    {
-      keywordId: "phoneNo",
-      value: "2222",
-    },
-    {
-      keywordId: "contactPerson",
-      value: "2222",
-    },
-    {
-      keywordId: "receptionDate",
-      value: "2020-01-28",
-    },
+    // {
+    //   keywordId: "29cfafa5-6986-4863-9997-2140a2641ab2",
+    //   value: "tiepp nguyen",
+    //   keywordName: "Customer Name",
+    //   TypeValue: "string",
+    //   metadata: []
+    // },
+    // {
+    //   keywordId: "4ba47201-0b32-4607-976c-1c60b09495d3",
+    //   value: "bac ninh",
+    //   keywordName: "Address",
+    //   TypeValue: "string",
+    //   metadata: []
+    // },
+    // {
+    //   keywordId: "ca788522-283f-4513-865a-04ca0908b218",
+    //   value: "0979709929",
+    //   keywordName: "Phone Number",
+    //   TypeValue: "string",
+    //   metadata: []
+    // },
+    // {
+    //   keywordId: "4cf4c518-9dce-4338-a83b-c401f8cff415",
+    //   value: "tiep van",
+    //   TypeValue: "string",
+    //   keywordName: "Customer Contact Person",
+    //   metadata: []
+    // },
+    // {
+    //   keywordId: "82222a12-4b57-49e3-b7e3-f3dfa9ca9c11",
+    //   value: "2023-01-28",
+    //   keywordName: "Reception Date",
+    //   TypeValue: "datetime",
+    //   metadata: []
+    // },
   ]);
   const [showDialog, setShowDialog] = useState(false);
   const options = [
@@ -101,50 +107,60 @@ const CaseDetail = () => {
     await getCaseTemplate();
   }, []);
 
-  const getCaseTemplate = () => {
+  const getCaseTemplate = async (e) => {
     // call API get template
-    // setTemplate();
-  };
-
-  const getTemplate = async (e) => {
     setLoading(true);
-    e.preventDefault();
-
     try {
-      
-      let templateURL = "/api/Template/getAll";
-      // searchURL =
-      //   data.customerName && data.phoneNumber
-      //     ? searchURL +
-      //       `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}`
-      //     : data.phoneNumber
-      //     ? searchURL + `?phoneNumber=${data.phoneNumber}`
-      //     : data.customerName
-      //     ? searchURL + `?customerName=${data.customerName}`
-      //     : searchURL;
 
-          console.log("templateURL:" + templateURL)
+      let templateURL = "/api/Template/template";
       const response = await axiosPrivate.get(templateURL, {
         signal: controller.signal,
       });
 
-      console.log("template--", response)
-      setTemplate(response.data);
-      // let result = [];
-      // response.data.forEach((element) => {
-      //   result.push({
-      //     id: element.id,
-      //     customerName: element.name,
-      //     phoneNumber: element.phoneNumber,
-      //   });
-      // });
-      // setListItem(result); /*set result list item here*/
+      console.log("template--", response.data.keywords)
+      // response.data.keywords = template;
+      setTemplate(response.data.keywords);
+      response.data.keywords.forEach(element => {
+        element.value = ""
+        if(element.typeName === "List (Alphanumeric)" && element.metadata && element.metadata.length > 0){
+
+        }
+      });
+      console.log("response.data.keywordstemplate--", response.data.keywords)
+      setData(response.data.keywords)
+
     } catch (error) {
       console.log(error);
     }
 
     setLoading(false);
   };
+
+  const handleSubmit = async (e) => {
+    //call API
+    e.preventDefault();
+    console.log("data-------", data)
+    let caseCreateURL = "/api/Case";
+    let payload = {
+      "templateId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "keywordValues": data
+    }
+    console.log(axiosPrivate)
+    await axiosPrivate.post(caseCreateURL, payload, {
+      signal: controller.signal,
+    }).then((response) => {
+      console.log(response);
+      return response;
+    })
+      .catch((error) => {
+        console.log(error);
+      });
+
+  };
+  const handleAttach = () => {
+    setShowDialog(true);
+  };
+
   const dynamicGenerate = (item, templateItem) => {
     return (
       <GenericItems
@@ -183,7 +199,15 @@ const CaseDetail = () => {
           console.log(newState);
           setData(newState);
         }}
-        options={options}
+        handleInput3={(e) => {
+          const newState = data.map((value) => {
+            if (value.keywordId === item.keywordId) {
+              return { ...value, value: e.target.outerText };
+            } else return { ...value };
+          });
+          setData(newState);
+        }}
+        options={item.metadata}
       ></GenericItems>
     );
   };
@@ -221,16 +245,10 @@ const CaseDetail = () => {
       </>
     );
   };
-  const handleSubmit = async () => {
-    //call API
-  };
-  const handleAttach = () => {
-    setShowDialog(true);
-  };
 
   return (
     <section className="customer">
-      <form onSubmit={handleSubmit}>
+      <form>
         <Grid container columnSpacing={5} rowSpacing={3}>
           {generateCode()}
           <Grid item xs={12}>
@@ -249,7 +267,7 @@ const CaseDetail = () => {
                 buttonType="attach"
                 onClick={handleAttach}
               />
-              <FormButton itemName="Confirm" type="submit" />
+              <FormButton itemName="Confirm" type="submit" onClick={handleSubmit} />
             </div>
           </Grid>
         </Grid>

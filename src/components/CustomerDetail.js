@@ -5,11 +5,14 @@ import FormInput from "./until/FormInput";
 import { useSearchParams } from "react-router-dom";
 import { Grid } from "@mui/material";
 import FormButton from "./until/FormButton";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const CustomerDetail = () => {
   const [latestData, setLatestData] = useState({});
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
+  const axiosPrivate = useAxiosPrivate();
+  const controller = new AbortController();
   const id = searchParams.get("id");
 
   useEffect(async () => {
@@ -22,12 +25,12 @@ const CustomerDetail = () => {
     // add moree event
     try {
       if (latestData.id) {
-        await axios.put(
-          "https://localhost:7265/api/Customer/" + latestData.id,
+        await axiosPrivate.put(
+          "/api/Customer/" + latestData.id,
           latestData
         );
       } else {
-        await axios.post("https://localhost:7265/api/Customer", latestData);
+        await axiosPrivate.post("/api/Customer", latestData);
       }
     } catch (error) {
       console.log(error);
@@ -68,7 +71,7 @@ const CustomerDetail = () => {
     setLoading(true);
     try {
       if (id) {
-        const response = await axios.get(
+        const response = await axiosPrivate.get(
           "https://localhost:7265/api/Customer?id=" + id
         );
         setLatestData(response.data);
