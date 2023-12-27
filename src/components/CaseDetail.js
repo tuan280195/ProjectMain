@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import GenericItems from "./until/GenericItems";
 import DialogHandle from "./until/DialogHandle";
 import FormButton from "./until/FormButton";
+import FormSnackbar from "./until/FormSnackbar";
 
 const CaseDetail = () => {
   const [template, setTemplate] = useState([
@@ -74,6 +75,11 @@ const CaseDetail = () => {
     },
   ]);
   const [showDialog, setShowDialog] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
   const options = [
     { id: 1, label: "Tuan" },
     { id: 2, label: "Tiep" },
@@ -166,7 +172,10 @@ const CaseDetail = () => {
       </>
     );
   };
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSnackbar({ isOpen: true, status: "success", message: "Successfully!" });
+
     //call API
   };
   const handleAttach = () => {
@@ -180,15 +189,6 @@ const CaseDetail = () => {
           {generateCode()}
           <Grid item xs={12}>
             <div className="handle-button">
-              {/* <Button
-                onClick={handleAttach}
-                size="medium"
-                variant="contained"
-                color="secondary"
-                sx={{ width: "7rem" }}
-              >
-                Attach
-              </Button> */}
               <FormButton
                 itemName="Attach"
                 buttonType="attach"
@@ -203,7 +203,8 @@ const CaseDetail = () => {
         open={showDialog}
         closeDialog={() => setShowDialog(false)}
         title="Attach Files"
-      ></DialogHandle>
+      />
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>
   );
 };
