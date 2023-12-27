@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GenericItems from "./until/GenericItems";
 import LoadingSpinner from "./until/LoadingSpinner";
 import ConfirmDialog from "./until/ConfirmBox";
@@ -137,6 +137,39 @@ const CaseSearch = ({ setHeader }) => {
     { id: 3, label: "Tan" },
   ]);
 
+  useEffect(async () => {
+    await getCaseTemplate();
+  }, []);
+
+  const getCaseTemplate = async (e) => {
+    // call API get template
+    setLoading(true);
+    try {
+
+      let templateURL = "/api/Template/template";
+      const response = await axiosPrivate.get(templateURL, {
+        signal: controller.signal,
+      });
+
+      console.log("template--", response.data.keywords)
+      // response.data.keywords = template;
+      setTemplate(response.data.keywords);
+      response.data.keywords.forEach(element => {
+        element.value = ""
+        if(element.typeName === "List (Alphanumeric)" && element.metadata && element.metadata.length > 0){
+
+        }
+      });
+      console.log("response.data.keywordstemplate--", response.data.keywords)
+      setData(response.data.keywords)
+
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoading(false);
+  };
+
   const handleClickSearch = async (e) => {
     setLoading(true);
     e.preventDefault();
@@ -147,8 +180,16 @@ const CaseSearch = ({ setHeader }) => {
       pageSize: 25,
       pageNumber: 1
     }
+    console.log("payload---------", payload);
+    let payloadFilterd = payload.keywordValues.filter(n => n.value);
+    console.log("after filter--", payloadFilterd);
+    payload.keywordValues = payloadFilterd;
     axiosPrivate.post(searchCaseUrl, payload).then((response) => {
-      console.log("response---------", response);
+      
+      // response.data.keywordValues
+      //   .map(v => (v && typeof v === 'object') ? cleanEmpty(v) : v)
+      //   .filter(v => !(v == null || v == '' | v == undefined)); 
+      console.log("esponse.data--", response.data);
       setSearchData(response.data)
       return response;
     })
@@ -189,7 +230,7 @@ const CaseSearch = ({ setHeader }) => {
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell>
-                      <Truncate str={row.keywordName} maxlength={15} />
+                      <Truncate str={row.caseName} maxlength={15} />
                     </TableCell>
                     <TableCell>
                       <Truncate str={row.value} maxlength={15} />

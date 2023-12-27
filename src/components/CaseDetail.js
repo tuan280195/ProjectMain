@@ -150,6 +150,7 @@ const CaseDetail = () => {
       signal: controller.signal,
     }).then((response) => {
       console.log(response);
+      alert('Create Case successfuly!');
       return response;
     })
       .catch((error) => {
@@ -250,7 +251,7 @@ const CaseDetail = () => {
 
   return (
     <section className="customer">
-      <form>
+      <form onSubmit={handleSubmit}>
         <Grid container columnSpacing={5} rowSpacing={3}>
           {generateCode()}
           <Grid item xs={12}>
@@ -269,7 +270,7 @@ const CaseDetail = () => {
                 buttonType="attach"
                 onClick={handleAttach}
               />
-              <FormButton itemName="Confirm" type="submit" onClick={handleSubmit} />
+              <FormButton itemName="Confirm" type="submit" />
             </div>
           </Grid>
         </Grid>
