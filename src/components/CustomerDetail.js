@@ -57,7 +57,9 @@ const CustomerDetail = () => {
         return {
           ...value,
           stateProvince: response?.data.results[0].address1,
-          city: response?.data.results[0].address2,
+          city:
+            response?.data.results[0].address2 +
+            response?.data.results[0].address3,
         };
       });
     }
