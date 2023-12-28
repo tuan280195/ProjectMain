@@ -36,21 +36,13 @@ const CustomerDetail = () => {
     setLoading(false);
   };
 
-  const handleCancel = async (e) => {
-    // call api set all items back
-    e.preventDefault();
-    if (!id) {
-      window.location.reload();
-    } else {
-      await getCustomerDetail();
-    }
-  };
-
   const handleAddress = async (getPostCode) => {
     setLoading(true);
-    const response = await axios.get(
-      `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${getPostCode}`
-    );
+    const response = await axios
+      .get(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${getPostCode}`)
+      .catch(function (error) {
+        console.log(error);
+      });
 
     if (response?.data.results != null) {
       setLatestData((value) => {
