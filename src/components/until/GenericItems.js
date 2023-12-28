@@ -70,6 +70,17 @@ function GenericItems({ label, type, options, ...props }) {
           required={props.required}
         />
       );
+    case "textarea":
+      return (
+        <div className="section-item">
+          <label className="section-label">{label}</label>
+          <textarea
+            value={props.value}
+            onChange={props.handleInput}
+            className="section-input"
+          ></textarea>
+        </div>
+      );
     default:
       return <></>;
   }

@@ -243,7 +243,6 @@ const CaseSearch = ({ setHeader }) => {
           setData(newState);
         }}
         options={options}
-        required={templateItem.isRequired}
       />
     );
   };
