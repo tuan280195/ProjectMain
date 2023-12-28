@@ -105,7 +105,7 @@ const CustomerSearch = ({ setHeader }) => {
 
   const handleClickSearch = async (e) => {
     await getCustomers(e);
-    setCondition({ width: "1000px", xs: 5 });
+    setCondition({ width: "1080px", xs: 5 });
     setShowList(true);
   };
 
@@ -182,7 +182,9 @@ const CustomerSearch = ({ setHeader }) => {
             ></input>
           </div>
           <br />
-          <FormButton itemName="Search" onClick={handleClickSearch} />
+          <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
+            <FormButton itemName="Search" onClick={handleClickSearch} />
+          </Grid>
         </Grid>
         {showList ? (
           <Grid item xs={7}>

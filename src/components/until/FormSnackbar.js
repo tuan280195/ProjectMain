@@ -6,12 +6,13 @@ const FormSnackbar = ({ item, setItem }) => {
     <>
       <Snackbar
         open={item.isOpen}
-        autoHideDuration={6000}
+        autoHideDuration={5000}
         onClose={() => {
           return setItem({ ...item, isOpen: false });
         }}
       >
         <Alert
+          variant="filled"
           onClose={() => {
             return setItem({ ...item, isOpen: false });
           }}

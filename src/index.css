@@ -28,6 +28,7 @@ section {
   justify-content: flex-start;
   padding: 1rem;
   border-radius: 0.5rem;
+  max-width: 1080px;
 }
 
 form {
@@ -83,14 +84,6 @@ select {
 
 button {
   margin-top: 1rem;
-}
-
-button:hover {
-  background-color: rgb(249, 223, 245);
-}
-
-button:active {
-  background-color: #fabbf0;
 }
 
 li {
