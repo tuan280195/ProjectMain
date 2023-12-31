@@ -29,29 +29,6 @@ function GenericItems({ label, type, options, ...props }) {
       return (
         
         <div className="section-item">
-          {/* <label className="section-label">{label}</label>
-          <Autocomplete
-            onChange={props.handleInput3}
-            disablePortal
-            sx={{
-              "& .MuiInputBase-root": {
-                height: "2rem",
-                borderRadius: "0.3rem",
-                padding: 0,
-                paddingLeft: "5px",
-              },
-              "& .MuiAutocomplete-endAdornment": {
-                top: "auto",
-              },
-            }}
-            options={options}
-            // {[
-            //   { id: 1, label: "Tuan" },
-            //   { id: 2, label: "Tan" },
-            //   { id: 3, label: "Tiep" },
-            // ]}
-            renderInput={(params) => <TextField {...params} />}
-          ></Autocomplete> */}
           <label className="section-label">
             {label}
             {props.required ? <span className="required-icon"> *</span> : null}
@@ -84,15 +61,6 @@ function GenericItems({ label, type, options, ...props }) {
       );
     case "datetime":
       return (
-        // <div className="section-item">
-        //   <label className="section-label">{label}</label>
-        //   <input
-        //     value={props.value}
-        //     type="date"
-        //     onChange={props.handleInput}
-        //     className="section-input"
-        //   ></input>
-        // </div>
         <FormInput
           label={label}
           className="section-input"

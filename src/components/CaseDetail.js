@@ -20,85 +20,8 @@ const CaseDetail = () => {
   let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
   console.log('tokenParsed', tokenParsed)
 
-  const [template, setTemplate] = useState([
-    // {
-    //   keywordId: "29cfafa5-6986-4863-9997-2140a2641ab2",
-    //   keywordName: "Customer Name",
-    //   typeName: "List (Alphanumeric)",
-    //   order: 1,
-    //   roleName: "Admin",
-    //   searchable: 1,
-    // },
-    // {
-    //   keywordId: "4ba47201-0b32-4607-976c-1c60b09495d3",
-    //   keywordName: "Adress",
-    //   typeName: "textbox",
-    //   order: 2,
-    //   roleName: "Admin",
-    //   searchable: 1,
-    // },
-    // {
-    //   keywordId: "ca788522-283f-4513-865a-04ca0908b218",
-    //   keywordName: "Phone No",
-    //   typeName: "textbox",
-    //   order: 3,
-    //   roleName: "Admin",
-    //   searchable: 1,
-    // },
-    // {
-    //   keywordId: "4cf4c518-9dce-4338-a83b-c401f8cff415",
-    //   keywordName: "Customer Contact Person",
-    //   typeName: "textbox",
-    //   order: 4,
-    //   roleName: "Admin",
-    //   searchable: 1,
-    // },
-    // {
-    //   keywordId: "82222a12-4b57-49e3-b7e3-f3dfa9ca9c11",
-    //   keywordName: "Reception Date",
-    //   typeName: "datetime",
-    //   order: 5,
-    //   roleName: "Admin",
-    //   searchable: 1,
-    // },
-  ]);
-  const [data, setData] = useState([
-    // {
-    //   keywordId: "29cfafa5-6986-4863-9997-2140a2641ab2",
-    //   value: "tiepp nguyen",
-    //   keywordName: "Customer Name",
-    //   TypeValue: "string",
-    //   metadata: []
-    // },
-    // {
-    //   keywordId: "4ba47201-0b32-4607-976c-1c60b09495d3",
-    //   value: "bac ninh",
-    //   keywordName: "Address",
-    //   TypeValue: "string",
-    //   metadata: []
-    // },
-    // {
-    //   keywordId: "ca788522-283f-4513-865a-04ca0908b218",
-    //   value: "0979709929",
-    //   keywordName: "Phone Number",
-    //   TypeValue: "string",
-    //   metadata: []
-    // },
-    // {
-    //   keywordId: "4cf4c518-9dce-4338-a83b-c401f8cff415",
-    //   value: "tiep van",
-    //   TypeValue: "string",
-    //   keywordName: "Customer Contact Person",
-    //   metadata: []
-    // },
-    // {
-    //   keywordId: "82222a12-4b57-49e3-b7e3-f3dfa9ca9c11",
-    //   value: "2023-01-28",
-    //   keywordName: "Reception Date",
-    //   TypeValue: "datetime",
-    //   metadata: []
-    // },
-  ]);
+  const [template, setTemplate] = useState([]);
+  const [data, setData] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [snackbar, setSnackbar] = useState({
     isOpen: false,
@@ -125,7 +48,6 @@ const CaseDetail = () => {
         signal: controller.signal,
       }).then((response) => {
         console.log("template--", response.data.keywords)
-        // response.data.keywords = template;
         setTemplate(response.data.keywords);
         response.data.keywords.forEach(element => {
           element.value = ""
