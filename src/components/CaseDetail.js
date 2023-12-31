@@ -6,6 +6,7 @@ import FormButton from "./until/FormButton";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FormSnackbar from "./until/FormSnackbar";
+import { AxiosResponse, AxiosError } from 'axios'
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 const CaseDetail = () => {
@@ -120,21 +121,26 @@ const CaseDetail = () => {
     try {
 
       let templateURL = "/api/Template/template";
-      const response = await axiosPrivate.get(templateURL, {
+      let abc = await axiosPrivate.get(templateURL, {
         signal: controller.signal,
+      }).then((response) => {
+        console.log("template--", response.data.keywords)
+        // response.data.keywords = template;
+        setTemplate(response.data.keywords);
+        response.data.keywords.forEach(element => {
+          element.value = ""
+        });
+        console.log("response.data.keywordstemplate--", response.data.keywords)
+        setData(response.data.keywords)
+
+        return response;
+      })
+        .catch(error => {
+          console.log("eerrrrrrr---")
+          console.log(error.toJSON());
       });
 
-      console.log("template--", response.data.keywords)
-      // response.data.keywords = template;
-      setTemplate(response.data.keywords);
-      response.data.keywords.forEach(element => {
-        element.value = ""
-        if(element.typeName === "List (Alphanumeric)" && element.metadata && element.metadata.length > 0){
-
-        }
-      });
-      console.log("response.data.keywordstemplate--", response.data.keywords)
-      setData(response.data.keywords)
+console.log("---abc", abc)
 
     } catch (error) {
       console.log(error);
@@ -158,7 +164,7 @@ const CaseDetail = () => {
     }).then((response) => {
       console.log(response);
       setSnackbar({ isOpen: true, status: "success", message: "Create Case successfuly!" });
-      
+
       return response;
     })
       .catch((error) => {
@@ -178,7 +184,7 @@ const CaseDetail = () => {
         value1={item.value.split("-")[0]}
         value2={item.value.split("-")[1]}
         label={templateItem.keywordName}
-        type={templateItem.typeName}
+        type={templateItem.typeValue}
         key={templateItem.order}
         handleInput={(e) => {
           const newState = data.map((value) => {

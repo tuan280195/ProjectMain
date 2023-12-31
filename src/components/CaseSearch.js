@@ -105,24 +105,7 @@ const CaseSearch = ({ setHeader }) => {
     // { keywordId: "arrivalDate", value: "" },
     // { keywordId: "paymentDate", value: "" },
   ]);
-  const [searchData, setSearchData] = useState([
-    {
-      caseId: "1",
-      caseName: "Test123456781232112321",
-      customerName: "Toyota",
-      requestType: "abc",
-      status: "in-progress",
-      pic: "TuanDQ7",
-    },
-    {
-      caseId: "2",
-      caseName: "Test2",
-      customerName: "Hitachi",
-      requestType: "def",
-      status: "Done",
-      pic: "TanBC1",
-    },
-  ]);
+  const [searchData, setSearchData] = useState([]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -138,6 +121,8 @@ const CaseSearch = ({ setHeader }) => {
   ]);
 
   useEffect(async () => {
+    setSearchData([]);
+    setData([]);
     await getCaseTemplate();
   }, []);
 
@@ -149,19 +134,22 @@ const CaseSearch = ({ setHeader }) => {
       let templateURL = "/api/Template/template";
       const response = await axiosPrivate.get(templateURL, {
         signal: controller.signal,
-      });
+      }).then((response) => {
+        console.log("template--", response.data.keywords)
+        // response.data.keywords = template;
+        setTemplate(response.data.keywords);
+        response.data.keywords.forEach(element => {
+          element.value = ""
+        });
+        console.log("response.data.keywordstemplate--", response.data.keywords)
+        setData(response.data.keywords)
 
-      console.log("template--", response.data.keywords)
-      // response.data.keywords = template;
-      setTemplate(response.data.keywords);
-      response.data.keywords.forEach(element => {
-        element.value = ""
-        if(element.typeName === "List (Alphanumeric)" && element.metadata && element.metadata.length > 0){
-
-        }
-      });
-      console.log("response.data.keywordstemplate--", response.data.keywords)
-      setData(response.data.keywords)
+        return response;
+      })
+        .catch(error => {
+          console.log("eerrrrrrr---")
+          console.log(error.toJSON());
+        });
 
     } catch (error) {
       console.log(error);
@@ -184,14 +172,15 @@ const CaseSearch = ({ setHeader }) => {
     let payloadFilterd = payload.keywordValues.filter(n => n.value);
     console.log("after filter--", payloadFilterd);
     payload.keywordValues = payloadFilterd;
+    console.log("search data3454--", searchData);
     axiosPrivate.post(searchCaseUrl, payload).then((response) => {
-      
+
       // response.data.keywordValues
       //   .map(v => (v && typeof v === 'object') ? cleanEmpty(v) : v)
       //   .filter(v => !(v == null || v == '' | v == undefined)); 
       console.log("esponse.data--", response.data);
       setSearchData(response.data)
-      return response;
+      console.log("search data--", searchData);
     })
       .catch((error) => {
         console.log(error);
@@ -209,6 +198,7 @@ const CaseSearch = ({ setHeader }) => {
 
   const Results = () => {
     return (
+      searchData.length > 0 && (
       <>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -232,19 +222,27 @@ const CaseSearch = ({ setHeader }) => {
                     <TableCell>
                       <Truncate str={row.caseName} maxlength={15} />
                     </TableCell>
-                    <TableCell>
-                      <Truncate str={row.value} maxlength={15} />
-                    </TableCell>
-                    <TableCell>{row.requestType}</TableCell>
-                    <TableCell>{row.status}</TableCell>
-                    <TableCell>{row.pic}</TableCell>
+                    {row.caseKeywordValues.length > 0 && row.caseKeywordValues.map((item) => {
+                      
+                      return (
+                        (item.keywordName === 'Customer Name' || item.keywordName === 'Request Type' || item.keywordName === 'Submission Status' || item.keywordName === 'Internal PIC') && (
+                        <TableCell>
+                          <Truncate str={item.value} />
+                        </TableCell>)
+                        )
+                        {/* <TableCell>{row.requestType}</TableCell>
+                        <TableCell>{row.status}</TableCell>
+                        <TableCell>{row.pic}</TableCell> */}
+
+                      
+                    })}
                     <TableCell align="center">
                       <Button
                         className="search-close"
-                        // onClick={() => {
-                        //   setShowAlert(true);
-                        //   setDeleteItem(item);
-                        // }}
+                      // onClick={() => {
+                      //   setShowAlert(true);
+                      //   setDeleteItem(item);
+                      // }}
                       >
                         Close
                       </Button>
@@ -262,9 +260,9 @@ const CaseSearch = ({ setHeader }) => {
           </Table>
         </TableContainer>
       </>
-    );
+    ));
   };
-  const handleClickDelete = () => {};
+  const handleClickDelete = () => { };
 
   const dynamicGenerate = (item, templateItem) => {
     return (
@@ -273,7 +271,7 @@ const CaseSearch = ({ setHeader }) => {
         value1={item.value.split("/")[0]}
         value2={item.value.split("/")[1]}
         label={templateItem.keywordName}
-        type={templateItem.typeName}
+        type={templateItem.typeValue}
         key={templateItem.order}
         handleInput={(e) => {
           const newState = data.map((value) => {
@@ -302,7 +300,16 @@ const CaseSearch = ({ setHeader }) => {
           });
           setData(newState);
         }}
-        options={options}
+        handleInput3={(e) => {
+          console.log(e.target.outerText)
+          const newState = data.map((value) => {
+            if (value.keywordId === item.keywordId) {
+              return { ...value, value: e.target.outerText };
+            } else return { ...value };
+          });
+          setData(newState);
+        }}
+        options={item.metadata}
       />
     );
   };

@@ -7,19 +7,30 @@ const FormInput = (props) => {
   const handleFocus = () => {
     setFocused(true);
   };
-
+  console.log("props", props)
   return (
+    
     <div className="section-item">
       <label className="section-label">
         {label}
         {props.required ? <span className="required-icon"> *</span> : null}
       </label>
-      <input
+      {props.type === 'textarea' ? (
+        <textarea 
+        {...inputProps}
+          onChange={onChange}
+          onBlur={handleFocus}
+          focused={focused.toString()}
+        />
+      ) : (
+        <input
         {...inputProps}
         onChange={onChange}
         onBlur={handleFocus}
         focused={focused.toString()}
       />
+      )}
+      
     </div>
   );
 };
