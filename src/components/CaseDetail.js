@@ -202,7 +202,6 @@ const CaseDetail = () => {
                 buttonType="attach"
                 onClick={handleAttach}
                 disabled={disableAttach}
-                tooltip="Please Create Case First"
               />
 
               <FormButton itemName="Confirm" type="submit" />
