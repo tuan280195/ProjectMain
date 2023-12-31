@@ -4,6 +4,7 @@ import FormButton from "./FormButton";
 import FormSelection from "./FormSelection";
 import LoadingSpinner from "./LoadingSpinner";
 import { useState } from "react";
+import FormInput from "./FormInput";
 
 const Upload = (props) => {
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,7 @@ const Upload = (props) => {
         <label className="section-label">File Type</label>
         <FormSelection options={props.optionFileType} />
       </div>
+      <FormInput itemName="File Name" className="section-input" type="text" />
       <TextField type="file" />
       <br />
       <FormButton itemName="Upload" buttonType="attach" type="submit" />
