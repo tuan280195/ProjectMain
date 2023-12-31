@@ -1,4 +1,4 @@
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import GenericItems from "./until/GenericItems";
 import DialogHandle from "./until/DialogHandle";
@@ -85,6 +85,7 @@ const CaseDetail = () => {
     { id: 2, label: "Tiep" },
     { id: 3, label: "Tan" },
   ];
+  const [disableAttach, setDisableAttach] = useState(false);
 
   useEffect(async () => {
     await getCaseTemplate();
@@ -188,12 +189,22 @@ const CaseDetail = () => {
         <Grid container columnSpacing={5} rowSpacing={3}>
           {generateCode()}
           <Grid item xs={12}>
+            {disableAttach ? (
+              <span className="required-icon">
+                Note *: Please Create Case Before Attach File!
+              </span>
+            ) : null}
+          </Grid>
+          <Grid item xs={12}>
             <div className="handle-button">
               <FormButton
                 itemName="Attach"
                 buttonType="attach"
                 onClick={handleAttach}
+                disabled={disableAttach}
+                tooltip="Please Create Case First"
               />
+
               <FormButton itemName="Confirm" type="submit" />
             </div>
           </Grid>
