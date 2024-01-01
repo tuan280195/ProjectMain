@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import FormButton from "./FormButton";
 
-const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
+const ConfirmDialog = ({ open, closeDialog, item, handleFunction, typeDialog = 'Delete'}) => {
   return (
     <Dialog
       fullWidth
@@ -40,9 +40,9 @@ const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
                 flexDirection: "column",
               }}
             >
-              <Typography variant="h5">Delete {item}</Typography>
+              <Typography variant="h5">{typeDialog} {item}</Typography>
               <Typography variant="main-body">
-                Are you sure you want to delete this {item}?
+                Are you sure you want to {typeDialog} this {item}?
               </Typography>
             </Box>
           </Grid>
@@ -57,9 +57,9 @@ const ConfirmDialog = ({ open, closeDialog, item, deleteFunction }) => {
               onClick={closeDialog}
             />
             <FormButton
-              itemName="Delete"
+              itemName={typeDialog}
               buttonType="delete"
-              onClick={deleteFunction}
+              onClick={handleFunction}
             />
           </Grid>
         </Grid>

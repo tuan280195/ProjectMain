@@ -31,7 +31,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     customerName: null,
     phoneNumber: null,
   });
-
+  const [caseIdClose, setCloseCase] = useState("");
   useEffect(async () => {
     setSearchData([]);
     setData([]);
@@ -62,34 +62,28 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     setLoading(false);
   };
 
-  const handleClickSearch = async (e) => {
-    setLoading(true);
-    e.preventDefault();
-
+  const getCaseList = async () => {
     const searchCaseUrl = "/api/Case/getAll";
     const payload = {
       keywordValues: data,
       pageSize: 25,
       pageNumber: 1
     }
-    console.log("payload---------", payload);
     let payloadFilterd = payload.keywordValues.filter(n => n.value);
-    console.log("after filter--", payloadFilterd);
     payload.keywordValues = payloadFilterd;
-    console.log("search data3454--", searchData);
     axiosPrivate.post(searchCaseUrl, payload).then((response) => {
 
-      // response.data.keywordValues
-      //   .map(v => (v && typeof v === 'object') ? cleanEmpty(v) : v)
-      //   .filter(v => !(v == null || v == '' | v == undefined)); 
-      console.log("esponse.data--", response.data);
       setSearchData(response.data)
-      console.log("search data--", searchData);
     })
       .catch((error) => {
         console.log(error);
       });
-    // call api
+  };
+  const handleClickSearch = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+
+    await getCaseList();
     setShowList(true);
     setLoading(false);
   };
@@ -98,6 +92,26 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     setLoading(true);
     setHeader("Case");
     setCaseDetail(caseId);
+    setLoading(false);
+  };
+
+  const confirmCloseCase = async (e) => {
+    setLoading(true);
+    setShowAlert(false);
+    e.preventDefault();
+
+    const closeCaseUrl = `/api/Case/Close?caseId=${caseIdClose}`;
+    const payload = {
+      caseId: caseIdClose
+    }
+
+    axiosPrivate.post(closeCaseUrl, payload).then(async (response) => {
+      await getCaseList();
+      setShowList(true);
+    })
+      .catch((error) => {
+        console.log(error);
+      });
     setLoading(false);
   };
 
@@ -110,15 +124,15 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Case Name</TableCell>
-                    {
-                      searchData[0].caseKeywordValues.length > 0 && searchData[0].caseKeywordValues.map((item) => {
-                        return (
-                          (item.isShowOnCaseList) && (
-                            <TableCell>{item.keywordName}</TableCell>
-                          )
+                  {
+                    searchData[0].caseKeywordValues.length > 0 && searchData[0].caseKeywordValues.map((item) => {
+                      return (
+                        (item.isShowOnCaseList) && (
+                          <TableCell>{item.keywordName}</TableCell>
                         )
-                      })
-                    }
+                      )
+                    })
+                  }
                   <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
@@ -144,10 +158,10 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
                       <TableCell align="center">
                         <Button
                           className="search-close"
-                        onClick={() => {
-                          setShowAlert(true);
-                          
-                        }}
+                          onClick={() => {
+                            setShowAlert(true);
+                            setCloseCase(row.caseId);
+                          }}
                         >
                           Close
                         </Button>
@@ -167,7 +181,6 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         </>
       ));
   };
-  const handleClickDelete = () => { };
 
   const dynamicGenerate = (item, templateItem) => {
     return (
@@ -283,7 +296,8 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         open={showAlert}
         closeDialog={() => setShowAlert(false)}
         item={deleteItem.customerName}
-        deleteFunction={handleClickDelete}
+        handleFunction={confirmCloseCase}
+        typeDialog='Close'
       ></ConfirmDialog>
     </section>
   );

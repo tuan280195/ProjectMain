@@ -7,7 +7,6 @@ const FormInput = (props) => {
   const handleFocus = () => {
     setFocused(true);
   };
-  console.log("props", props)
   return (
     
     <div className="section-item">
