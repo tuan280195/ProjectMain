@@ -2,13 +2,12 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import LoadingSpinner from "./until/LoadingSpinner";
 import Truncate from "./until/Truncate";
-import axios from "../api/axios";
 import ConfirmDialog from "./until/ConfirmBox";
 import { Grid, Button } from "@mui/material";
 import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-const CustomerSearch = ({ setHeader }) => {
+const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   const [data, setData] = useState({});
   const [showList, setShowList] = useState(false);
   const [listItem, setListItem] = useState([
@@ -85,6 +84,7 @@ const CustomerSearch = ({ setHeader }) => {
     //call API
     //save to context
     setHeader("Customer");
+    setCustomerDetail(id);
     setLoading(false);
   };
 

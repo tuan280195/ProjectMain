@@ -29,11 +29,15 @@ const Sidebar = () => {
   const [customerOpen, setCustomerOpen] = React.useState(true);
   const [caseOpen, setCaseOpen] = React.useState(true);
   const [header, setHeader] = React.useState("Home");
+  const [caseId, setCaseDetail] = React.useState("");
+  const [customerId, setCustomerDetail] = React.useState("");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
   const handleClick = (item) => {
+    setCaseDetail("");
+    setCustomerDetail("");
     switch (item) {
       case "Customer":
         setCustomerOpen(!customerOpen);
@@ -225,11 +229,11 @@ const Sidebar = () => {
         }}
       >
         {header === "Search Customer" && (
-          <CustomerSearch setHeader={setHeader} />
+          <CustomerSearch setHeader={setHeader} setCustomerDetail={setCustomerDetail} />
         )}
-        {header === "Customer" && <CustomerDetail />}
-        {header === "Search Case" && <CaseSearch setHeader={setHeader} />}
-        {header === "Case" && <CaseDetail />}
+        {header === "Customer" && <CustomerDetail customerId={customerId}/>}
+        {header === "Search Case" && <CaseSearch setHeader={setHeader} setCaseDetail={setCaseDetail}/>}
+        {header === "Case" && <CaseDetail caseId={caseId}/>}
       </Box>
     </Box>
   );

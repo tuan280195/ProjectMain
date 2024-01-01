@@ -3,7 +3,7 @@ import FormSelection from "./FormSelection";
 
 function GenericItems({ label, type, options, ...props }) {
   switch (type) {
-    case "textbox":
+    case "string":
       return (
         <FormInput
           label={label}
@@ -14,14 +14,26 @@ function GenericItems({ label, type, options, ...props }) {
           required={props.required}
         />
       );
-    case "combobox":
+    case "textarea":
       return (
+        <FormInput
+          label={label}
+          className="section-input"
+          type="textarea"
+          onChange={props.handleInput}
+          value={props.value}
+          required={props.required}
+        />
+      );
+    case "list":
+      return (
+        
         <div className="section-item">
           <label className="section-label">
             {label}
             {props.required ? <span className="required-icon"> *</span> : null}
           </label>
-          <FormSelection options={options} required={props.required} />
+          <FormSelection options={options} required={props.required} optionSelect={props.handleInput3} value={props.value}/>
         </div>
       );
     case "daterange":
@@ -49,17 +61,16 @@ function GenericItems({ label, type, options, ...props }) {
       );
     case "datetime":
       return (
-        <div className="section-item">
-          <label className="section-label">{label}</label>
-          <input
-            value={props.value}
-            type="date"
-            onChange={props.handleInput}
-            className="section-input"
-          ></input>
-        </div>
+        <FormInput
+          label={label}
+          className="section-input"
+          type="date"
+          onChange={props.handleInput}
+          value={props.value}
+          required={props.required}
+        />
       );
-    case "currency":
+    case "decimal":
       return (
         <FormInput
           label={label}

@@ -3,6 +3,7 @@ import { Autocomplete, TextField } from "@mui/material";
 const FormSelection = (props) => {
   return (
     <Autocomplete
+      value={props.value}
       disablePortal
       sx={{
         "& .MuiInputBase-root": {
@@ -16,11 +17,7 @@ const FormSelection = (props) => {
         },
       }}
       options={props.options}
-      // {[
-      //   { id: 1, label: "Tuan" },
-      //   { id: 2, label: "Tan" },
-      //   { id: 3, label: "Tiep" },
-      // ]}
+      onChange={props.optionSelect}
       renderInput={(params) => (
         <TextField {...params} required={props.required} />
       )}
