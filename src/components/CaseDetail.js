@@ -10,12 +10,11 @@ import { AxiosResponse, AxiosError } from 'axios'
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 const CaseDetail = ({ caseId }) => {
-  console.log("CaseDetail caseId-------------------", caseId)
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
-  
+
   let tokenBuffer = Buffer.from(auth.accessToken.split('.')[1], 'base64');
   let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
   console.log('tokenParsed', tokenParsed)
@@ -29,13 +28,16 @@ const CaseDetail = ({ caseId }) => {
     message: "Successfully!",
   });
   const [caseIdName, setCaseIdAndName] = useState({});
-
+  const [optionFileType, setOptionFileType] = useState([]);
   const [disableAttach, setDisableAttach] = useState(false);
 
   useEffect(async () => {
     await getCaseTemplate();
-    if(caseId){
+    if (caseId) {
+      setDisableAttach(false);
       await getCaseByCaseId();
+    } else {
+      setDisableAttach(true);
     }
   }, []);
 
@@ -44,43 +46,16 @@ const CaseDetail = ({ caseId }) => {
     let templateURL = "/api/Template/template";
     // call API get template
     await axiosPrivate.get(templateURL, {
-      validateStatus: function (status) {
-        console.log(status)
-        return status < 500; // Resolve only if the status code is less than 500
-      }
+      signal: controller.signal,
     }).then((response) => {
-      console.log("template--", response.data.keywords)
       setTemplate(response.data.keywords);
       response.data.keywords.forEach(element => {
         element.value = ""
       });
-      console.log("response.data.keywordstemplate--", response.data.keywords)
       setData(response.data.keywords)
     })
       .catch(error => {
-        console.log("eerrrrrrr---")
-        console.log(JSON.stringify(error))
-        console.log(error.response);
-        let errorObject = JSON.parse(JSON.stringify(error));
-        console.log(errorObject);
-        // dispatch(authError(errorObject.response.data.error));
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message);
-          console.log('Error', error);
-        }
-        console.log(error.config);
+        console.log(error);
       });
 
     setLoading(false);
@@ -97,10 +72,9 @@ const CaseDetail = ({ caseId }) => {
         return status < 500; // Resolve only if the status code is less than 500
       }
     }).then((response) => {
-      console.log("case details--", response.data.caseKeywordValues)
       setCaseIdAndName({
-        caseId: response.data.caseId,
-        caseName: response.data.caseName
+        "caseId": response.data.caseId,
+        "caseName": response.data.caseName
       });
       setData(response.data.caseKeywordValues)
     })
@@ -113,9 +87,8 @@ const CaseDetail = ({ caseId }) => {
   const handleSubmit = async (e) => {
     //call API
     e.preventDefault();
-    console.log("data-------", data)
     let caseCreateURL = "/api/Case";
-    if(caseIdName.caseId){
+    if (caseIdName.caseId) {
       let payload = {
         "caseId": caseIdName.caseId,
         "keywordValues": data
@@ -126,13 +99,13 @@ const CaseDetail = ({ caseId }) => {
       }).then((response) => {
         console.log(response);
         setSnackbar({ isOpen: true, status: "success", message: "Update Case successfuly!" });
-  
+        setDisableAttach(false);
         return response;
       })
         .catch((error) => {
           console.log(error);
         });
-    }else{
+    } else {
       let payload = {
         "keywordValues": data
       }
@@ -142,17 +115,38 @@ const CaseDetail = ({ caseId }) => {
       }).then((response) => {
         console.log(response);
         setSnackbar({ isOpen: true, status: "success", message: "Create Case successfuly!" });
-  
+        setDisableAttach(false);
         return response;
       })
         .catch((error) => {
           console.log(error);
         });
     }
+  };
+
+  const getFileTypes = async () => {
+    let getFileTypesURL = "/api/FileType?pageSize=25&pageNumber=1";
+    await axiosPrivate.get(getFileTypesURL, {
+      signal: controller.signal,
+    }).then((response) => {
+      let options = [];
+      response.data.forEach(function (item) {
+        options.push({
+          "id": item.id,
+          "label": item.name
+        });
+      })
+      setOptionFileType(options);
+      return response;
+    })
+      .catch((error) => {
+        console.log(error);
+      });
 
   };
 
-  const handleAttach = () => {
+  const handleAttach = async () => {
+    await getFileTypes();
     setShowDialog(true);
   };
 
@@ -216,7 +210,7 @@ const CaseDetail = ({ caseId }) => {
     return (
       <>
         <Grid item xs={12}>
-          <strong><h2>{caseIdName.caseName}</h2></strong>
+          <strong><h2 style={{ margin: '1px' }}>{caseIdName.caseName}</h2></strong>
         </Grid>
         <Grid item xs={6}>
           {template.map((templateItem) => {
@@ -276,6 +270,7 @@ const CaseDetail = ({ caseId }) => {
         open={showDialog}
         closeDialog={() => setShowDialog(false)}
         title="Attach Files"
+        optionFileType={optionFileType}
       />
       <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>

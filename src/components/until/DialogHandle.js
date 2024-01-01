@@ -9,13 +9,13 @@ import {
 import { useState } from "react";
 import Truncate from "./Truncate";
 
-const DialogHandle = ({ title, open, closeDialog, item, handleFunction }) => {
-  const optionFileType = [
-    { id: 1, label: "Hoa Don" },
-    { id: 2, label: "Ban Ve" },
-    { id: 3, label: "Invoice" },
-    { id: 4, label: "Receipt" },
-  ];
+const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFunction }) => {
+  // const optionFileType = [
+  //   { id: 1, label: "Hoa Don" },
+  //   { id: 2, label: "Ban Ve" },
+  //   { id: 3, label: "Invoice" },
+  //   { id: 4, label: "Receipt" },
+  // ];
   const [listItem, setListItem] = useState([
     "Hoa Don",
     "Receipt",
