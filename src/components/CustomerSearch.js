@@ -7,7 +7,7 @@ import { Grid, Button } from "@mui/material";
 import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-const CustomerSearch = ({ setHeader }) => {
+const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   const [data, setData] = useState({});
   const [showList, setShowList] = useState(false);
   const [listItem, setListItem] = useState([
@@ -84,6 +84,7 @@ const CustomerSearch = ({ setHeader }) => {
     //call API
     //save to context
     setHeader("Customer");
+    setCustomerDetail(id);
     setLoading(false);
   };
 

@@ -9,13 +9,13 @@ import FormSnackbar from "./until/FormSnackbar";
 import { AxiosResponse, AxiosError } from 'axios'
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
-const CaseDetail = () => {
+const CaseDetail = ({ caseId }) => {
+  console.log("CaseDetail caseId-------------------", caseId)
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
-  console.log("-----case details")
-  console.log(auth);
+  
   let tokenBuffer = Buffer.from(auth.accessToken.split('.')[1], 'base64');
   let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
   console.log('tokenParsed', tokenParsed)
@@ -28,71 +28,127 @@ const CaseDetail = () => {
     status: "success",
     message: "Successfully!",
   });
-  const options = [
-    { id: 1, label: "Tuan" },
-    { id: 2, label: "Tiep" },
-    { id: 3, label: "Tan" },
-  ];
+  const [caseIdName, setCaseIdAndName] = useState({});
+
   const [disableAttach, setDisableAttach] = useState(false);
 
   useEffect(async () => {
     await getCaseTemplate();
+    if(caseId){
+      await getCaseByCaseId();
+    }
   }, []);
 
   const getCaseTemplate = async (e) => {
-    // call API get template
     setLoading(true);
-    try {
-
-      let templateURL = "/api/Template/template";
-      let abc = await axiosPrivate.get(templateURL, {
-        signal: controller.signal,
-      }).then((response) => {
-        console.log("template--", response.data.keywords)
-        setTemplate(response.data.keywords);
-        response.data.keywords.forEach(element => {
-          element.value = ""
-        });
-        console.log("response.data.keywordstemplate--", response.data.keywords)
-        setData(response.data.keywords)
-
-        return response;
-      })
-        .catch(error => {
-          console.log("eerrrrrrr---")
-          console.log(error.toJSON());
+    let templateURL = "/api/Template/template";
+    // call API get template
+    await axiosPrivate.get(templateURL, {
+      validateStatus: function (status) {
+        console.log(status)
+        return status < 500; // Resolve only if the status code is less than 500
+      }
+    }).then((response) => {
+      console.log("template--", response.data.keywords)
+      setTemplate(response.data.keywords);
+      response.data.keywords.forEach(element => {
+        element.value = ""
+      });
+      console.log("response.data.keywordstemplate--", response.data.keywords)
+      setData(response.data.keywords)
+    })
+      .catch(error => {
+        console.log("eerrrrrrr---")
+        console.log(JSON.stringify(error))
+        console.log(error.response);
+        let errorObject = JSON.parse(JSON.stringify(error));
+        console.log(errorObject);
+        // dispatch(authError(errorObject.response.data.error));
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+          console.log('Error', error);
+        }
+        console.log(error.config);
       });
 
-console.log("---abc", abc)
+    setLoading(false);
 
-    } catch (error) {
-      console.log(error);
-    }
+  };
+
+  const getCaseByCaseId = async () => {
+    setLoading(true);
+    let templateURL = `/api/Case?caseId=${caseId}`;
+    // call API get template
+    await axiosPrivate.get(templateURL, {
+      validateStatus: function (status) {
+        console.log(status)
+        return status < 500; // Resolve only if the status code is less than 500
+      }
+    }).then((response) => {
+      console.log("case details--", response.data.caseKeywordValues)
+      setCaseIdAndName({
+        caseId: response.data.caseId,
+        caseName: response.data.caseName
+      });
+      setData(response.data.caseKeywordValues)
+    })
+      .catch(error => {
+        console.log(error);
+      });
 
     setLoading(false);
   };
-
   const handleSubmit = async (e) => {
     //call API
     e.preventDefault();
     console.log("data-------", data)
     let caseCreateURL = "/api/Case";
-    let payload = {
-      "templateId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "keywordValues": data
+    if(caseIdName.caseId){
+      let payload = {
+        "caseId": caseIdName.caseId,
+        "keywordValues": data
+      }
+      console.log(axiosPrivate)
+      await axiosPrivate.put(caseCreateURL, payload, {
+        signal: controller.signal,
+      }).then((response) => {
+        console.log(response);
+        setSnackbar({ isOpen: true, status: "success", message: "Update Case successfuly!" });
+  
+        return response;
+      })
+        .catch((error) => {
+          console.log(error);
+        });
+    }else{
+      let payload = {
+        "keywordValues": data
+      }
+      console.log(axiosPrivate)
+      await axiosPrivate.post(caseCreateURL, payload, {
+        signal: controller.signal,
+      }).then((response) => {
+        console.log(response);
+        setSnackbar({ isOpen: true, status: "success", message: "Create Case successfuly!" });
+  
+        return response;
+      })
+        .catch((error) => {
+          console.log(error);
+        });
     }
-    console.log(axiosPrivate)
-    await axiosPrivate.post(caseCreateURL, payload, {
-      signal: controller.signal,
-    }).then((response) => {
-      console.log(response);
-      setSnackbar({ isOpen: true, status: "success", message: "Create Case successfuly!" });
-
-      return response;
-    })
-      .catch((error) => {
-        console.log(error);
-      });
 
   };
 
@@ -159,6 +215,9 @@ console.log("---abc", abc)
     const mid = (template.length + 1) / 2;
     return (
       <>
+        <Grid item xs={12}>
+          <strong><h2>{caseIdName.caseName}</h2></strong>
+        </Grid>
         <Grid item xs={6}>
           {template.map((templateItem) => {
             return data.map((item, index) => {
@@ -208,7 +267,7 @@ console.log("---abc", abc)
                 disabled={disableAttach}
               />
 
-              <FormButton itemName="Confirm" type="submit" />
+              <FormButton itemName="Save" type="submit" />
             </div>
           </Grid>
         </Grid>

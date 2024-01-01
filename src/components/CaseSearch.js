@@ -17,94 +17,11 @@ import Truncate from "./until/Truncate";
 import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-const CaseSearch = ({ setHeader }) => {
+const CaseSearch = ({ setHeader, setCaseDetail }) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
-  const [template, setTemplate] = useState([
-    {
-      keywordId: "4CF4C518-9DCE-4338-A83B-C401F8CFF415",
-      keywordName: "Customer",
-      typeName: "List (Alphanumeric)",
-      order: 1,
-      roleName: "user",
-      searchable: 1,
-    },
-    {
-      keywordId: "82222a12-4b57-49e3-b7e3-f3dfa9ca9c11",
-      keywordName: "Reception Date",
-      typeName: "daterange",
-      order: 3,
-      roleName: "user",
-      searchable: 1,
-    },
-    {
-      keywordId: "requestType",
-      keywordName: "Request Type",
-      typeName: "currency",
-      order: 4,
-      roleName: "user",
-      searchable: 1,
-    },
-    {
-      keywordId: "pic",
-      keywordName: "PIC",
-      typeName: "textbox",
-      order: 5,
-      roleName: "user",
-      searchable: 1,
-    },
-    {
-      keywordId: "paymentStatus",
-      keywordName: "Payment Status",
-      typeName: "combobox",
-      order: 6,
-      roleName: "admin",
-      searchable: 1,
-    },
-    {
-      keywordId: "invoiceDate",
-      keywordName: "Invoice Date",
-      typeName: "textbox",
-      order: 7,
-      roleName: "admin",
-      searchable: 1,
-    },
-    {
-      keywordId: "paymentDate",
-      keywordName: "Payment Date",
-      typeName: "textbox",
-      order: 9,
-      roleName: "admin",
-      searchable: 1,
-    },
-    {
-      keywordId: "ca788522-283f-4513-865a-04ca0908b218",
-      keywordName: "Phone No",
-      typeName: "textbox",
-      order: 2,
-      roleName: "user",
-      searchable: 1,
-    },
-    {
-      keywordId: "arrivalDate",
-      keywordName: "Arrival Date",
-      typeName: "textbox",
-      order: 8,
-      roleName: "admin",
-      searchable: 1,
-    },
-  ]);
-  const [data, setData] = useState([
-    { keywordId: "4CF4C518-9DCE-4338-A83B-C401F8CFF415", value: "test 1" },
-    { keywordId: "ca788522-283f-4513-865a-04ca0908b218", value: "0819177199" },
-    { keywordId: "82222a12-4b57-49e3-b7e3-f3dfa9ca9c11", value: "2023-12-15/2023-12-21" },
-    // { keywordId: "requestType", value: "" },
-    // { keywordId: "pic", value: "" },
-    // { keywordId: "paymentStatus", value: "" },
-    // { keywordId: "invoiceDate", value: "" },
-    // { keywordId: "arrivalDate", value: "" },
-    // { keywordId: "paymentDate", value: "" },
-  ]);
+  const [template, setTemplate] = useState([]);
+  const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -114,11 +31,6 @@ const CaseSearch = ({ setHeader }) => {
     customerName: null,
     phoneNumber: null,
   });
-  const [options, setOptions] = useState([
-    { id: 1, label: "Tuan" },
-    { id: 2, label: "Tiep" },
-    { id: 3, label: "Tan" },
-  ]);
 
   useEffect(async () => {
     setSearchData([]);
@@ -129,31 +41,23 @@ const CaseSearch = ({ setHeader }) => {
   const getCaseTemplate = async (e) => {
     // call API get template
     setLoading(true);
-    try {
-
-      let templateURL = "/api/Template/template";
-      const response = await axiosPrivate.get(templateURL, {
-        signal: controller.signal,
-      }).then((response) => {
-        console.log("template--", response.data.keywords)
-        // response.data.keywords = template;
-        setTemplate(response.data.keywords);
-        response.data.keywords.forEach(element => {
-          element.value = ""
-        });
-        console.log("response.data.keywordstemplate--", response.data.keywords)
-        setData(response.data.keywords)
-
-        return response;
-      })
-        .catch(error => {
-          console.log("eerrrrrrr---")
-          console.log(error.toJSON());
-        });
-
-    } catch (error) {
-      console.log(error);
-    }
+    let templateURL = "/api/Template/template";
+    await axiosPrivate.get(templateURL, {
+      signal: controller.signal,
+    }).then((response) => {
+      console.log("template--", response.data.keywords)
+      // response.data.keywords = template;
+      setTemplate(response.data.keywords);
+      response.data.keywords.forEach(element => {
+        element.value = ""
+      });
+      console.log("response.data.keywordstemplate--", response.data.keywords)
+      setData(response.data.keywords)
+    })
+      .catch(error => {
+        console.log("eerrrrrrr---")
+        console.log(error.response);
+      });
 
     setLoading(false);
   };
@@ -189,78 +93,79 @@ const CaseSearch = ({ setHeader }) => {
     setShowList(true);
     setLoading(false);
   };
-  const handleClickEdit = async () => {
+  const handleClickEdit = async (caseId) => {
+    console.log("caseId-----------", caseId)
     setLoading(true);
     setHeader("Case");
-
+    setCaseDetail(caseId);
     setLoading(false);
   };
 
   const Results = () => {
     return (
       searchData.length > 0 && (
-      <>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Case Name</TableCell>
-                <TableCell>Customer Name</TableCell>
-                <TableCell>Request Type</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>PIC</TableCell>
-                <TableCell align="center">Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {searchData.map((row) => {
-                return (
-                  <TableRow
-                    key={row.caseId}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell>
-                      <Truncate str={row.caseName} maxlength={15} />
-                    </TableCell>
-                    {row.caseKeywordValues.length > 0 && row.caseKeywordValues.map((item) => {
-                      
-                      return (
-                        (item.keywordName === 'Customer Name' || item.keywordName === 'Request Type' || item.keywordName === 'Submission Status' || item.keywordName === 'Internal PIC') && (
-                        <TableCell>
-                          <Truncate str={item.value} />
-                        </TableCell>)
+        <>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Case Name</TableCell>
+                  <TableCell>Customer Name</TableCell>
+                  <TableCell>Request Type</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>PIC</TableCell>
+                  <TableCell align="center">Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {searchData.map((row) => {
+                  return (
+                    <TableRow
+                      key={row.caseId}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell>
+                        <Truncate str={row.caseName} maxlength={15} />
+                      </TableCell>
+                      {row.caseKeywordValues.length > 0 && row.caseKeywordValues.map((item) => {
+
+                        return (
+                          (item.keywordName === 'Customer Name' || item.keywordName === 'Request Type' || item.keywordName === 'Submission Status' || item.keywordName === 'Internal PIC') && (
+                            <TableCell>
+                              <Truncate str={item.value} />
+                            </TableCell>)
                         )
                         {/* <TableCell>{row.requestType}</TableCell>
                         <TableCell>{row.status}</TableCell>
                         <TableCell>{row.pic}</TableCell> */}
 
-                      
-                    })}
-                    <TableCell align="center">
-                      <Button
-                        className="search-close"
-                      // onClick={() => {
-                      //   setShowAlert(true);
-                      //   setDeleteItem(item);
-                      // }}
-                      >
-                        Close
-                      </Button>
-                      <Button
-                        className="search-edit"
-                        onClick={() => handleClickEdit(row.caseKey)}
-                      >
-                        Edit
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </>
-    ));
+
+                      })}
+                      <TableCell align="center">
+                        <Button
+                          className="search-close"
+                        // onClick={() => {
+                        //   setShowAlert(true);
+                        //   setDeleteItem(item);
+                        // }}
+                        >
+                          Close
+                        </Button>
+                        <Button
+                          className="search-edit"
+                          onClick={() => handleClickEdit(row.caseId)}
+                        >
+                          Edit
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      ));
   };
   const handleClickDelete = () => { };
 

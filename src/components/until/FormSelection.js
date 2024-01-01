@@ -1,8 +1,11 @@
 import { Autocomplete, TextField } from "@mui/material";
 
 const FormSelection = (props) => {
+  console.log("props.value----lits", props.value);
   return (
+    
     <Autocomplete
+      value={props.value}
       disablePortal
       sx={{
         "& .MuiInputBase-root": {

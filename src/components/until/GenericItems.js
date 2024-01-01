@@ -33,7 +33,7 @@ function GenericItems({ label, type, options, ...props }) {
             {label}
             {props.required ? <span className="required-icon"> *</span> : null}
           </label>
-          <FormSelection options={options} required={props.required} optionSelect={props.handleInput3}/>
+          <FormSelection options={options} required={props.required} optionSelect={props.handleInput3} value={props.value}/>
         </div>
       );
     case "daterange":

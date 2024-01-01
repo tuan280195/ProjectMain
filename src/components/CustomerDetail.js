@@ -5,15 +5,21 @@ import FormInput from "./until/FormInput";
 import { useSearchParams } from "react-router-dom";
 import { Grid } from "@mui/material";
 import FormButton from "./until/FormButton";
+import FormSnackbar from "./until/FormSnackbar";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-const CustomerDetail = () => {
+const CustomerDetail = ({ customerId }) => {
   const [latestData, setLatestData] = useState({});
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const id = searchParams.get("id");
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
 
   useEffect(async () => {
     await getCustomerDetail();
@@ -23,17 +29,27 @@ const CustomerDetail = () => {
     setLoading(true);
     e.preventDefault();
     // add moree event
-    try {
-      if (latestData.id) {
-        await axiosPrivate.put(
-          "/api/Customer/" + latestData.id,
-          latestData
-        );
-      } else {
-        await axiosPrivate.post("/api/Customer", latestData);
-      }
-    } catch (error) {
-      console.log(error);
+
+    if (latestData.id) {
+      await axiosPrivate.put(
+        "/api/Customer/" + latestData.id,
+        latestData
+      ).then((response) => {
+        setSnackbar({ isOpen: true, status: "success", message: "Update Customer successfuly!" });
+        return response;
+      })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      await axiosPrivate.post("/api/Customer", latestData).then((response) => {
+        setSnackbar({ isOpen: true, status: "success", message: "Create Customer successfuly!" });
+
+        return response;
+      })
+        .catch((error) => {
+          console.log(error);
+        });;
     }
 
     setLoading(false);
@@ -64,9 +80,9 @@ const CustomerDetail = () => {
   const getCustomerDetail = async () => {
     setLoading(true);
     try {
-      if (id) {
+      if (customerId) {
         const response = await axiosPrivate.get(
-          "https://localhost:7265/api/Customer?id=" + id
+          "https://localhost:7265/api/Customer?id=" + customerId
         );
         setLatestData(response.data);
       }
@@ -248,6 +264,7 @@ const CustomerDetail = () => {
         </Grid>
       </form>
       <LoadingSpinner loading={loading}></LoadingSpinner>
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>
   );
 };
