@@ -110,10 +110,15 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Case Name</TableCell>
-                  <TableCell>Customer Name</TableCell>
-                  <TableCell>Request Type</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>PIC</TableCell>
+                    {
+                      searchData[0].caseKeywordValues.length > 0 && searchData[0].caseKeywordValues.map((item) => {
+                        return (
+                          (item.isShowOnCaseList) && (
+                            <TableCell>{item.keywordName}</TableCell>
+                          )
+                        )
+                      })
+                    }
                   <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
@@ -130,24 +135,19 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
                       {row.caseKeywordValues.length > 0 && row.caseKeywordValues.map((item) => {
 
                         return (
-                          (item.keywordName === 'Customer Name' || item.keywordName === 'Request Type' || item.keywordName === 'Submission Status' || item.keywordName === 'Internal PIC') && (
+                          (item.isShowOnCaseList) && (
                             <TableCell>
                               <Truncate str={item.value} />
                             </TableCell>)
                         )
-                        {/* <TableCell>{row.requestType}</TableCell>
-                        <TableCell>{row.status}</TableCell>
-                        <TableCell>{row.pic}</TableCell> */}
-
-
                       })}
                       <TableCell align="center">
                         <Button
                           className="search-close"
-                        // onClick={() => {
-                        //   setShowAlert(true);
-                        //   setDeleteItem(item);
-                        // }}
+                        onClick={() => {
+                          setShowAlert(true);
+                          
+                        }}
                         >
                           Close
                         </Button>
