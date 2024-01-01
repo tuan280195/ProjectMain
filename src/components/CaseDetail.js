@@ -191,7 +191,6 @@ const CaseDetail = () => {
           <Grid item xs={12}>
             {disableAttach ? (
               <span className="required-icon">
-                Note *: Please Create Case Before Attach File!
                 Note* : Please Create Case Before Attach File!
               </span>
             ) : null}
