@@ -14,26 +14,19 @@ function GenericItems({ label, type, options, ...props }) {
           required={props.required}
         />
       );
-    case "textarea":
-      return (
-        <FormInput
-          label={label}
-          className="section-input"
-          type="textarea"
-          onChange={props.handleInput}
-          value={props.value}
-          required={props.required}
-        />
-      );
     case "list":
       return (
-        
         <div className="section-item">
           <label className="section-label">
             {label}
             {props.required ? <span className="required-icon"> *</span> : null}
           </label>
-          <FormSelection options={options} required={props.required} optionSelect={props.handleInput3} value={props.value}/>
+          <FormSelection
+            options={options}
+            required={props.required}
+            optionSelect={props.handleInput3}
+            value={props.value}
+          />
         </div>
       );
     case "daterange":

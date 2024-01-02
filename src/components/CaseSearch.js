@@ -16,6 +16,7 @@ import {
 import Truncate from "./until/Truncate";
 import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import Paging from "./until/Paging";
 
 const CaseSearch = ({ setHeader, setCaseDetail }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -32,6 +33,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     phoneNumber: null,
   });
   const [caseIdClose, setCloseCase] = useState("");
+  const [page, setPage] = useState(1);
   useEffect(async () => {
     setSearchData([]);
     setData([]);
@@ -42,53 +44,57 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     // call API get template
     setLoading(true);
     let templateURL = "/api/Template/template";
-    await axiosPrivate.get(templateURL, {
-      signal: controller.signal,
-    }).then((response) => {
-      console.log("template--", response.data.keywords)
-      // response.data.keywords = template;
-      setTemplate(response.data.keywords);
-      response.data.keywords.forEach(element => {
-        element.value = ""
-      });
-      console.log("response.data.keywordstemplate--", response.data.keywords)
-      setData(response.data.keywords)
-    })
-      .catch(error => {
-        console.log("eerrrrrrr---")
+    await axiosPrivate
+      .get(templateURL, {
+        signal: controller.signal,
+      })
+      .then((response) => {
+        console.log("template--", response.data.keywords);
+        // response.data.keywords = template;
+        setTemplate(response.data.keywords);
+        response.data.keywords.forEach((element) => {
+          element.value = "";
+        });
+        console.log("response.data.keywordstemplate--", response.data.keywords);
+        setData(response.data.keywords);
+      })
+      .catch((error) => {
+        console.log("eerrrrrrr---");
         console.log(error.response);
       });
 
     setLoading(false);
   };
 
-  const getCaseList = async () => {
+  const getCaseList = async (paging) => {
     const searchCaseUrl = "/api/Case/getAll";
+    setPage(paging);
     const payload = {
       keywordValues: data,
-      pageSize: 25,
-      pageNumber: 1
-    }
-    let payloadFilterd = payload.keywordValues.filter(n => n.value);
+      pageSize: 10,
+      pageNumber: paging,
+    };
+    let payloadFilterd = payload.keywordValues.filter((n) => n.value);
     payload.keywordValues = payloadFilterd;
-    axiosPrivate.post(searchCaseUrl, payload).then((response) => {
-
-      setSearchData(response.data)
-    })
+    axiosPrivate
+      .post(searchCaseUrl, payload)
+      .then((response) => {
+        setSearchData(response.data);
+      })
       .catch((error) => {
         console.log(error);
       });
   };
-  const handleClickSearch = async (e) => {
+  const handleClickSearch = async (e, page) => {
     setLoading(true);
     e.preventDefault();
 
-    await getCaseList();
+    await getCaseList(page);
     setShowList(true);
     setLoading(false);
   };
   const handleClickEdit = async (caseId) => {
-    console.log("caseId-----------", caseId)
+    console.log("caseId-----------", caseId);
     setLoading(true);
     setHeader("Case");
     setCaseDetail(caseId);
@@ -102,13 +108,15 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
 
     const closeCaseUrl = `/api/Case/Close?caseId=${caseIdClose}`;
     const payload = {
-      caseId: caseIdClose
-    }
+      caseId: caseIdClose,
+    };
 
-    axiosPrivate.post(closeCaseUrl, payload).then(async (response) => {
-      await getCaseList();
-      setShowList(true);
-    })
+    axiosPrivate
+      .post(closeCaseUrl, payload)
+      .then(async (response) => {
+        await getCaseList();
+        setShowList(true);
+      })
       .catch((error) => {
         console.log(error);
       });
@@ -119,20 +127,23 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     return (
       searchData.length > 0 && (
         <>
+          <Paging
+            onChange={(e, value) => handleClickSearch(e, value)}
+            page={page}
+          />
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell>Case Name</TableCell>
-                  {
-                    searchData[0].caseKeywordValues.length > 0 && searchData[0].caseKeywordValues.map((item) => {
+                  {searchData[0].caseKeywordValues.length > 0 &&
+                    searchData[0].caseKeywordValues.map((item) => {
                       return (
-                        (item.isShowOnCaseList) && (
+                        item.isShowOnCaseList && (
                           <TableCell>{item.keywordName}</TableCell>
                         )
-                      )
-                    })
-                  }
+                      );
+                    })}
                   <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
@@ -146,15 +157,16 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
                       <TableCell>
                         <Truncate str={row.caseName} maxlength={15} />
                       </TableCell>
-                      {row.caseKeywordValues.length > 0 && row.caseKeywordValues.map((item) => {
-
-                        return (
-                          (item.isShowOnCaseList) && (
-                            <TableCell>
-                              <Truncate str={item.value} />
-                            </TableCell>)
-                        )
-                      })}
+                      {row.caseKeywordValues.length > 0 &&
+                        row.caseKeywordValues.map((item) => {
+                          return (
+                            item.isShowOnCaseList && (
+                              <TableCell>
+                                <Truncate str={item.value} />
+                              </TableCell>
+                            )
+                          );
+                        })}
                       <TableCell align="center">
                         <Button
                           className="search-close"
@@ -179,7 +191,8 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
             </Table>
           </TableContainer>
         </>
-      ));
+      )
+    );
   };
 
   const dynamicGenerate = (item, templateItem) => {
@@ -219,7 +232,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
           setData(newState);
         }}
         handleInput3={(e) => {
-          console.log(e.target.outerText)
+          console.log(e.target.outerText);
           const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.outerText };
@@ -285,7 +298,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
           style={{ display: "flex", justifyContent: "center" }}
         >
           <FormButton
-            onClick={handleClickSearch}
+            onClick={(e) => handleClickSearch(e, 1)}
             itemName="Search"
           ></FormButton>
         </Grid>
@@ -297,7 +310,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         closeDialog={() => setShowAlert(false)}
         item={deleteItem.customerName}
         handleFunction={confirmCloseCase}
-        typeDialog='Close'
+        typeDialog="Close"
       ></ConfirmDialog>
     </section>
   );

@@ -6,6 +6,7 @@ import ConfirmDialog from "./until/ConfirmBox";
 import { Grid, Button } from "@mui/material";
 import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import Paging from "./until/Paging";
 
 const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   const [data, setData] = useState({});
@@ -21,6 +22,7 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
     phoneNumber: null,
   });
   const [condition, setCondition] = useState({ width: "400px", xs: 12 });
+  const [page, setPage] = useState(1);
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
@@ -42,8 +44,7 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
 
   // getUsers();
 
-  const getCustomers = async (e) => {
-    setLoading(true);
+  const getCustomers = async (e, paging) => {
     e.preventDefault();
 
     try {
@@ -75,8 +76,6 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
     } catch (error) {
       console.log(error);
     }
-
-    setLoading(false);
   };
 
   const handleClickEdit = (id) => {
@@ -104,10 +103,12 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
     setLoading(false);
   };
 
-  const handleClickSearch = async (e) => {
-    await getCustomers(e);
+  const handleClickSearch = async (e, value) => {
+    setLoading(true);
+    await getCustomers(e, value);
     setCondition({ width: "1080px", xs: 5 });
     setShowList(true);
+    setLoading(false);
   };
 
   const handleChange = (event, item) => {
@@ -184,11 +185,18 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
           </div>
           <br />
           <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
-            <FormButton itemName="Search" onClick={handleClickSearch} />
+            <FormButton
+              itemName="Search"
+              onClick={(e) => handleClickSearch(e, 1)}
+            />
           </Grid>
         </Grid>
         {showList ? (
           <Grid item xs={7}>
+            <Paging
+              onChange={(e, value) => handleClickSearch(e, value)}
+              page={page}
+            />
             <Results />
           </Grid>
         ) : null}

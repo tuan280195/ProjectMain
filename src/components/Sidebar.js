@@ -15,7 +15,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Button, Collapse } from "@mui/material";
+import { Collapse } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import CustomerSearch from "./CustomerSearch";
 import CustomerDetail from "./CustomerDetail";
@@ -229,11 +229,16 @@ const Sidebar = () => {
         }}
       >
         {header === "Search Customer" && (
-          <CustomerSearch setHeader={setHeader} setCustomerDetail={setCustomerDetail} />
+          <CustomerSearch
+            setHeader={setHeader}
+            setCustomerDetail={setCustomerDetail}
+          />
         )}
-        {header === "Customer" && <CustomerDetail customerId={customerId}/>}
-        {header === "Search Case" && <CaseSearch setHeader={setHeader} setCaseDetail={setCaseDetail}/>}
-        {header === "Case" && <CaseDetail caseId={caseId}/>}
+        {header === "Customer" && <CustomerDetail customerId={customerId} />}
+        {header === "Search Case" && (
+          <CaseSearch setHeader={setHeader} setCaseDetail={setCaseDetail} />
+        )}
+        {header === "Case" && <CaseDetail caseId={caseId} />}
       </Box>
     </Box>
   );
