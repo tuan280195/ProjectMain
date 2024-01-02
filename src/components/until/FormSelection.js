@@ -17,7 +17,7 @@ const FormSelection = (props) => {
         },
       }}
       options={props.options}
-      onChange={props.optionSelect}
+      onChange={props.optionSelected}
       renderInput={(params) => (
         <TextField {...params} required={props.required} />
       )}

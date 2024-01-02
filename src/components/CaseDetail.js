@@ -271,6 +271,7 @@ const CaseDetail = ({ caseId }) => {
         closeDialog={() => setShowDialog(false)}
         title="Attach Files"
         optionFileType={optionFileType}
+        caseId={caseIdName.caseId}
       />
       <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>

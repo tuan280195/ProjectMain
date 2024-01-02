@@ -9,7 +9,7 @@ import {
 import { useState } from "react";
 import Truncate from "./Truncate";
 
-const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFunction }) => {
+const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFunction, caseId, fileTypeId, fileName }) => {
   // const optionFileType = [
   //   { id: 1, label: "Hoa Don" },
   //   { id: 2, label: "Ban Ve" },
@@ -37,7 +37,7 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
       <DialogContent sx={{ px: 4, py: 6, position: "relative" }}>
         <Grid container spacing={5}>
           <Grid item xs={6}>
-            <Upload optionFileType={optionFileType} />
+            <Upload optionFileType={optionFileType} caseId={caseId} fileTypeId={fileTypeId} fileName={fileName}/>
           </Grid>
           <Grid item xs={6}>
             <ul

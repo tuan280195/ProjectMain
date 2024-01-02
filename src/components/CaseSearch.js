@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import GenericItems from "./until/GenericItems";
 import LoadingSpinner from "./until/LoadingSpinner";
 import ConfirmDialog from "./until/ConfirmBox";
+import Pagination from "./until/Pagination";
 import {
   Button,
   Grid,
@@ -47,6 +48,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     }).then((response) => {
       console.log("template--", response.data.keywords)
       // response.data.keywords = template;
+      response.data.keywords = response.data.keywords.filter(x => x.searchable);
       setTemplate(response.data.keywords);
       response.data.keywords.forEach(element => {
         element.value = ""
@@ -272,6 +274,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
 
   return (
     <section>
+      <Pagination />
       <Grid container spacing={5}>
         {generateCode()}
         {showList ? (
