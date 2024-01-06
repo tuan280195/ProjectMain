@@ -48,11 +48,12 @@ const CaseDetail = ({ caseId }) => {
     await axiosPrivate.get(templateURL, {
       signal: controller.signal,
     }).then((response) => {
-      setTemplate(response.data.keywords);
-      response.data.keywords.forEach(element => {
+      let filteredTemplateKW = response.data.keywords.filter(x => x.searchable);
+      filteredTemplateKW.forEach(element => {
         element.value = ""
       });
-      setData(response.data.keywords)
+      setTemplate(filteredTemplateKW);
+      setData(filteredTemplateKW)
     })
       .catch(error => {
         console.log(error);
@@ -142,7 +143,6 @@ const CaseDetail = ({ caseId }) => {
       .catch((error) => {
         console.log(error);
       });
-
   };
 
   const handleAttach = async () => {
@@ -175,7 +175,6 @@ const CaseDetail = ({ caseId }) => {
               return { ...value, value: newVlue + "-" + item2 };
             } else return { ...value };
           });
-          console.log(newState);
           setData(newState);
         }}
         handleInput2={(newVlue) => {
@@ -185,7 +184,6 @@ const CaseDetail = ({ caseId }) => {
               return { ...value, value: item1 + "-" + newVlue };
             } else return { ...value };
           });
-          console.log(newState);
           setData(newState);
         }}
         handleInput3={(e) => {
@@ -213,27 +211,29 @@ const CaseDetail = ({ caseId }) => {
           <strong><h2 style={{ margin: '1px' }}>{caseIdName.caseName}</h2></strong>
         </Grid>
         <Grid item xs={6}>
-          {template.map((templateItem) => {
-            return data.map((item, index) => {
-              if (
-                item.keywordId === templateItem.keywordId &&
-                index + 1 <= mid
-              ) {
-                return dynamicGenerate(item, templateItem);
-              } else return null;
-            });
+          {template.map((templateItem, index) => {
+            if(index + 1 <= mid){
+              return data.map((item) => {
+                if (
+                  item.keywordId === templateItem.keywordId
+                ) {
+                  return dynamicGenerate(item, templateItem);
+                }
+              });
+            }
           })}
         </Grid>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
-            return data.map((item) => {
-              if (
-                item.keywordId === templateItem.keywordId &&
-                index + 1 > mid
-              ) {
-                return dynamicGenerate(item, templateItem);
-              } else return null;
-            });
+            if(index + 1 > mid){
+              return data.map((item) => {
+                if (
+                  item.keywordId === templateItem.keywordId
+                ) {
+                  return dynamicGenerate(item, templateItem);
+                }
+              });
+            }
           })}
         </Grid>
       </>
@@ -245,22 +245,23 @@ const CaseDetail = ({ caseId }) => {
       <form onSubmit={handleSubmit}>
         <Grid container columnSpacing={5} rowSpacing={3}>
           {generateCode()}
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             {disableAttach ? (
               <span className="required-icon">
                 Note *: Please Create Case Before Attach File!
               </span>
             ) : null}
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
+            {/* <span>attached 3 files</span> */}
             <div className="handle-button">
-              <FormButton
-                itemName="Attach"
-                buttonType="attach"
-                onClick={handleAttach}
-                disabled={disableAttach}
-              />
-
+                <FormButton
+                  itemName="Attach"
+                  buttonType="attach"
+                  titleContent={disableAttach? "Please Create Case Before Attach File!": ""}
+                  onClick={handleAttach}
+                  disabled={disableAttach}
+                />
               <FormButton itemName="Save" type="submit" />
             </div>
           </Grid>
@@ -271,7 +272,7 @@ const CaseDetail = ({ caseId }) => {
         closeDialog={() => setShowDialog(false)}
         title="Attach Files"
         optionFileType={optionFileType}
-        caseId={caseIdName.caseId}
+        caseId={caseId}
       />
       <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>

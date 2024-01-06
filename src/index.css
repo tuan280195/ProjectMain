@@ -155,6 +155,7 @@ li {
 .handle-button {
   display: flex;
   justify-content: space-around;
+  column-gap: 40px;
 }
 
 /* Search */
@@ -184,4 +185,21 @@ li.search-result {
 
 input:invalid[focused="true"] {
   border: 1px solid red;
+}
+
+.pagination-class{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 10px;
+  justify-content: right;
+  margin: 10px 0 10px 0;
+}
+
+.select-option{
+  height: 38px;
+}
+
+.tooltipSpan{
+  width: 100%;
 }
