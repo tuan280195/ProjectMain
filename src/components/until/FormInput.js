@@ -1,35 +1,15 @@
-import { useState } from "react";
+// import { useState } from "react";
 
 const FormInput = (props) => {
-  const { label, onChange, ...inputProps } = props;
-  const [focused, setFocused] = useState(false);
-
-  const handleFocus = () => {
-    setFocused(true);
-  };
+  const { label, onChange, children, ...inputProps } = props;
   return (
-    
     <div className="section-item">
       <label className="section-label">
         {label}
-        {props.required ? <span className="required-icon"> *</span> : null}
+        {props.isRequired ? <span className="required-icon"> *</span> : null}
       </label>
-      {props.type === 'textarea' ? (
-        <textarea 
-        {...inputProps}
-          onChange={onChange}
-          onBlur={handleFocus}
-          focused={focused.toString()}
-        />
-      ) : (
-        <input
-        {...inputProps}
-        onChange={onChange}
-        onBlur={handleFocus}
-        focused={focused.toString()}
-      />
-      )}
-      
+      <input {...inputProps} onChange={onChange} />
+      {children}
     </div>
   );
 };

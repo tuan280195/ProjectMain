@@ -20,36 +20,73 @@ const CustomerDetail = ({ customerId }) => {
     status: "success",
     message: "Successfully!",
   });
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(async () => {
     await getCustomerDetail();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const validateForm = () => {
+    let errors = {};
+
+    // Validate name field
+    if (!latestData.name) {
+      errors.name = "Name is required.";
+    }
+
+    if (!latestData.phoneNumber) {
+      errors.phoneNumber = "Phone Number is required.";
+    }
+
+    // Set the errors and update form validity
+    setErrors(errors);
+    setIsFormValid(Object.keys(errors).length === 0);
+  };
+
+  const onSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-    // add moree event
+    validateForm();
+    if (!isFormValid) {
+      // Form is valid, perform the submission logic
+      console.log("Form has errors. Please correct them.");
+      setLoading(false);
+      return;
+    } else {
+      // Form is invalid, display error messages
+      console.log("Form has errors. Please correct them.");
+    }
 
     if (latestData.id) {
-      await axiosPrivate.put(
-        "/api/Customer/" + latestData.id,
-        latestData
-      ).then((response) => {
-        setSnackbar({ isOpen: true, status: "success", message: "Update Customer successfuly!" });
-        return response;
-      })
+      await axiosPrivate
+        .put("/api/Customer/" + latestData.id, latestData)
+        .then((response) => {
+          setSnackbar({
+            isOpen: true,
+            status: "success",
+            message: "Update Customer successfuly!",
+          });
+          return response;
+        })
         .catch((error) => {
           console.log(error);
         });
     } else {
-      await axiosPrivate.post("/api/Customer", latestData).then((response) => {
-        setSnackbar({ isOpen: true, status: "success", message: "Create Customer successfuly!" });
+      await axiosPrivate
+        .post("/api/Customer", latestData)
+        .then((response) => {
+          setSnackbar({
+            isOpen: true,
+            status: "success",
+            message: "Create Customer successfuly!",
+          });
 
-        return response;
-      })
+          return response;
+        })
         .catch((error) => {
           console.log(error);
-        });;
+        });
     }
 
     setLoading(false);
@@ -94,7 +131,7 @@ const CustomerDetail = ({ customerId }) => {
 
   return (
     <section className="customer">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onSubmit}>
         <Grid container columnSpacing={5} rowSpacing={3}>
           <Grid item xs={6}>
             <FormInput
@@ -106,9 +143,11 @@ const CustomerDetail = ({ customerId }) => {
                   return { ...value, name: e.target.value };
                 })
               }
+              isRequired={true}
               className="section-input"
-              required
-            />
+            >
+              <errors>{errors.name}</errors>
+            </FormInput>
           </Grid>
           <Grid item xs={6}>
             <FormInput
@@ -116,14 +155,17 @@ const CustomerDetail = ({ customerId }) => {
               value={latestData.phoneNumber}
               type="text"
               className="section-input"
-              required
+              // required
               maxLength={11}
               onChange={(e) => {
                 setLatestData((value) => {
                   return { ...value, phoneNumber: e.target.value };
                 });
               }}
-            />
+              isRequired={true}
+            >
+              <errors>{errors.phoneNumber}</errors>
+            </FormInput>
           </Grid>
           <Grid item xs={6}>
             <div className="section-item">

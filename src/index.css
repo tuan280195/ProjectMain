@@ -39,11 +39,6 @@ form {
   padding-bottom: 1rem;
 }
 
-a,
-a:visited {
-  color: #fff;
-}
-
 input[type="text"],
 input[type="number"],
 input[type="password"],
@@ -129,6 +124,12 @@ li {
   font-weight: bold;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+errors {
+  font-size: 20px;
+  color: red;
+  margin-left: 5px;
 }
 
 .line {

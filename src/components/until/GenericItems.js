@@ -1,7 +1,7 @@
 import FormInput from "./FormInput";
 import FormSelection from "./FormSelection";
 
-function GenericItems({ label, type, options, ...props }) {
+function GenericItems({ label, type, options, children, ...props }) {
   switch (type) {
     case "string":
       return (
@@ -11,29 +11,24 @@ function GenericItems({ label, type, options, ...props }) {
           type="text"
           onChange={props.handleInput}
           value={props.value}
-          required={props.required}
-        />
-      );
-    case "textarea":
-      return (
-        <FormInput
-          label={label}
-          className="section-input"
-          type="textarea"
-          onChange={props.handleInput}
-          value={props.value}
-          required={props.required}
-        />
+          isRequired={props.required}
+        >
+          {children}
+        </FormInput>
       );
     case "list":
       return (
-        
         <div className="section-item">
           <label className="section-label">
             {label}
             {props.required ? <span className="required-icon"> *</span> : null}
           </label>
-          <FormSelection options={options} required={props.required} optionSelect={props.handleInput3} value={props.value}/>
+          <FormSelection
+            options={options}
+            optionSelect={props.handleInput3}
+            value={props.value}
+          />
+          {children}
         </div>
       );
     case "daterange":
@@ -67,8 +62,10 @@ function GenericItems({ label, type, options, ...props }) {
           type="date"
           onChange={props.handleInput}
           value={props.value}
-          required={props.required}
-        />
+          isRequired={props.required}
+        >
+          {children}
+        </FormInput>
       );
     case "decimal":
       return (
@@ -78,8 +75,10 @@ function GenericItems({ label, type, options, ...props }) {
           type="number"
           onChange={props.handleInput}
           value={props.value}
-          required={props.required}
-        />
+          isRequired={props.required}
+        >
+          {children}
+        </FormInput>
       );
     case "textarea":
       return (
@@ -89,7 +88,9 @@ function GenericItems({ label, type, options, ...props }) {
             value={props.value}
             onChange={props.handleInput}
             className="section-input"
-          ></textarea>
+          >
+            {children}
+          </textarea>
         </div>
       );
     default:
