@@ -49,10 +49,9 @@ const CaseDetail = ({ caseId }) => {
   const validateForm = () => {
     let errors = [];
 
-    // Validate fields
+    // Validate required fields
     template.map((item) => {
       if (item.isRequired) {
-        console.log("item " + item.keywordName);
         let currentValue;
         data.map((value) => {
           if (value.keywordId === item.keywordId) {
@@ -70,7 +69,7 @@ const CaseDetail = ({ caseId }) => {
 
     // Set the errors and update form validity
     setErrors(errors);
-    setIsFormValid(errors.length !== 0);
+    setIsFormValid(errors.length === 0);
   };
 
   const getCaseTemplate = async (e) => {
@@ -117,8 +116,8 @@ const CaseDetail = ({ caseId }) => {
     setLoading(false);
   };
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
     validateForm();
     if (!isFormValid) {
       // Form is valid, perform the submission logic
@@ -130,8 +129,7 @@ const CaseDetail = ({ caseId }) => {
       setLoading(false);
       return;
     } else {
-      // Form is invalid, display error messages
-      console.log("Form has errors. Please correct them.");
+      console.log("OK.");
     }
     
     let caseCreateURL = "/api/Case";
@@ -243,6 +241,7 @@ const CaseDetail = ({ caseId }) => {
         }}
         options={item.metadata}
         required={templateItem.isRequired}
+        maxLength={templateItem.maxLength}
       >
         {errors.map((error) => {
           if (error.keywordId === item.keywordId) {
@@ -296,9 +295,9 @@ const CaseDetail = ({ caseId }) => {
                 templateItem.keywordName === "Note"
               ) {
                 return dynamicGenerate(item, templateItem);
-              } else return null;
+              }
             });
-          })};
+          })}
       </Grid>
       </>
     );
