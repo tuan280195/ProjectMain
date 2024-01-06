@@ -6,11 +6,11 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  IconButton,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import Truncate from "./Truncate";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-
 
 const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFunction, caseId }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -80,6 +80,19 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent sx={{ px: 4, py: 6, position: "relative" }}>
+        <IconButton
+          size="small"
+          onClick={closeDialog}
+          sx={{
+            position: "absolute",
+            right: "1rem",
+            top: "0.5rem",
+            width: "2rem",
+            height: "2rem",
+          }}
+        >
+          X
+        </IconButton>
         <Grid container spacing={5}>
           <Grid item xs={4}>
             <Upload optionFileType={optionFileType} caseId={caseId} uploadFunction={uploadFunction} handleSelectedFileType={handleSelectedFileType} handleInputFileName={handleInputFileName} handleFileChange={handleFileChange} />

@@ -100,7 +100,6 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     setLoading(false);
   };
   const handleClickEdit = (caseId) => {
-    console.log("caseId-----------", caseId)
     setLoading(true);
     setCaseDetail(caseId);
     setHeader("Case");

@@ -6,7 +6,7 @@ import FormButton from "./until/FormButton";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FormSnackbar from "./until/FormSnackbar";
-import { AxiosResponse, AxiosError } from 'axios'
+import LoadingSpinner from "./until/LoadingSpinner";
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 const CaseDetail = ({ caseId }) => {
@@ -15,9 +15,9 @@ const CaseDetail = ({ caseId }) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
-  let tokenBuffer = Buffer.from(auth.accessToken.split('.')[1], 'base64');
-  let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
-  console.log('tokenParsed', tokenParsed)
+  // let tokenBuffer = Buffer.from(auth.accessToken.split('.')[1], 'base64');
+  // let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
+  // console.log('tokenParsed', tokenParsed)
 
   const [template, setTemplate] = useState([]);
   const [data, setData] = useState([]);
@@ -30,8 +30,11 @@ const CaseDetail = ({ caseId }) => {
   const [caseIdName, setCaseIdAndName] = useState({});
   const [optionFileType, setOptionFileType] = useState([]);
   const [disableAttach, setDisableAttach] = useState(false);
+  const [errors, setErrors] = useState([]);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(async () => {
+    setLoading(true);
     await getCaseTemplate();
     if (caseId) {
       setDisableAttach(false);
@@ -39,7 +42,36 @@ const CaseDetail = ({ caseId }) => {
     } else {
       setDisableAttach(true);
     }
+    setLoading(false);
   }, []);
+
+  
+  const validateForm = () => {
+    let errors = [];
+
+    // Validate fields
+    template.map((item) => {
+      if (item.isRequired) {
+        console.log("item " + item.keywordName);
+        let currentValue;
+        data.map((value) => {
+          if (value.keywordId === item.keywordId) {
+            return (currentValue = value.value);
+          }
+        });
+        if (currentValue === "") {
+          errors.push({
+            keywordId: item.keywordId,
+            value: item.keywordName + " is required.",
+          });
+        }
+      }
+    });
+
+    // Set the errors and update form validity
+    setErrors(errors);
+    setIsFormValid(errors.length !== 0);
+  };
 
   const getCaseTemplate = async (e) => {
     setLoading(true);
@@ -60,7 +92,6 @@ const CaseDetail = ({ caseId }) => {
       });
 
     setLoading(false);
-
   };
 
   const getCaseByCaseId = async () => {
@@ -86,8 +117,23 @@ const CaseDetail = ({ caseId }) => {
     setLoading(false);
   };
   const handleSubmit = async (e) => {
-    //call API
+    setLoading(true);
     e.preventDefault();
+    validateForm();
+    if (!isFormValid) {
+      // Form is valid, perform the submission logic
+      setSnackbar({
+        isOpen: true,
+        status: "error",
+        message: "Form has errors. Please correct them.",
+      });
+      setLoading(false);
+      return;
+    } else {
+      // Form is invalid, display error messages
+      console.log("Form has errors. Please correct them.");
+    }
+    
     let caseCreateURL = "/api/Case";
     if (caseIdName.caseId) {
       let payload = {
@@ -123,6 +169,7 @@ const CaseDetail = ({ caseId }) => {
           console.log(error);
         });
     }
+    setLoading(false);
   };
 
   const getFileTypes = async () => {
@@ -187,7 +234,6 @@ const CaseDetail = ({ caseId }) => {
           setData(newState);
         }}
         handleInput3={(e) => {
-          console.log(e.target.outerText)
           const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.outerText };
@@ -197,14 +243,20 @@ const CaseDetail = ({ caseId }) => {
         }}
         options={item.metadata}
         required={templateItem.isRequired}
-      />
+      >
+        {errors.map((error) => {
+          if (error.keywordId === item.keywordId) {
+            return <errors>{error.value}</errors>;
+          }
+        })}
+      </GenericItems>
     );
   };
   const generateCode = () => {
     template.sort((a, b) =>
       a.order > b.order ? 1 : b.order > a.order ? -1 : 0
     );
-    const mid = (template.length + 1) / 2;
+    const mid = template.length / 2;
     return (
       <>
         <Grid item xs={12}>
@@ -212,7 +264,7 @@ const CaseDetail = ({ caseId }) => {
         </Grid>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
-            if(index + 1 <= mid){
+            if(index + 1 <= mid && templateItem.keywordName !== "Note"){
               return data.map((item) => {
                 if (
                   item.keywordId === templateItem.keywordId
@@ -225,7 +277,7 @@ const CaseDetail = ({ caseId }) => {
         </Grid>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
-            if(index + 1 > mid){
+            if(index + 1 > mid && templateItem.keywordName !== "Note"){
               return data.map((item) => {
                 if (
                   item.keywordId === templateItem.keywordId
@@ -248,7 +300,7 @@ const CaseDetail = ({ caseId }) => {
           {/* <Grid item xs={12}>
             {disableAttach ? (
               <span className="required-icon">
-                Note *: Please Create Case Before Attach File!
+                Note* : Please Create Case Before Attach File!
               </span>
             ) : null}
           </Grid> */}
@@ -274,6 +326,7 @@ const CaseDetail = ({ caseId }) => {
         optionFileType={optionFileType}
         caseId={caseId}
       />
+      <LoadingSpinner loading={loading}></LoadingSpinner>
       <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>
   );
