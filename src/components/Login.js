@@ -31,7 +31,6 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      console.log("response");
       const response = await axios.post(
         LOGIN_URL,
         JSON.stringify({ username, password }),
@@ -42,9 +41,6 @@ const Login = () => {
           withCredentials: true,
         }
       );
-      console.log(response);
-      console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response));
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
       var tokenStorage = {
