@@ -50,12 +50,16 @@ const CustomerDetail = ({ customerId }) => {
     validateForm();
     if (!isFormValid) {
       // Form is valid, perform the submission logic
-      console.log("Form has errors. Please correct them.");
+      setSnackbar({
+        isOpen: true,
+        status: "error",
+        message: "Form has errors. Please correct them.",
+      });
       setLoading(false);
       return;
     } else {
       // Form is invalid, display error messages
-      console.log("Form has errors. Please correct them.");
+      console.log("OK.");
     }
 
     if (latestData.id) {
