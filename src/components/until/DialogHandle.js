@@ -5,11 +5,19 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  IconButton,
 } from "@mui/material";
 import { useState } from "react";
 import Truncate from "./Truncate";
 
-const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFunction }) => {
+const DialogHandle = ({
+  title,
+  open,
+  closeDialog,
+  item,
+  optionFileType,
+  handleFunction,
+}) => {
   // const optionFileType = [
   //   { id: 1, label: "Hoa Don" },
   //   { id: 2, label: "Ban Ve" },
@@ -35,6 +43,19 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent sx={{ px: 4, py: 6, position: "relative" }}>
+        <IconButton
+          size="small"
+          onClick={closeDialog}
+          sx={{
+            position: "absolute",
+            right: "1rem",
+            top: "0.5rem",
+            width: "2rem",
+            height: "2rem",
+          }}
+        >
+          X
+        </IconButton>
         <Grid container spacing={5}>
           <Grid item xs={6}>
             <Upload optionFileType={optionFileType} />
