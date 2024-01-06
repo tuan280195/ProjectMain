@@ -27,7 +27,7 @@ function GenericItems({ label, type, options, children, ...props }) {
           <FormSelection
             options={options}
             optionSelect={props.handleInput3}
-            value={props.value}
+            defaultValue={props.value}
             isRequired={props.required}
           />
           {children}
@@ -87,16 +87,16 @@ function GenericItems({ label, type, options, children, ...props }) {
         <div className="section-item">
           <label className="section-label">{label}</label>
           <textarea
-            defaultValue={props.value}
+            value={props.value}
             onChange={props.handleInput}
             className="section-input"
           >
-            {children}
+            {/* {children} */}
           </textarea>
         </div>
       );
     default:
-      return <></>;
+      return <></>
   }
 }
 

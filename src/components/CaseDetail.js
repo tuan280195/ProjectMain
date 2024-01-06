@@ -288,6 +288,18 @@ const CaseDetail = ({ caseId }) => {
             }
           })}
         </Grid>
+        <Grid item xs={12}>
+          {template.map((templateItem, index) => {
+            return data.map((item) => {
+              if (
+                item.keywordId === templateItem.keywordId &&
+                templateItem.keywordName === "Note"
+              ) {
+                return dynamicGenerate(item, templateItem);
+              } else return null;
+            });
+          })};
+      </Grid>
       </>
     );
   };
