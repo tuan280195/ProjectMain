@@ -12,6 +12,7 @@ function GenericItems({ label, type, options, children, ...props }) {
           onChange={props.handleInput}
           value={props.value}
           isRequired={props.required}
+          maxLength={props.maxLength}
         >
           {children}
         </FormInput>
