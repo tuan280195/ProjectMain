@@ -6,7 +6,6 @@ import FormButton from "./until/FormButton";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FormSnackbar from "./until/FormSnackbar";
-import { AxiosResponse, AxiosError } from "axios";
 import LoadingSpinner from "./until/LoadingSpinner";
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
@@ -16,9 +15,9 @@ const CaseDetail = ({ caseId }) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
-  let tokenBuffer = Buffer.from(auth.accessToken.split(".")[1], "base64");
-  let tokenParsed = JSON.parse(tokenBuffer.toString("utf-8"));
-  console.log("tokenParsed", tokenParsed);
+  // let tokenBuffer = Buffer.from(auth.accessToken.split('.')[1], 'base64');
+  // let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
+  // console.log('tokenParsed', tokenParsed)
 
   const [template, setTemplate] = useState([]);
   const [data, setData] = useState([]);
@@ -46,53 +45,7 @@ const CaseDetail = ({ caseId }) => {
     setLoading(false);
   }, []);
 
-  const getCaseTemplate = async (e) => {
-    setLoading(true);
-    let templateURL = "/api/Template/template";
-    // call API get template
-    await axiosPrivate
-      .get(templateURL, {
-        signal: controller.signal,
-      })
-      .then((response) => {
-        setTemplate(response.data.keywords);
-        response.data.keywords.forEach((element) => {
-          element.value = "";
-        });
-        setData(response.data.keywords);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    setLoading(false);
-  };
-
-  const getCaseByCaseId = async () => {
-    setLoading(true);
-    let templateURL = `/api/Case?caseId=${caseId}`;
-    // call API get template
-    await axiosPrivate
-      .get(templateURL, {
-        validateStatus: function (status) {
-          console.log(status);
-          return status < 500; // Resolve only if the status code is less than 500
-        },
-      })
-      .then((response) => {
-        setCaseIdAndName({
-          caseId: response.data.caseId,
-          caseName: response.data.caseName,
-        });
-        setData(response.data.caseKeywordValues);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    setLoading(false);
-  };
-
+  
   const validateForm = () => {
     let errors = [];
 
@@ -119,6 +72,49 @@ const CaseDetail = ({ caseId }) => {
     setIsFormValid(errors.length === 0);
   };
 
+  const getCaseTemplate = async (e) => {
+    setLoading(true);
+    let templateURL = "/api/Template/template";
+    // call API get template
+    await axiosPrivate.get(templateURL, {
+      signal: controller.signal,
+    }).then((response) => {
+      let filteredTemplateKW = response.data.keywords.filter(x => x.searchable);
+      filteredTemplateKW.forEach(element => {
+        element.value = ""
+      });
+      setTemplate(filteredTemplateKW);
+      setData(filteredTemplateKW)
+    })
+      .catch(error => {
+        console.log(error);
+      });
+
+    setLoading(false);
+  };
+
+  const getCaseByCaseId = async () => {
+    setLoading(true);
+    let templateURL = `/api/Case?caseId=${caseId}`;
+    // call API get template
+    await axiosPrivate.get(templateURL, {
+      validateStatus: function (status) {
+        console.log(status)
+        return status < 500; // Resolve only if the status code is less than 500
+      }
+    }).then((response) => {
+      setCaseIdAndName({
+        "caseId": response.data.caseId,
+        "caseName": response.data.caseName
+      });
+      setData(response.data.caseKeywordValues)
+    })
+      .catch(error => {
+        console.log(error);
+      });
+
+    setLoading(false);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -135,50 +131,38 @@ const CaseDetail = ({ caseId }) => {
     } else {
       console.log("OK.");
     }
-
+    
     let caseCreateURL = "/api/Case";
     if (caseIdName.caseId) {
       let payload = {
-        caseId: caseIdName.caseId,
-        keywordValues: data,
-      };
-      console.log(axiosPrivate);
-      await axiosPrivate
-        .put(caseCreateURL, payload, {
-          signal: controller.signal,
-        })
-        .then((response) => {
-          console.log(response);
-          setSnackbar({
-            isOpen: true,
-            status: "success",
-            message: "Update Case successfuly!",
-          });
-          setDisableAttach(false);
-          return response;
-        })
+        "caseId": caseIdName.caseId,
+        "keywordValues": data
+      }
+      console.log(axiosPrivate)
+      await axiosPrivate.put(caseCreateURL, payload, {
+        signal: controller.signal,
+      }).then((response) => {
+        console.log(response);
+        setSnackbar({ isOpen: true, status: "success", message: "Update Case successfuly!" });
+        setDisableAttach(false);
+        return response;
+      })
         .catch((error) => {
           console.log(error);
         });
     } else {
       let payload = {
-        keywordValues: data,
-      };
-      console.log(axiosPrivate);
-      await axiosPrivate
-        .post(caseCreateURL, payload, {
-          signal: controller.signal,
-        })
-        .then((response) => {
-          console.log(response);
-          setSnackbar({
-            isOpen: true,
-            status: "success",
-            message: "Create Case successfuly!",
-          });
-          setDisableAttach(false);
-          return response;
-        })
+        "keywordValues": data
+      }
+      console.log(axiosPrivate)
+      await axiosPrivate.post(caseCreateURL, payload, {
+        signal: controller.signal,
+      }).then((response) => {
+        console.log(response);
+        setSnackbar({ isOpen: true, status: "success", message: "Create Case successfuly!" });
+        setDisableAttach(false);
+        return response;
+      })
         .catch((error) => {
           console.log(error);
         });
@@ -188,21 +172,19 @@ const CaseDetail = ({ caseId }) => {
 
   const getFileTypes = async () => {
     let getFileTypesURL = "/api/FileType?pageSize=25&pageNumber=1";
-    await axiosPrivate
-      .get(getFileTypesURL, {
-        signal: controller.signal,
-      })
-      .then((response) => {
-        let options = [];
-        response.data.forEach(function (item) {
-          options.push({
-            id: item.id,
-            label: item.name,
-          });
+    await axiosPrivate.get(getFileTypesURL, {
+      signal: controller.signal,
+    }).then((response) => {
+      let options = [];
+      response.data.forEach(function (item) {
+        options.push({
+          "id": item.id,
+          "label": item.name
         });
-        setOptionFileType(options);
-        return response;
       })
+      setOptionFileType(options);
+      return response;
+    })
       .catch((error) => {
         console.log(error);
       });
@@ -228,6 +210,7 @@ const CaseDetail = ({ caseId }) => {
               return { ...value, value: e.target.value };
             } else return { ...value };
           });
+          console.log("dynamicGenerate newState", newState)
           setData(newState);
         }}
         // using for date range
@@ -274,37 +257,36 @@ const CaseDetail = ({ caseId }) => {
       a.order > b.order ? 1 : b.order > a.order ? -1 : 0
     );
     const mid = template.length / 2;
+    console.log("generateCode dataa", data)
     return (
       <>
         <Grid item xs={12}>
-          <strong>
-            <h2 style={{ margin: "1px" }}>{caseIdName.caseName}</h2>
-          </strong>
+          <strong><h2 style={{ margin: '1px' }}>{caseIdName.caseName}</h2></strong>
         </Grid>
         <Grid item xs={6}>
-          {template.map((templateItem) => {
-            return data.map((item, index) => {
-              if (
-                item.keywordId === templateItem.keywordId &&
-                index + 1 <= mid &&
-                templateItem.keywordName !== "Note"
-              ) {
-                return dynamicGenerate(item, templateItem);
-              } else return null;
-            });
+          {template.map((templateItem, index) => {
+            if(index + 1 <= mid && templateItem.keywordName !== "Note"){
+              return data.map((item) => {
+                if (
+                  item.keywordId === templateItem.keywordId
+                ) {
+                  return dynamicGenerate(item, templateItem);
+                }
+              });
+            }
           })}
         </Grid>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
-            return data.map((item) => {
-              if (
-                item.keywordId === templateItem.keywordId &&
-                index + 1 > mid &&
-                templateItem.keywordName !== "Note"
-              ) {
-                return dynamicGenerate(item, templateItem);
-              } else return null;
-            });
+            if(index + 1 > mid && templateItem.keywordName !== "Note"){
+              return data.map((item) => {
+                if (
+                  item.keywordId === templateItem.keywordId
+                ) {
+                  return dynamicGenerate(item, templateItem);
+                }
+              });
+            }
           })}
         </Grid>
         <Grid item xs={12}>
@@ -315,10 +297,10 @@ const CaseDetail = ({ caseId }) => {
                 templateItem.keywordName === "Note"
               ) {
                 return dynamicGenerate(item, templateItem);
-              } else return null;
+              }
             });
           })}
-        </Grid>
+      </Grid>
       </>
     );
   };
@@ -329,21 +311,15 @@ const CaseDetail = ({ caseId }) => {
         <Grid container columnSpacing={5} rowSpacing={3}>
           {generateCode()}
           <Grid item xs={12}>
-            {disableAttach ? (
-              <span className="required-icon">
-                Note* : Please Create Case Before Attach File!
-              </span>
-            ) : null}
-          </Grid>
-          <Grid item xs={12}>
+            {/* <span>attached 3 files</span> */}
             <div className="handle-button">
-              <FormButton
-                itemName="Attach"
-                buttonType="attach"
-                onClick={handleAttach}
-                disabled={disableAttach}
-              />
-
+                <FormButton
+                  itemName="Attach"
+                  buttonType="attach"
+                  titleContent={disableAttach? "Please Create Case Before Attach File!": ""}
+                  onClick={handleAttach}
+                  disabled={disableAttach}
+                />
               <FormButton itemName="Save" type="submit" />
             </div>
           </Grid>
@@ -354,6 +330,7 @@ const CaseDetail = ({ caseId }) => {
         closeDialog={() => setShowDialog(false)}
         title="Attach Files"
         optionFileType={optionFileType}
+        caseId={caseId}
       />
       <LoadingSpinner loading={loading}></LoadingSpinner>
       <FormSnackbar item={snackbar} setItem={setSnackbar} />

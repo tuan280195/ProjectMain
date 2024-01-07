@@ -26,8 +26,9 @@ function GenericItems({ label, type, options, children, ...props }) {
           </label>
           <FormSelection
             options={options}
-            optionSelect={props.handleInput3}
+            optionSelected={props.handleInput3}
             value={props.value}
+            isRequired={props.required}
           />
           {children}
         </div>
@@ -95,7 +96,7 @@ function GenericItems({ label, type, options, children, ...props }) {
         </div>
       );
     default:
-      return <></>;
+      return <></>
   }
 }
 

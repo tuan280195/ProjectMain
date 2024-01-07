@@ -6,6 +6,9 @@ import ConfirmDialog from "./until/ConfirmBox";
 import { Grid, Button } from "@mui/material";
 import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import Pagination from "./until/Pagination";
+import caseSearchState from "../stories/caseSearchState.ts";
+import caseSearchActions from "../actions/caseSearchActions.ts";
 
 const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   const [data, setData] = useState({});
@@ -64,14 +67,14 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
       });
 
       let result = [];
-      response.data.forEach((element) => {
-        result.push({
-          id: element.id,
-          customerName: element.name,
-          phoneNumber: element.phoneNumber,
-        });
-      });
-      setListItem(result); /*set result list item here*/
+      // response.data.forEach((element) => {
+      //   result.push({
+      //     id: element.id,
+      //     customerName: element.name,
+      //     phoneNumber: element.phoneNumber,
+      //   });
+      // });
+      setListItem(response.data); /*set result list item here*/
     } catch (error) {
       console.log(error);
     }
@@ -106,7 +109,7 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
 
   const handleClickSearch = async (e) => {
     await getCustomers(e);
-    setCondition({ width: "1080px", xs: 5 });
+    setCondition({ width: "1080px", xs: 4 });
     setShowList(true);
   };
 
@@ -118,15 +121,36 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
     setData(newData);
   };
 
+  const handleChangePageSize = async (e) => {
+    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, e.target.value,caseSearchState.paginationState.currentPage);
+    await getCustomers(e);
+  };
+  const handleChangePage = async (e) => {
+    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, caseSearchState.paginationState.pageSize, parseInt(e.target.innerText));
+    await getCustomers(e);
+  };
+
   const Results = () => {
+    let totalCount = 0;
+    if(listItem && listItem.totalCount > 0){
+      totalCount = Math.ceil(listItem.totalCount/listItem.pageSize);
+    }
     return (
+      <>
+      <Pagination 
+          totalCount={totalCount} 
+          pageSize={caseSearchState.caseDataSearchState.pageSize} 
+          currentPage={caseSearchState.caseDataSearchState.currentPage}
+          handleChangePageSize={handleChangePageSize}
+          handleChangePage={handleChangePage}/>
+      
       <ul id="results" className="search-results" style={{ marginTop: 10 }}>
-        {listItem && listItem[0].id != null ? (
-          listItem.map((item, index) => {
+        {listItem && listItem.items.length > 0 ? (
+          listItem.items.map((item, index) => {
             return (
               <>
                 <li className="search-result" key={item + "-" + index}>
-                  <Truncate str={item.customerName} maxLength={20} />
+                  <Truncate str={item.name} maxLength={20} />
                   <div className="search-action">
                     <Link
                       className="search-delete"
@@ -156,6 +180,7 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
           </li>
         )}
       </ul>
+      </>
     );
   };
 
@@ -188,7 +213,7 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
           </Grid>
         </Grid>
         {showList ? (
-          <Grid item xs={7}>
+          <Grid item xs={8}>
             <Results />
           </Grid>
         ) : null}

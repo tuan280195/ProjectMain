@@ -47,6 +47,7 @@ const CustomerDetail = ({ customerId }) => {
   const onSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
+    // add moree event
     validateForm();
     if (!isFormValid) {
       // Form is valid, perform the submission logic
@@ -61,36 +62,27 @@ const CustomerDetail = ({ customerId }) => {
       // Form is invalid, display error messages
       console.log("OK.");
     }
-
+    
     if (latestData.id) {
-      await axiosPrivate
-        .put("/api/Customer/" + latestData.id, latestData)
-        .then((response) => {
-          setSnackbar({
-            isOpen: true,
-            status: "success",
-            message: "Update Customer successfuly!",
-          });
-          return response;
-        })
+      await axiosPrivate.put(
+        "/api/Customer/" + latestData.id,
+        latestData
+      ).then((response) => {
+        setSnackbar({ isOpen: true, status: "success", message: "Update Customer successfuly!" });
+        return response;
+      })
         .catch((error) => {
           console.log(error);
         });
     } else {
-      await axiosPrivate
-        .post("/api/Customer", latestData)
-        .then((response) => {
-          setSnackbar({
-            isOpen: true,
-            status: "success",
-            message: "Create Customer successfuly!",
-          });
+      await axiosPrivate.post("/api/Customer", latestData).then((response) => {
+        setSnackbar({ isOpen: true, status: "success", message: "Create Customer successfuly!" });
 
-          return response;
-        })
+        return response;
+      })
         .catch((error) => {
           console.log(error);
-        });
+        });;
     }
 
     setLoading(false);

@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 
 const FormButton = ({ itemName, buttonType = "normal", ...props }) => {
   var styleMode;
@@ -57,12 +57,18 @@ const FormButton = ({ itemName, buttonType = "normal", ...props }) => {
     fontSize: "30px",
     lineHeight: "1.3",
     border: "none",
-    width: "40%",
+    width: "100%",
   };
+  
   return (
-    <Button sx={styleButton} {...props}>
+
+    <Tooltip title={props.titleContent} placement="top" className="required-icon">
+      <span className="tooltipSpan">
+      <Button sx={styleButton} {...props}>
       {itemName}
     </Button>
+    </span>
+    </Tooltip>
   );
 };
 
