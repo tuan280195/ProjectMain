@@ -210,6 +210,7 @@ const CaseDetail = ({ caseId }) => {
               return { ...value, value: e.target.value };
             } else return { ...value };
           });
+          console.log("dynamicGenerate newState", newState)
           setData(newState);
         }}
         // using for date range
@@ -256,6 +257,7 @@ const CaseDetail = ({ caseId }) => {
       a.order > b.order ? 1 : b.order > a.order ? -1 : 0
     );
     const mid = template.length / 2;
+    console.log("generateCode dataa", data)
     return (
       <>
         <Grid item xs={12}>
@@ -308,13 +310,6 @@ const CaseDetail = ({ caseId }) => {
       <form onSubmit={handleSubmit}>
         <Grid container columnSpacing={5} rowSpacing={3}>
           {generateCode()}
-          {/* <Grid item xs={12}>
-            {disableAttach ? (
-              <span className="required-icon">
-                Note* : Please Create Case Before Attach File!
-              </span>
-            ) : null}
-          </Grid> */}
           <Grid item xs={12}>
             {/* <span>attached 3 files</span> */}
             <div className="handle-button">

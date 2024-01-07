@@ -58,7 +58,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
       });
       setTemplate(response.data.keywords);
       caseSearchActions.setKeywordsSearchState(response.data.keywords);
-      // setData(response.data.keywords)
+      setData(response.data.keywords)
     })
       .catch(error => {
         console.log(error.response);
@@ -140,7 +140,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
       totalCount = Math.ceil(caseSearchState.caseDataSearchState.totalCount / caseSearchState.caseDataSearchState.pageSize)
     }
     return (
-      caseSearchState.caseDataSearchState && caseSearchState.caseDataSearchState.totalCount > 0 && (
+      caseSearchState.caseDataSearchState && caseSearchState.caseDataSearchState.totalCount > 0 ? (
         <>
           <Pagination
             totalCount={totalCount}
@@ -208,7 +208,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
             </Table>
           </TableContainer>
         </>
-      ));
+      ): (<h3>Not Found!</h3>));
   };
 
   const dynamicGenerate = (item, templateItem) => {
@@ -221,46 +221,53 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         type={templateItem.typeValue}
         key={templateItem.order}
         handleInput={(e) => {
-          const newState = caseSearchState.keywordsSearchState.keywordValues.map((value) => {
+          const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
-              console.log(111)
               return { ...value, value: e.target.value };
             } else return { ...value };
           });
+
+          // const newState = data.map((value) => {
+          //   if (value.keywordId === item.keywordId) {
+          //     return { ...value, value: e.target.value };
+          //   } else return { ...value };
+          // });
+
           console.log(newState)
+          //caseSearchState.keywordsSearchState.keywordValues = newState;
           caseSearchActions.setKeywordsSearchState(newState);
-          // setData(newState);
+          setData(newState);
         }}
         // using for date range
         handleInput1={(e) => {
-          const newState = caseSearchState.keywordsSearchState.keywordValues.map((value) => {
+          const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
               const item2 = item.value.split("/")[1];
               return { ...value, value: e.target.value + "/" + item2 };
             } else return { ...value };
           });
           caseSearchActions.setKeywordsSearchState(newState);
-          // setData(newState);
+          setData(newState);
         }}
         handleInput2={(e) => {
-          const newState = caseSearchState.keywordsSearchState.keywordValues.map((value) => {
+          const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
               const item1 = item.value.split("/")[0];
               return { ...value, value: item1 + "/" + e.target.value };
             } else return { ...value };
           });
           caseSearchActions.setKeywordsSearchState(newState);
-          // setData(newState);
+          setData(newState);
         }}
         handleInput3={(e) => {
           console.log(e.target.outerText)
-          const newState = caseSearchState.keywordsSearchState.keywordValues.map((value) => {
+          const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
-              return { ...value, value: !e.target.outerText ? "" : e.target.outerText };
+              return { ...value, value: e.target.outerText };
             } else return { ...value };
           });
+          setData(newState);
           caseSearchActions.setKeywordsSearchState(newState);
-          // setData(newState);
         }}
         options={item.metadata}
       />
@@ -272,16 +279,16 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
       a.order > b.order ? 1 : b.order > a.order ? -1 : 0
     );
     const mid = (template.length + 1) / 2;
-    console.log("template Length" + template.length);
+    console.log("caseSearchState.keywordsSearchState.keywordValues", caseSearchState.keywordsSearchState.keywordValues);
     return (
       <>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
             if (index + 1 <= mid) {
-              return caseSearchState.keywordsSearchState.keywordValues.map((item) => {
+              return data.map((item) => {
                 if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
-                } else return null;
+                }
               });
             }
           })}
@@ -289,10 +296,10 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
             if (index + 1 > mid) {
-              return caseSearchState.keywordsSearchState.keywordValues.map((item) => {
+              return data.map((item) => {
                 if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
-                } else return null;
+                }
               });
             }
           })}
