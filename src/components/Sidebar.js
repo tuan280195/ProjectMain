@@ -81,7 +81,7 @@ const Sidebar = () => {
   const drawer = (
     <div style={{ color: "#11596f", fontFamily: "inherit" }}>
       <Toolbar>
-        <ListItemButton>
+        <ListItemButton sx={{ maxWidth: "7.5rem" }}>
           <ListItemIcon>
             <LogoutIcon />
           </ListItemIcon>
