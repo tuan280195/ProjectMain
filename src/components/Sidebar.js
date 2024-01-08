@@ -22,6 +22,7 @@ import CustomerDetail from "./CustomerDetail";
 import CaseSearch from "./CaseSearch";
 import CaseDetail from "./CaseDetail";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 360;
 
@@ -32,6 +33,7 @@ const Sidebar = () => {
   const [header, setHeader] = React.useState("Home");
   const [caseId, setCaseDetail] = React.useState("");
   const [customerId, setCustomerDetail] = React.useState("");
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -78,10 +80,15 @@ const Sidebar = () => {
   };
   const hoverChildButton = { ...hoverButton, pl: 4 };
 
+  const logOut = () => {
+    localStorage.removeItem("AuthToken");
+    navigate('/login', { replace: true });
+  };
+  
   const drawer = (
     <div style={{ color: "#11596f", fontFamily: "inherit" }}>
       <Toolbar>
-        <ListItemButton sx={{ maxWidth: "7.5rem" }}>
+        <ListItemButton sx={{ maxWidth: "7.5rem" }} onClick={logOut}>
           <ListItemIcon>
             <LogoutIcon />
           </ListItemIcon>

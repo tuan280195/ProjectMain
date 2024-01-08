@@ -20,30 +20,12 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   const [showAlert, setShowAlert] = useState(false);
   const [deleteItem, setDeleteItem] = useState({
     id: null,
-    customerName: null,
+    name: null,
     phoneNumber: null,
   });
   const [condition, setCondition] = useState({ width: "400px", xs: 12 });
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
-
-  // const getUsers = async () => {
-  //   let isMounted = true;
-  //   const controller = new AbortController();
-  //   try {
-  //     console.log("api/Customer/getAll");
-  //     const response = await axiosPrivate.get("/api/Customer/getAll", {
-  //       signal: controller.signal,
-  //     });
-  //     console.log(response.data);
-  //     isMounted && setUsers(response.data);
-  //   } catch (err) {
-  //     console.error(err);
-  //     navigate("/api/account/login", { state: { from: location }, replace: true });
-  //   }
-  // };
-
-  // getUsers();
 
   const getCustomers = async (e) => {
     setLoading(true);
@@ -54,56 +36,42 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
       searchURL =
         data.customerName && data.phoneNumber
           ? searchURL +
-            `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}`
+          `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}`
           : data.phoneNumber
-          ? searchURL + `?phoneNumber=${data.phoneNumber}`
-          : data.customerName
-          ? searchURL + `?customerName=${data.customerName}`
-          : searchURL;
+            ? searchURL + `?phoneNumber=${data.phoneNumber}`
+            : data.customerName
+              ? searchURL + `?customerName=${data.customerName}`
+              : searchURL;
 
-      console.log("searchURL:" + searchURL);
       const response = await axiosPrivate.get(searchURL, {
         signal: controller.signal,
       });
-
-      let result = [];
-      // response.data.forEach((element) => {
-      //   result.push({
-      //     id: element.id,
-      //     customerName: element.name,
-      //     phoneNumber: element.phoneNumber,
-      //   });
-      // });
       setListItem(response.data); /*set result list item here*/
     } catch (error) {
       console.log(error);
     }
-
     setLoading(false);
   };
 
   const handleClickEdit = (id) => {
     setLoading(true);
-    //call API
-    //save to context
     setHeader("Customer");
     setCustomerDetail(id);
     setLoading(false);
   };
 
-  const handleClickDelete = async () => {
+  const handleClickDelete = async (e) => {
     setLoading(true);
-    try {
-      // call API Delete
-      var deleteURL = "/api/Customer/" + deleteItem.id;
-      await axiosPrivate.delete(deleteURL).then(async (res) => {
-        await getCustomers();
-        setShowAlert(false);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-
+    e.preventDefault();
+    var deleteURL = "/api/Customer/" + deleteItem.id;
+    await axiosPrivate.delete(deleteURL).then(async (res) => {
+      setShowAlert(false);
+      await getCustomers(e);
+      setCondition({ width: "1080px", xs: 4 });
+      setShowList(true);
+    }).catch((error) => {
+      console.log(error)
+    });
     setLoading(false);
   };
 
@@ -122,7 +90,7 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   };
 
   const handleChangePageSize = async (e) => {
-    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, e.target.value,caseSearchState.paginationState.currentPage);
+    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, e.target.value, caseSearchState.paginationState.currentPage);
     await getCustomers(e);
   };
   const handleChangePage = async (e) => {
@@ -132,54 +100,54 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
 
   const Results = () => {
     let totalCount = 0;
-    if(listItem && listItem.totalCount > 0){
-      totalCount = Math.ceil(listItem.totalCount/listItem.pageSize);
+    if (listItem && listItem.totalCount > 0) {
+      totalCount = Math.ceil(listItem.totalCount / listItem.pageSize);
     }
     return (
       <>
-      <Pagination 
-          totalCount={totalCount} 
-          pageSize={caseSearchState.caseDataSearchState.pageSize} 
+        <Pagination
+          totalCount={totalCount}
+          pageSize={caseSearchState.caseDataSearchState.pageSize}
           currentPage={caseSearchState.caseDataSearchState.currentPage}
           handleChangePageSize={handleChangePageSize}
-          handleChangePage={handleChangePage}/>
-      
-      <ul id="results" className="search-results" style={{ marginTop: 10 }}>
-        {listItem && listItem.items.length > 0 ? (
-          listItem.items.map((item, index) => {
-            return (
-              <>
-                <li className="search-result" key={item + "-" + index}>
-                  <Truncate str={item.name} maxLength={20} />
-                  <div className="search-action">
-                    <Link
-                      className="search-delete"
-                      to=""
-                      onClick={() => {
-                        setShowAlert(true);
-                        setDeleteItem(item);
-                      }}
-                    >
-                      Delete
-                    </Link>{" "}
-                    <Link
-                      className="search-edit"
-                      to=""
-                      onClick={() => handleClickEdit(item.id)}
-                    >
-                      Edit
-                    </Link>
-                  </div>
-                </li>
-              </>
-            );
-          })
-        ) : (
-          <li>
-            <p>Not found</p>
-          </li>
-        )}
-      </ul>
+          handleChangePage={handleChangePage} />
+
+        <ul id="results" className="search-results" style={{ marginTop: 10 }}>
+          {listItem && listItem.items.length > 0 ? (
+            listItem.items.map((item, index) => {
+              return (
+                <>
+                  <li className="search-result" key={item + "-" + index}>
+                    <Truncate str={item.name} maxLength={20} />
+                    <div className="search-action">
+                      <Link
+                        className="search-delete"
+                        to=""
+                        onClick={() => {
+                          setShowAlert(true);
+                          setDeleteItem(item);
+                        }}
+                      >
+                        Delete
+                      </Link>{" "}
+                      <Link
+                        className="search-edit"
+                        to=""
+                        onClick={() => handleClickEdit(item.id)}
+                      >
+                        Edit
+                      </Link>
+                    </div>
+                  </li>
+                </>
+              );
+            })
+          ) : (
+            <li>
+              <p>Not found</p>
+            </li>
+          )}
+        </ul>
       </>
     );
   };
@@ -223,8 +191,8 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
       <ConfirmDialog
         open={showAlert}
         closeDialog={() => setShowAlert(false)}
-        item={deleteItem.customerName}
-        deleteFunction={handleClickDelete}
+        item={deleteItem.name}
+        handleFunction={handleClickDelete}
       ></ConfirmDialog>
     </section>
   );

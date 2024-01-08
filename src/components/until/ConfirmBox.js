@@ -2,6 +2,7 @@ import {
   Box,
   Dialog,
   DialogContent,
+  DialogTitle,
   Grid,
   IconButton,
   Typography,
@@ -16,8 +17,8 @@ const ConfirmDialog = ({ open, closeDialog, item, handleFunction, typeDialog = '
       onClose={closeDialog}
       onBackdropClick={closeDialog}
     >
-      <DialogContent sx={{ px: 8, py: 6, position: "relative" }}>
-        <IconButton
+      <DialogTitle>{typeDialog} </DialogTitle>
+      <IconButton
           size="small"
           onClick={closeDialog}
           sx={{
@@ -30,6 +31,7 @@ const ConfirmDialog = ({ open, closeDialog, item, handleFunction, typeDialog = '
         >
           X
         </IconButton>
+      <DialogContent sx={{ px: 8, py: 6, position: "relative" }} style={{paddingTop: "5px"}}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Box
@@ -40,9 +42,9 @@ const ConfirmDialog = ({ open, closeDialog, item, handleFunction, typeDialog = '
                 flexDirection: "column",
               }}
             >
-              <Typography variant="h5">{typeDialog} {item}</Typography>
+              {/* <Typography variant="h5">{typeDialog} {item}</Typography> */}
               <Typography variant="main-body">
-                Are you sure you want to {typeDialog} this {item}?
+                Are you sure you want to {typeDialog} this file <b>{item}?</b>
               </Typography>
             </Box>
           </Grid>
@@ -57,6 +59,7 @@ const ConfirmDialog = ({ open, closeDialog, item, handleFunction, typeDialog = '
               onClick={closeDialog}
             />
             <FormButton
+              
               itemName={typeDialog}
               buttonType="delete"
               onClick={handleFunction}

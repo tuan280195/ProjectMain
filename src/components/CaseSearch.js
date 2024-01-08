@@ -218,7 +218,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         value1={item.value.split("/")[0]}
         value2={item.value.split("/")[1]}
         label={templateItem.keywordName}
-        type={templateItem.typeValue}
+        type={templateItem.typeValue === 'datetime' ? 'daterange' : templateItem.typeValue}
         key={templateItem.order}
         handleInput={(e) => {
           const newState = data.map((value) => {
@@ -279,7 +279,6 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
       a.order > b.order ? 1 : b.order > a.order ? -1 : 0
     );
     const mid = (template.length + 1) / 2;
-    console.log("caseSearchState.keywordsSearchState.keywordValues", caseSearchState.keywordsSearchState.keywordValues);
     return (
       <>
         <Grid item xs={6}>

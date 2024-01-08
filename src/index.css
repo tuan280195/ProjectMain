@@ -151,6 +151,8 @@ errors {
 .section-range {
   display: flex;
   justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
 }
 
 .handle-button {
@@ -203,4 +205,11 @@ input:invalid[focused="true"] {
 
 .tooltipSpan{
   width: 100%;
+}
+
+.preview-file {
+  display: flex;
+  flex-direction: column !important;
+  align-items: center;
+  padding-top: 8px !important;
 }
