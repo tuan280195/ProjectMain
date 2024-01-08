@@ -43,7 +43,6 @@ function GenericItems({ label, type, options, children, ...props }) {
               type="date"
               onChange={props.handleInput1}
               className="section-input"
-              style={{ marginRight: "10px" }}
             ></input>
             <span>〜</span>
             <input
@@ -51,7 +50,6 @@ function GenericItems({ label, type, options, children, ...props }) {
               type="date"
               onChange={props.handleInput2}
               className="section-input"
-              style={{ marginLeft: "10px" }}
             ></input>
           </div>
         </div>
