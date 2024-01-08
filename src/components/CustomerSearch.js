@@ -122,64 +122,73 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   };
 
   const handleChangePageSize = async (e) => {
-    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, e.target.value,caseSearchState.paginationState.currentPage);
+    caseSearchActions.setPaginationState(
+      caseSearchState.paginationState.totalCount,
+      e.target.value,
+      caseSearchState.paginationState.currentPage
+    );
     await getCustomers(e);
   };
   const handleChangePage = async (e) => {
-    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, caseSearchState.paginationState.pageSize, parseInt(e.target.innerText));
+    caseSearchActions.setPaginationState(
+      caseSearchState.paginationState.totalCount,
+      caseSearchState.paginationState.pageSize,
+      parseInt(e.target.innerText)
+    );
     await getCustomers(e);
   };
 
   const Results = () => {
     let totalCount = 0;
-    if(listItem && listItem.totalCount > 0){
-      totalCount = Math.ceil(listItem.totalCount/listItem.pageSize);
+    if (listItem && listItem.totalCount > 0) {
+      totalCount = Math.ceil(listItem.totalCount / listItem.pageSize);
     }
     return (
       <>
-      <Pagination 
-          totalCount={totalCount} 
-          pageSize={caseSearchState.caseDataSearchState.pageSize} 
+        <Pagination
+          totalCount={totalCount}
+          pageSize={caseSearchState.caseDataSearchState.pageSize}
           currentPage={caseSearchState.caseDataSearchState.currentPage}
           handleChangePageSize={handleChangePageSize}
-          handleChangePage={handleChangePage}/>
-      
-      <ul id="results" className="search-results" style={{ marginTop: 10 }}>
-        {listItem && listItem.items.length > 0 ? (
-          listItem.items.map((item, index) => {
-            return (
-              <>
-                <li className="search-result" key={item + "-" + index}>
-                  <Truncate str={item.name} maxLength={20} />
-                  <div className="search-action">
-                    <Link
-                      className="search-delete"
-                      to=""
-                      onClick={() => {
-                        setShowAlert(true);
-                        setDeleteItem(item);
-                      }}
-                    >
-                      Delete
-                    </Link>{" "}
-                    <Link
-                      className="search-edit"
-                      to=""
-                      onClick={() => handleClickEdit(item.id)}
-                    >
-                      Edit
-                    </Link>
-                  </div>
-                </li>
-              </>
-            );
-          })
-        ) : (
-          <li>
-            <p>Not found</p>
-          </li>
-        )}
-      </ul>
+          handleChangePage={handleChangePage}
+        />
+
+        <ul id="results" className="search-results" style={{ marginTop: 10 }}>
+          {listItem && listItem.items.length > 0 ? (
+            listItem.items.map((item, index) => {
+              return (
+                <>
+                  <li className="search-result" key={item + "-" + index}>
+                    <Truncate str={item.name} maxLength={20} />
+                    <div className="search-action">
+                      <Link
+                        className="search-delete"
+                        to=""
+                        onClick={() => {
+                          setShowAlert(true);
+                          setDeleteItem(item);
+                        }}
+                      >
+                        Delete
+                      </Link>{" "}
+                      <Link
+                        className="search-edit"
+                        to=""
+                        onClick={() => handleClickEdit(item.id)}
+                      >
+                        Edit
+                      </Link>
+                    </div>
+                  </li>
+                </>
+              );
+            })
+          ) : (
+            <li>
+              <p>Not found</p>
+            </li>
+          )}
+        </ul>
       </>
     );
   };
@@ -209,7 +218,8 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
           </div>
           <br />
           <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
-            <FormButton itemName="Search" onClick={handleClickSearch} />
+            {/* Search Button */}
+            <FormButton itemName="検索" onClick={handleClickSearch} />
           </Grid>
         </Grid>
         {showList ? (

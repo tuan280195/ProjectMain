@@ -29,7 +29,7 @@ const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [customerOpen, setCustomerOpen] = React.useState(true);
   const [caseOpen, setCaseOpen] = React.useState(true);
-  const [header, setHeader] = React.useState("Home");
+  const [header, setHeader] = React.useState();
   const [caseId, setCaseDetail] = React.useState("");
   const [customerId, setCustomerDetail] = React.useState("");
 
@@ -44,19 +44,19 @@ const Sidebar = () => {
         setCustomerOpen(!customerOpen);
         break;
       case "Search Customer":
-        setHeader(item);
+        setHeader("顧客情報の検索");
         break;
       case "Create Customer":
-        setHeader("Customer");
+        setHeader("顧客情報");
         break;
       case "Case":
         setCaseOpen(!caseOpen);
         break;
       case "Search Case":
-        setHeader(item);
+        setHeader("案件の検索");
         break;
       case "Create Case":
-        setHeader("Case");
+        setHeader("案件情報");
         break;
       default:
         setHeader("Home");
@@ -81,11 +81,11 @@ const Sidebar = () => {
   const drawer = (
     <div style={{ color: "#11596f", fontFamily: "inherit" }}>
       <Toolbar>
-        <ListItemButton sx={{ maxWidth: "7.5rem" }}>
+        <ListItemButton sx={{ maxWidth: "10rem" }}>
           <ListItemIcon>
             <LogoutIcon />
           </ListItemIcon>
-          <ListItemText primary="Log out"></ListItemText>
+          <ListItemText primary="ログアウト"></ListItemText>
         </ListItemButton>
       </Toolbar>
       <Divider />
@@ -109,7 +109,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <SearchIcon />
               </ListItemIcon>
-              <ListItemText primary="Search Customer" />
+              <ListItemText primary="顧客情報の検索" />
             </ListItemButton>
             <ListItemButton
               sx={hoverChildButton}
@@ -118,7 +118,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <AddBusinessIcon />
               </ListItemIcon>
-              <ListItemText primary="Create Customer" />
+              <ListItemText primary="顧客情報の新規作成" />
             </ListItemButton>
           </List>
         </Collapse>
@@ -128,7 +128,7 @@ const Sidebar = () => {
           <ListItemIcon>
             <BusinessCenterIcon />
           </ListItemIcon>
-          <ListItemText primary="Case"></ListItemText>
+          <ListItemText primary="案件管理"></ListItemText>
           {caseOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={caseOpen} timeout="auto" unmountOnExit>
@@ -140,7 +140,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <SearchIcon />
               </ListItemIcon>
-              <ListItemText primary="Search Case" />
+              <ListItemText primary="案件の検索" />
             </ListItemButton>
             <ListItemButton
               sx={hoverChildButton}
@@ -149,7 +149,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <AddBusinessIcon />
               </ListItemIcon>
-              <ListItemText primary="Create Case" />
+              <ListItemText primary="案件の新規作成" />
             </ListItemButton>
           </List>
         </Collapse>
@@ -236,17 +236,17 @@ const Sidebar = () => {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        {header === "Search Customer" && (
+        {header === "顧客情報の検索" && (
           <CustomerSearch
             setHeader={setHeader}
             setCustomerDetail={setCustomerDetail}
           />
         )}
-        {header === "Customer" && <CustomerDetail customerId={customerId} />}
-        {header === "Search Case" && (
+        {header === "顧客情報" && <CustomerDetail customerId={customerId} />}
+        {header === "案件の検索" && (
           <CaseSearch setHeader={setHeader} setCaseDetail={setCaseDetail} />
         )}
-        {header === "Case" && <CaseDetail caseId={caseId} />}
+        {header === "案件情報" && <CaseDetail caseId={caseId} />}
       </Box>
     </Box>
   );

@@ -45,7 +45,6 @@ const CaseDetail = ({ caseId }) => {
     setLoading(false);
   }, []);
 
-  
   const validateForm = () => {
     let errors = [];
 
@@ -76,17 +75,21 @@ const CaseDetail = ({ caseId }) => {
     setLoading(true);
     let templateURL = "/api/Template/template";
     // call API get template
-    await axiosPrivate.get(templateURL, {
-      signal: controller.signal,
-    }).then((response) => {
-      let filteredTemplateKW = response.data.keywords.filter(x => x.searchable);
-      filteredTemplateKW.forEach(element => {
-        element.value = ""
-      });
-      setTemplate(filteredTemplateKW);
-      setData(filteredTemplateKW)
-    })
-      .catch(error => {
+    await axiosPrivate
+      .get(templateURL, {
+        signal: controller.signal,
+      })
+      .then((response) => {
+        let filteredTemplateKW = response.data.keywords.filter(
+          (x) => x.searchable
+        );
+        filteredTemplateKW.forEach((element) => {
+          element.value = "";
+        });
+        setTemplate(filteredTemplateKW);
+        setData(filteredTemplateKW);
+      })
+      .catch((error) => {
         console.log(error);
       });
 
@@ -97,19 +100,21 @@ const CaseDetail = ({ caseId }) => {
     setLoading(true);
     let templateURL = `/api/Case?caseId=${caseId}`;
     // call API get template
-    await axiosPrivate.get(templateURL, {
-      validateStatus: function (status) {
-        console.log(status)
-        return status < 500; // Resolve only if the status code is less than 500
-      }
-    }).then((response) => {
-      setCaseIdAndName({
-        "caseId": response.data.caseId,
-        "caseName": response.data.caseName
-      });
-      setData(response.data.caseKeywordValues)
-    })
-      .catch(error => {
+    await axiosPrivate
+      .get(templateURL, {
+        validateStatus: function (status) {
+          console.log(status);
+          return status < 500; // Resolve only if the status code is less than 500
+        },
+      })
+      .then((response) => {
+        setCaseIdAndName({
+          caseId: response.data.caseId,
+          caseName: response.data.caseName,
+        });
+        setData(response.data.caseKeywordValues);
+      })
+      .catch((error) => {
         console.log(error);
       });
 
@@ -131,38 +136,50 @@ const CaseDetail = ({ caseId }) => {
     } else {
       console.log("OK.");
     }
-    
+
     let caseCreateURL = "/api/Case";
     if (caseIdName.caseId) {
       let payload = {
-        "caseId": caseIdName.caseId,
-        "keywordValues": data
-      }
-      console.log(axiosPrivate)
-      await axiosPrivate.put(caseCreateURL, payload, {
-        signal: controller.signal,
-      }).then((response) => {
-        console.log(response);
-        setSnackbar({ isOpen: true, status: "success", message: "Update Case successfuly!" });
-        setDisableAttach(false);
-        return response;
-      })
+        caseId: caseIdName.caseId,
+        keywordValues: data,
+      };
+      console.log(axiosPrivate);
+      await axiosPrivate
+        .put(caseCreateURL, payload, {
+          signal: controller.signal,
+        })
+        .then((response) => {
+          console.log(response);
+          setSnackbar({
+            isOpen: true,
+            status: "success",
+            message: "Update Case successfuly!",
+          });
+          setDisableAttach(false);
+          return response;
+        })
         .catch((error) => {
           console.log(error);
         });
     } else {
       let payload = {
-        "keywordValues": data
-      }
-      console.log(axiosPrivate)
-      await axiosPrivate.post(caseCreateURL, payload, {
-        signal: controller.signal,
-      }).then((response) => {
-        console.log(response);
-        setSnackbar({ isOpen: true, status: "success", message: "Create Case successfuly!" });
-        setDisableAttach(false);
-        return response;
-      })
+        keywordValues: data,
+      };
+      console.log(axiosPrivate);
+      await axiosPrivate
+        .post(caseCreateURL, payload, {
+          signal: controller.signal,
+        })
+        .then((response) => {
+          console.log(response);
+          setSnackbar({
+            isOpen: true,
+            status: "success",
+            message: "Create Case successfuly!",
+          });
+          setDisableAttach(false);
+          return response;
+        })
         .catch((error) => {
           console.log(error);
         });
@@ -172,19 +189,21 @@ const CaseDetail = ({ caseId }) => {
 
   const getFileTypes = async () => {
     let getFileTypesURL = "/api/FileType?pageSize=25&pageNumber=1";
-    await axiosPrivate.get(getFileTypesURL, {
-      signal: controller.signal,
-    }).then((response) => {
-      let options = [];
-      response.data.forEach(function (item) {
-        options.push({
-          "id": item.id,
-          "label": item.name
-        });
+    await axiosPrivate
+      .get(getFileTypesURL, {
+        signal: controller.signal,
       })
-      setOptionFileType(options);
-      return response;
-    })
+      .then((response) => {
+        let options = [];
+        response.data.forEach(function (item) {
+          options.push({
+            id: item.id,
+            label: item.name,
+          });
+        });
+        setOptionFileType(options);
+        return response;
+      })
       .catch((error) => {
         console.log(error);
       });
@@ -210,7 +229,7 @@ const CaseDetail = ({ caseId }) => {
               return { ...value, value: e.target.value };
             } else return { ...value };
           });
-          console.log("dynamicGenerate newState", newState)
+          console.log("dynamicGenerate newState", newState);
           setData(newState);
         }}
         // using for date range
@@ -257,19 +276,19 @@ const CaseDetail = ({ caseId }) => {
       a.order > b.order ? 1 : b.order > a.order ? -1 : 0
     );
     const mid = template.length / 2;
-    console.log("generateCode dataa", data)
+    console.log("generateCode dataa", data);
     return (
       <>
         <Grid item xs={12}>
-          <strong><h2 style={{ margin: '1px' }}>{caseIdName.caseName}</h2></strong>
+          <strong>
+            <h2 style={{ margin: "1px" }}>{caseIdName.caseName}</h2>
+          </strong>
         </Grid>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
-            if(index + 1 <= mid && templateItem.keywordName !== "Note"){
+            if (index + 1 <= mid && templateItem.keywordName !== "Note") {
               return data.map((item) => {
-                if (
-                  item.keywordId === templateItem.keywordId
-                ) {
+                if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
                 }
               });
@@ -278,11 +297,9 @@ const CaseDetail = ({ caseId }) => {
         </Grid>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
-            if(index + 1 > mid && templateItem.keywordName !== "Note"){
+            if (index + 1 > mid && templateItem.keywordName !== "Note") {
               return data.map((item) => {
-                if (
-                  item.keywordId === templateItem.keywordId
-                ) {
+                if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
                 }
               });
@@ -300,7 +317,7 @@ const CaseDetail = ({ caseId }) => {
               }
             });
           })}
-      </Grid>
+        </Grid>
       </>
     );
   };
@@ -313,14 +330,17 @@ const CaseDetail = ({ caseId }) => {
           <Grid item xs={12}>
             {/* <span>attached 3 files</span> */}
             <div className="handle-button">
-                <FormButton
-                  itemName="Attach"
-                  buttonType="attach"
-                  titleContent={disableAttach? "Please Create Case Before Attach File!": ""}
-                  onClick={handleAttach}
-                  disabled={disableAttach}
-                />
-              <FormButton itemName="Save" type="submit" />
+              <FormButton
+                itemName="関連書類"
+                buttonType="attach"
+                titleContent={
+                  disableAttach ? "Please Create Case Before Attach File!" : ""
+                }
+                onClick={handleAttach}
+                disabled={disableAttach}
+              />
+              {/* Save Button */}
+              <FormButton itemName="保存" type="submit" />
             </div>
           </Grid>
         </Grid>

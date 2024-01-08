@@ -12,7 +12,15 @@ import { useState, useEffect } from "react";
 import Truncate from "./Truncate";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFunction, caseId }) => {
+const DialogHandle = ({
+  title,
+  open,
+  closeDialog,
+  item,
+  optionFileType,
+  handleFunction,
+  caseId,
+}) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [loading, setLoading] = useState(false);
@@ -20,24 +28,26 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
   const [listItem, setListItem] = useState([]);
   useEffect(async () => {
     setListItem([]);
-    if(caseId){
+    if (caseId) {
       await getFilesOfCase();
     }
   }, []);
 
   const getFilesOfCase = async () => {
     let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseId}`;
-    await axiosPrivate.get(getFilesUploadURL, {
-      signal: controller.signal,
-    }).then((response) => {
-      setListItem(response.data);
-      return response;
-    })
+    await axiosPrivate
+      .get(getFilesUploadURL, {
+        signal: controller.signal,
+      })
+      .then((response) => {
+        setListItem(response.data);
+        return response;
+      })
       .catch((error) => {
         console.log(error);
       });
   };
-  
+
   const uploadFunction = async (event) => {
     setLoading(true);
     event.preventDefault();
@@ -50,7 +60,7 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
 
     await axiosPrivate
       .post("/api/FileUpload/Upload", formData)
-      .then(async (response)  => {
+      .then(async (response) => {
         await getFilesOfCase();
         console.log(response);
       })
@@ -95,7 +105,14 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
         </IconButton>
         <Grid container spacing={5}>
           <Grid item xs={4}>
-            <Upload optionFileType={optionFileType} caseId={caseId} uploadFunction={uploadFunction} handleSelectedFileType={handleSelectedFileType} handleInputFileName={handleInputFileName} handleFileChange={handleFileChange} />
+            <Upload
+              optionFileType={optionFileType}
+              caseId={caseId}
+              uploadFunction={uploadFunction}
+              handleSelectedFileType={handleSelectedFileType}
+              handleInputFileName={handleInputFileName}
+              handleFileChange={handleFileChange}
+            />
           </Grid>
           <Grid item xs={8}>
             <ul
@@ -113,23 +130,21 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
                         style={{ padding: "10px" }}
                       ></Truncate>
                       <div className="search-action">
-                        {
-                          item.isImage && (
-                            <Button
-                              className="search-delete"
-                              onClick={() => {
-                                // setShowAlert(true);
-                                // setDeleteItem(item);
-                              }}
-                            >
-                              View
-                            </Button>
-                          )
-                        }
+                        {item.isImage && (
+                          <Button
+                            className="search-delete"
+                            onClick={() => {
+                              // setShowAlert(true);
+                              // setDeleteItem(item);
+                            }}
+                          >
+                            View
+                          </Button>
+                        )}
 
                         <Button
                           className="search-edit"
-                        // onClick={() => handleClickEdit(item.id)}
+                          // onClick={() => handleClickEdit(item.id)}
                         >
                           Delete
                         </Button>
@@ -145,7 +160,7 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
             </ul>
           </Grid>
         </Grid>
-      <LoadingSpinner loading={loading}></LoadingSpinner>
+        <LoadingSpinner loading={loading}></LoadingSpinner>
       </DialogContent>
     </Dialog>
   );
