@@ -11,23 +11,33 @@ import {
 import { useState, useEffect } from "react";
 import Truncate from "./Truncate";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import CircularProgress from "@mui/material/CircularProgress";
+import ConfirmDialog from "./ConfirmBox";
 
 const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFunction, caseId }) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [loading, setLoading] = useState(false);
-  let dataUpload = {};
+  const [loadingFile, setLoadingFile] = useState(false);
   const [listItem, setListItem] = useState([]);
   const [urlPreviewImg, setUrlPreviewImg] = useState({ blobUrl: "", fileName: "" });
+  const [fileDelete, setFileDelete] = useState({});
+  const [showAlert, setShowAlert] = useState(false);
+  let dataUpload = {};
   useEffect(async () => {
     setListItem([]);
+    setLoading(false);
+    setLoadingFile(false);
     setUrlPreviewImg({ blobUrl: "", fileName: "" })
+    setFileDelete({});
+    setShowAlert(false);
     if (caseId) {
       await getFilesOfCase();
     }
   }, []);
 
   const getFilesOfCase = async () => {
+    setLoadingFile(true);
     let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseId}`;
     await axiosPrivate.get(getFilesUploadURL, {
       signal: controller.signal,
@@ -38,6 +48,7 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
       .catch((error) => {
         console.log(error);
       });
+    setLoadingFile(false);
   };
 
   const uploadFunction = async (event) => {
@@ -73,12 +84,15 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
   const handleFileChange = (e) => {
     dataUpload.fileToUpload = e.target.files[0];
   };
-
   const viewOrDownloadFile = async (item) => {
     setLoading(true);
-    let getFileUrl = `/api/FileUpload/Download?filename=${item.fileName}&caseId=${caseId}`
+    let getFileUrl = `/api/FileUpload/Download`
+    let payload = {
+      fileName: item.fileName,
+      caseId: caseId
+    }
     await axiosPrivate
-      .get(getFileUrl)
+      .post(getFileUrl, payload)
       .then(async (response) => {
         const byteArray = Uint8Array.from(
           atob(response.data)
@@ -101,7 +115,23 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
       });
     setLoading(false);
   }
-
+  const handleClickDelete = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+    let deleteFileUrl = `/api/FileUpload/Delete`
+    let payload = fileDelete;
+    payload.caseId = caseId;
+    await axiosPrivate
+      .put(deleteFileUrl, payload)
+      .then(async (response) => {
+        await getFilesOfCase();
+        setShowAlert(false);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    setLoading(false);
+  };
   return (
     <Dialog
       fullWidth={true}
@@ -111,20 +141,20 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
       maxWidth="xl"
     >
       <DialogTitle>{title}</DialogTitle>
-      <DialogContent sx={{ px: 4, py: 6, position: "relative" }}>
-        <IconButton
-          size="small"
-          onClick={closeDialog}
-          sx={{
-            position: "absolute",
-            right: "1rem",
-            top: "0.5rem",
-            width: "2rem",
-            height: "2rem",
-          }}
-        >
-          X
-        </IconButton>
+      <IconButton
+        size="small"
+        onClick={closeDialog}
+        sx={{
+          position: "absolute",
+          right: "5px",
+          top: "5px",
+          width: "2rem",
+          height: "2rem",
+        }}
+      >
+        X
+      </IconButton>
+      <DialogContent sx={{ px: 4, py: 6, position: "relative" }} style={{ paddingTop: "5px" }}>
         <Grid container spacing={5}>
           <Grid item xs={4}>
             <Upload optionFileType={optionFileType} caseId={caseId} uploadFunction={uploadFunction} handleSelectedFileType={handleSelectedFileType} handleInputFileName={handleInputFileName} handleFileChange={handleFileChange} />
@@ -155,7 +185,10 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
                         </Button>
                         <Button
                           className="search-edit"
-                        // onClick={() => handleClickEdit(item.id)}
+                          onClick={() => {
+                            setFileDelete(item);
+                            setShowAlert(true);
+                          }}
                         >
                           Delete
                         </Button>
@@ -164,11 +197,14 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
                   );
                 })
               ) : (
-                <li>
-                  <p>Not Found!</p>
+                <li style={{ textAlign: "center" }}>
+                  {loadingFile ? (
+                    <CircularProgress />
+                  ) : (<p>Not Found!</p>)}
                 </li>
               )}
             </ul>
+
           </Grid>
           {urlPreviewImg.blobUrl && (
             <Grid item xs={12} className="preview-file">
@@ -178,6 +214,13 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
           )}
 
         </Grid>
+        <ConfirmDialog
+          open={showAlert}
+          closeDialog={() => setShowAlert(false)}
+          item={fileDelete.fileName}
+          handleFunction={handleClickDelete}
+          typeDialog='Delete'
+        ></ConfirmDialog>
         <LoadingSpinner loading={loading}></LoadingSpinner>
       </DialogContent>
     </Dialog>
