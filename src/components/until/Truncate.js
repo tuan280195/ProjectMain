@@ -1,7 +1,7 @@
 function Truncate(propString) {
   function truncate(str) {
-    return str && str.length > propString.maxlength
-      ? str.substring(0, propString.maxlength - 3) + "..."
+    return str && str.length > propString.maxLength
+      ? str.substring(0, propString.maxLength - 3) + "..."
       : str;
   }
 

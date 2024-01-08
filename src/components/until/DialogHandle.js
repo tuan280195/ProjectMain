@@ -18,9 +18,11 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
   const [loading, setLoading] = useState(false);
   let dataUpload = {};
   const [listItem, setListItem] = useState([]);
+  const [urlPreviewImg, setUrlPreviewImg] = useState({ blobUrl: "", fileName: "" });
   useEffect(async () => {
     setListItem([]);
-    if(caseId){
+    setUrlPreviewImg({ blobUrl: "", fileName: "" })
+    if (caseId) {
       await getFilesOfCase();
     }
   }, []);
@@ -37,9 +39,10 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
         console.log(error);
       });
   };
-  
+
   const uploadFunction = async (event) => {
     setLoading(true);
+    setUrlPreviewImg({});
     event.preventDefault();
 
     const formData = new FormData();
@@ -50,7 +53,7 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
 
     await axiosPrivate
       .post("/api/FileUpload/Upload", formData)
-      .then(async (response)  => {
+      .then(async (response) => {
         await getFilesOfCase();
         console.log(response);
       })
@@ -70,6 +73,35 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
   const handleFileChange = (e) => {
     dataUpload.fileToUpload = e.target.files[0];
   };
+
+  const viewOrDownloadFile = async (item) => {
+    setLoading(true);
+    let getFileUrl = `/api/FileUpload/Download?filename=${item.fileName}&caseId=${caseId}`
+    await axiosPrivate
+      .get(getFileUrl)
+      .then(async (response) => {
+        const byteArray = Uint8Array.from(
+          atob(response.data)
+            .split('')
+            .map(char => char.charCodeAt(0))
+        );
+        const blob = new Blob([byteArray], { type: response.headers["content-type"] });
+        const blobUrl = window.URL.createObjectURL(blob);
+        if (!item.isImage) {
+          const link = document.createElement('a');
+          link.href = blobUrl
+          link.download = item.fileName;
+          link.click();
+        } else {
+          setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.fileName })
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    setLoading(false);
+  }
+
   return (
     <Dialog
       fullWidth={true}
@@ -109,24 +141,18 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
                     <li className="search-result" key={item.keywordId}>
                       <Truncate
                         str={item.fileName}
-                        maxLength={15}
+                        maxLength={20}
                         style={{ padding: "10px" }}
-                      ></Truncate>
+                      />
                       <div className="search-action">
-                        {
-                          item.isImage && (
-                            <Button
-                              className="search-delete"
-                              onClick={() => {
-                                // setShowAlert(true);
-                                // setDeleteItem(item);
-                              }}
-                            >
-                              View
-                            </Button>
-                          )
-                        }
-
+                        <Button
+                          className="search-delete"
+                          onClick={async () => {
+                            await viewOrDownloadFile(item);
+                          }}
+                        >
+                          {item.isImage ? 'View' : 'Download'}
+                        </Button>
                         <Button
                           className="search-edit"
                         // onClick={() => handleClickEdit(item.id)}
@@ -144,8 +170,15 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
               )}
             </ul>
           </Grid>
+          {urlPreviewImg.blobUrl && (
+            <Grid item xs={12} className="preview-file">
+              <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>Download Image</a>
+              <img src={urlPreviewImg.blobUrl} style={{ width: "25%" }} />
+            </Grid>
+          )}
+
         </Grid>
-      <LoadingSpinner loading={loading}></LoadingSpinner>
+        <LoadingSpinner loading={loading}></LoadingSpinner>
       </DialogContent>
     </Dialog>
   );
