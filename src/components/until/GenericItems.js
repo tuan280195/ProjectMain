@@ -45,7 +45,7 @@ function GenericItems({ label, type, options, children, ...props }) {
               className="section-input"
               style={{ marginRight: "10px" }}
             ></input>
-            -
+            <span>〜</span>
             <input
               value={props.value2}
               type="date"
