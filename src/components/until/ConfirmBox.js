@@ -9,7 +9,14 @@ import {
 } from "@mui/material";
 import FormButton from "./FormButton";
 
-const ConfirmDialog = ({ open, closeDialog, item, handleFunction, typeDialog = 'Delete'}) => {
+const ConfirmDialog = ({
+  open,
+  closeDialog,
+  item,
+  handleFunction,
+  typeDialog = "削除",
+  mainContent = "案件を削除すると、関連データ、添付書類、写真データの情報がすべて失われます。本当に削除しますか？",
+}) => {
   return (
     <Dialog
       fullWidth
@@ -46,6 +53,7 @@ const ConfirmDialog = ({ open, closeDialog, item, handleFunction, typeDialog = '
               <Typography variant="main-body">
                 Are you sure you want to {typeDialog} this file <b>{item}?</b>
               </Typography>
+              <Typography variant="main-body">{mainContent}</Typography>
             </Box>
           </Grid>
           <Grid
@@ -54,12 +62,12 @@ const ConfirmDialog = ({ open, closeDialog, item, handleFunction, typeDialog = '
             sx={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
           >
             <FormButton
-              itemName="Cancel"
+              itemName="取消"
               buttonType="cancel"
               onClick={closeDialog}
             />
             <FormButton
-              
+
               itemName={typeDialog}
               buttonType="delete"
               onClick={handleFunction}

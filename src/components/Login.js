@@ -3,6 +3,7 @@ import useAuth from "../hooks/useAuth";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import axios from "../api/axios";
+import FormButton from "./until/FormButton";
 const LOGIN_URL = "/api/Account/login";
 
 const Login = () => {
@@ -82,7 +83,7 @@ const Login = () => {
       </p>
       <h1>Sign In</h1>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="username">Username:</label>
+        <label htmlFor="username">ユーザー名:</label>
         <input
           type="text"
           id="username"
@@ -93,7 +94,7 @@ const Login = () => {
           required
         />
         <label htmlFor="password" style={{ marginTop: "1rem" }}>
-          Password:
+          パスワード:
         </label>
         <input
           type="password"
@@ -102,15 +103,17 @@ const Login = () => {
           value={password}
           required
         />
-        <button>Sign In</button>
+        <br />
+        {/* <button>ログイン</button> */}
+        <FormButton itemName="ログイン" type="submit" />
       </form>
-      <p>
+      {/* <p>
         Need an Account?
         <br />
         <span className="line">
           <Link to="/register">Sign Up</Link>
         </span>
-      </p>
+      </p> */}
     </section>
   );
 };

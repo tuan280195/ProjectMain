@@ -11,10 +11,10 @@ import { Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 
 const ROLES = {
-  User: 'User',
-  Editor: 'Editor',
-  Admin: 'Admin',
-  SuperAdmin: 'SuperAdmin',
+  User: "User",
+  Editor: "Editor",
+  Admin: "Admin",
+  SuperAdmin: "SuperAdmin",
 };
 
 function App() {
@@ -27,14 +27,6 @@ function App() {
         <Route path="linkpage" element={<LinkPage />} />
         <Route path="unauthorized" element={<Unauthorized />} />
         <Route path="/main" element={<Sidebar />} />
-        {/* <Route path="customersearch" element={<CustomerSearch />} />
-        <Route path="customerdetail" element={<CustomerDetail />} /> */}
-
-        {/* we want to protect these routes */}
-        {/* <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
-          <Route path="/" element={<Home />} />
-        </Route> */}
-
         <Route
           element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.User]} />}
         >
