@@ -59,15 +59,14 @@ const FormButton = ({ itemName, buttonType = "normal", ...props }) => {
     border: "none",
     width: "100%",
   };
-  
-  return (
 
-    <Tooltip title={props.titleContent} placement="top" className="required-icon">
+  return (
+    <Tooltip title={props.titleContent} placement="top">
       <span className="tooltipSpan">
-      <Button sx={styleButton} {...props}>
-      {itemName}
-    </Button>
-    </span>
+        <Button sx={styleButton} {...props}>
+          {itemName}
+        </Button>
+      </span>
     </Tooltip>
   );
 };

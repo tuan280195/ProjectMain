@@ -49,18 +49,22 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     // call API get template
     setLoading(true);
     let templateURL = "/api/Template/template";
-    await axiosPrivate.get(templateURL, {
-      signal: controller.signal,
-    }).then((response) => {
-      response.data.keywords = response.data.keywords.filter(x => x.searchable);
-      response.data.keywords.forEach(element => {
-        element.value = ""
-      });
-      setTemplate(response.data.keywords);
-      caseSearchActions.setKeywordsSearchState(response.data.keywords);
-      setData(response.data.keywords)
-    })
-      .catch(error => {
+    await axiosPrivate
+      .get(templateURL, {
+        signal: controller.signal,
+      })
+      .then((response) => {
+        response.data.keywords = response.data.keywords.filter(
+          (x) => x.searchable
+        );
+        response.data.keywords.forEach((element) => {
+          element.value = "";
+        });
+        setTemplate(response.data.keywords);
+        caseSearchActions.setKeywordsSearchState(response.data.keywords);
+        setData(response.data.keywords);
+      })
+      .catch((error) => {
         console.log(error.response);
       });
 
@@ -72,21 +76,30 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     const payload = {
       keywordValues: caseSearchState.keywordsSearchState.keywordValues,
       pageSize: caseSearchState.paginationState.pageSize,
-      pageNumber: caseSearchState.paginationState.currentPage
-    }
-    let payloadFilterd = caseSearchState.keywordsSearchState.keywordValues.filter(n => n.value);
+      pageNumber: caseSearchState.paginationState.currentPage,
+    };
+    let payloadFilterd =
+      caseSearchState.keywordsSearchState.keywordValues.filter((n) => n.value);
     payload.keywordValues = payloadFilterd;
     // caseSearchActions.setKeywordsSearchState(payloadFilterd);
     setShowList(false);
-    axiosPrivate.post(searchCaseUrl, payload).then((response) => {
-      console.log(response.data)
-      caseSearchActions.setPaginationState(response.data.totalCount, response.data.pageSize, response.data.currentPage)
-      caseSearchActions.setCaseDataSearchState(response.data.items)
-      console.log('caseSearchState.caseDataSearchState----', caseSearchState.caseDataSearchState)
-      // setSearchData(response.data)
-      setShowList(true);
-
-    })
+    axiosPrivate
+      .post(searchCaseUrl, payload)
+      .then((response) => {
+        console.log(response.data);
+        caseSearchActions.setPaginationState(
+          response.data.totalCount,
+          response.data.pageSize,
+          response.data.currentPage
+        );
+        caseSearchActions.setCaseDataSearchState(response.data.items);
+        console.log(
+          "caseSearchState.caseDataSearchState----",
+          caseSearchState.caseDataSearchState
+        );
+        // setSearchData(response.data)
+        setShowList(true);
+      })
       .catch((error) => {
         console.log(error);
       });
@@ -113,12 +126,14 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
 
     const closeCaseUrl = `/api/Case/Close?caseId=${caseIdClose}`;
     const payload = {
-      caseId: caseIdClose
-    }
+      caseId: caseIdClose,
+    };
 
-    axiosPrivate.post(closeCaseUrl, payload).then(async (response) => {
-      await getCaseList();
-    })
+    axiosPrivate
+      .post(closeCaseUrl, payload)
+      .then(async (response) => {
+        await getCaseList();
+      })
       .catch((error) => {
         console.log(error);
       });
@@ -126,89 +141,112 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
   };
 
   const handleChangePageSize = async (e) => {
-    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, e.target.value, caseSearchState.paginationState.currentPage);
+    caseSearchActions.setPaginationState(
+      caseSearchState.paginationState.totalCount,
+      e.target.value,
+      caseSearchState.paginationState.currentPage
+    );
     await getCaseList();
   };
   const handleChangePage = async (e) => {
-    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, caseSearchState.paginationState.pageSize, parseInt(e.target.innerText));
+    caseSearchActions.setPaginationState(
+      caseSearchState.paginationState.totalCount,
+      caseSearchState.paginationState.pageSize,
+      parseInt(e.target.innerText)
+    );
     await getCaseList();
   };
   const Results = () => {
     let totalCount = 0;
-    console.log("caseSearchState.caseDataSearchState", caseSearchState.caseDataSearchState)
-    if (caseSearchState.caseDataSearchState && caseSearchState.caseDataSearchState.totalCount > 0) {
-      totalCount = Math.ceil(caseSearchState.caseDataSearchState.totalCount / caseSearchState.caseDataSearchState.pageSize)
+    console.log(
+      "caseSearchState.caseDataSearchState",
+      caseSearchState.caseDataSearchState
+    );
+    if (
+      caseSearchState.caseDataSearchState &&
+      caseSearchState.caseDataSearchState.totalCount > 0
+    ) {
+      totalCount = Math.ceil(
+        caseSearchState.caseDataSearchState.totalCount /
+          caseSearchState.caseDataSearchState.pageSize
+      );
     }
-    return (
-      caseSearchState.caseDataSearchState && caseSearchState.caseDataSearchState.totalCount > 0 ? (
-        <>
-          <Pagination
-            totalCount={totalCount}
-            pageSize={caseSearchState.caseDataSearchState.pageSize}
-            currentPage={caseSearchState.caseDataSearchState.currentPage}
-            handleChangePageSize={handleChangePageSize}
-            handleChangePage={handleChangePage} />
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Case Name</TableCell>
-                  {
-                    caseSearchState.caseDataSearchState.items[0].caseKeywordValues.length > 0 && caseSearchState.caseDataSearchState.items[0].caseKeywordValues.map((item) => {
+    return caseSearchState.caseDataSearchState &&
+      caseSearchState.caseDataSearchState.totalCount > 0 ? (
+      <>
+        <Pagination
+          totalCount={totalCount}
+          pageSize={caseSearchState.caseDataSearchState.pageSize}
+          currentPage={caseSearchState.caseDataSearchState.currentPage}
+          handleChangePageSize={handleChangePageSize}
+          handleChangePage={handleChangePage}
+        />
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Case Name</TableCell>
+                {caseSearchState.caseDataSearchState.items[0].caseKeywordValues
+                  .length > 0 &&
+                  caseSearchState.caseDataSearchState.items[0].caseKeywordValues.map(
+                    (item) => {
                       return (
-                        (item.isShowOnCaseList) && (
+                        item.isShowOnCaseList && (
                           <TableCell>{item.keywordName}</TableCell>
                         )
-                      )
-                    })
-                  }
-                  <TableCell align="center">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {caseSearchState.caseDataSearchState.items.map((row) => {
-                  return (
-                    <TableRow
-                      key={row.caseId}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell>
-                        <Truncate str={row.caseName} maxlength={15} />
-                      </TableCell>
-                      {row.caseKeywordValues.length > 0 && row.caseKeywordValues.map((item) => {
-
+                      );
+                    }
+                  )}
+                <TableCell align="center">Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {caseSearchState.caseDataSearchState.items.map((row) => {
+                return (
+                  <TableRow
+                    key={row.caseId}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell>
+                      <Truncate str={row.caseName} maxlength={15} />
+                    </TableCell>
+                    {row.caseKeywordValues.length > 0 &&
+                      row.caseKeywordValues.map((item) => {
                         return (
-                          (item.isShowOnCaseList) && (
+                          item.isShowOnCaseList && (
                             <TableCell>
                               <Truncate str={item.value} />
-                            </TableCell>)
-                        )
+                            </TableCell>
+                          )
+                        );
                       })}
-                      <TableCell align="center">
-                        <Button
-                          className="search-close"
-                          onClick={() => {
-                            setShowAlert(true);
-                            setCloseCase(row.caseId);
-                          }}
-                        >
-                          Close
-                        </Button>
-                        <Button
-                          className="search-edit"
-                          onClick={() => handleClickEdit(row.caseId)}
-                        >
-                          Edit
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      ): (<h3>Not Found!</h3>));
+                    <TableCell align="center">
+                      <Button
+                        className="search-close"
+                        onClick={() => {
+                          setShowAlert(true);
+                          setCloseCase(row.caseId);
+                        }}
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        className="search-edit"
+                        onClick={() => handleClickEdit(row.caseId)}
+                      >
+                        Edit
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </>
+    ) : (
+      <h3>Not Found!</h3>
+    );
   };
 
   const dynamicGenerate = (item, templateItem) => {
@@ -233,7 +271,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
           //   } else return { ...value };
           // });
 
-          console.log(newState)
+          console.log(newState);
           //caseSearchState.keywordsSearchState.keywordValues = newState;
           caseSearchActions.setKeywordsSearchState(newState);
           setData(newState);
@@ -260,7 +298,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
           setData(newState);
         }}
         handleInput3={(e) => {
-          console.log(e.target.outerText)
+          console.log(e.target.outerText);
           const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.outerText };
@@ -321,10 +359,8 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
           xs={12}
           style={{ display: "flex", justifyContent: "center" }}
         >
-          <FormButton
-            onClick={handleClickSearch}
-            itemName="Search"
-          ></FormButton>
+          {/* Search Button */}
+          <FormButton onClick={handleClickSearch} itemName="検索"></FormButton>
         </Grid>
       </Grid>
 
@@ -334,7 +370,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         closeDialog={() => setShowAlert(false)}
         item={deleteItem.customerName}
         handleFunction={confirmCloseCase}
-        typeDialog='Close'
+        typeDialog="Close"
       ></ConfirmDialog>
     </section>
   );

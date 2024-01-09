@@ -14,7 +14,15 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import CircularProgress from "@mui/material/CircularProgress";
 import ConfirmDialog from "./ConfirmBox";
 
-const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFunction, caseId }) => {
+const DialogHandle = ({
+  title,
+  open,
+  closeDialog,
+  item,
+  optionFileType,
+  handleFunction,
+  caseId,
+}) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [loading, setLoading] = useState(false);
@@ -39,12 +47,14 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
   const getFilesOfCase = async () => {
     setLoadingFile(true);
     let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseId}`;
-    await axiosPrivate.get(getFilesUploadURL, {
-      signal: controller.signal,
-    }).then((response) => {
-      setListItem(response.data);
-      return response;
-    })
+    await axiosPrivate
+      .get(getFilesUploadURL, {
+        signal: controller.signal,
+      })
+      .then((response) => {
+        setListItem(response.data);
+        return response;
+      })
       .catch((error) => {
         console.log(error);
       });
@@ -157,7 +167,14 @@ const DialogHandle = ({ title, open, closeDialog, item, optionFileType, handleFu
       <DialogContent sx={{ px: 4, py: 6, position: "relative" }} style={{ paddingTop: "5px" }}>
         <Grid container spacing={5}>
           <Grid item xs={4}>
-            <Upload optionFileType={optionFileType} caseId={caseId} uploadFunction={uploadFunction} handleSelectedFileType={handleSelectedFileType} handleInputFileName={handleInputFileName} handleFileChange={handleFileChange} />
+            <Upload
+              optionFileType={optionFileType}
+              caseId={caseId}
+              uploadFunction={uploadFunction}
+              handleSelectedFileType={handleSelectedFileType}
+              handleInputFileName={handleInputFileName}
+              handleFileChange={handleFileChange}
+            />
           </Grid>
           <Grid item xs={8}>
             <ul

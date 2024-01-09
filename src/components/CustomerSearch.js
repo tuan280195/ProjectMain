@@ -90,11 +90,19 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   };
 
   const handleChangePageSize = async (e) => {
-    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, e.target.value, caseSearchState.paginationState.currentPage);
+    caseSearchActions.setPaginationState(
+      caseSearchState.paginationState.totalCount,
+      e.target.value,
+      caseSearchState.paginationState.currentPage
+    );
     await getCustomers(e);
   };
   const handleChangePage = async (e) => {
-    caseSearchActions.setPaginationState(caseSearchState.paginationState.totalCount, caseSearchState.paginationState.pageSize, parseInt(e.target.innerText));
+    caseSearchActions.setPaginationState(
+      caseSearchState.paginationState.totalCount,
+      caseSearchState.paginationState.pageSize,
+      parseInt(e.target.innerText)
+    );
     await getCustomers(e);
   };
 
@@ -177,7 +185,8 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
           </div>
           <br />
           <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
-            <FormButton itemName="Search" onClick={handleClickSearch} />
+            {/* Search Button */}
+            <FormButton itemName="検索" onClick={handleClickSearch} />
           </Grid>
         </Grid>
         {showList ? (
