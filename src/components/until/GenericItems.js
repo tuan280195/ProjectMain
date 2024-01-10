@@ -80,6 +80,19 @@ function GenericItems({ label, type, options, children, ...props }) {
           {children}
         </FormInput>
       );
+    case "int":
+      return (
+        <FormInput
+          label={label}
+          className="section-input"
+          type="number"
+          onChange={props.handleInput}
+          value={props.value}
+          isRequired={props.required}
+        >
+          {children}
+        </FormInput>
+      );
     case "textarea":
       return (
         <div className="section-item">
