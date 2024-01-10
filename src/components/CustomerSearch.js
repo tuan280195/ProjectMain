@@ -132,9 +132,9 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Customer Name</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Note</TableCell>
+                <TableCell>取引先名</TableCell>
+                <TableCell>電話番号</TableCell>
+                <TableCell>備考</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -185,7 +185,7 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
       <Grid container columnSpacing={5} rowSpacing={5}>
         <Grid item xs={condition.xs}>
           <div className="section-item">
-            <label className="section-label">Customer Name</label>
+            <label className="section-label">取引先名</label>
             <input
               value={data.customerName}
               className="section-input"
@@ -194,7 +194,7 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
             ></input>
           </div>
           <div className="section-item">
-            <label className="section-label">Phone Number</label>
+            <label className="section-label">電話番号</label>
             <input
               value={data.phoneNumber}
               className="section-input"
