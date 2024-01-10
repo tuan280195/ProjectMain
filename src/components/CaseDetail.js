@@ -281,7 +281,7 @@ const CaseDetail = ({ caseId }) => {
         </Grid>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
-            if (index + 1 <= mid && templateItem.keywordName !== "Note") {
+            if (index + 1 <= mid && templateItem.typeValue !== "textarea") {
               return data.map((item) => {
                 if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
@@ -292,7 +292,7 @@ const CaseDetail = ({ caseId }) => {
         </Grid>
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
-            if (index + 1 > mid && templateItem.keywordName !== "Note") {
+            if (index + 1 > mid && templateItem.typeValue !== "textarea") {
               return data.map((item) => {
                 if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
@@ -306,7 +306,7 @@ const CaseDetail = ({ caseId }) => {
             return data.map((item) => {
               if (
                 item.keywordId === templateItem.keywordId &&
-                templateItem.keywordName === "Note"
+                templateItem.typeValue === "textarea"
               ) {
                 return dynamicGenerate(item, templateItem);
               }
