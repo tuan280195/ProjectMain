@@ -49,10 +49,6 @@ const ConfirmDialog = ({
                 flexDirection: "column",
               }}
             >
-              {/* <Typography variant="h5">{typeDialog} {item}</Typography> */}
-              <Typography variant="main-body">
-                Are you sure you want to {typeDialog} this file <b>{item}?</b>
-              </Typography>
               <Typography variant="main-body">{mainContent}</Typography>
             </Box>
           </Grid>

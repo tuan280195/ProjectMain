@@ -1,6 +1,5 @@
 // import useAxiosPrivate from "../hooks/useAxiosPrivate";
 // import caseSearchState from "../stories/caseSearchState.ts";
-import caseSearchActions from "../actions/caseSearchActions.ts";
 
 import { axiosPrivate } from "../api/axios";
 

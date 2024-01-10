@@ -35,6 +35,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     phoneNumber: null,
   });
   const [caseIdClose, setCloseCase] = useState("");
+  // const tableClassCustomize = useStyles();
   useEffect(async () => {
     caseSearchActions.setPaginationState(0, 25, 1);
     caseSearchActions.setKeywordsSearchState([]);
@@ -93,11 +94,6 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
           response.data.currentPage
         );
         caseSearchActions.setCaseDataSearchState(response.data.items);
-        console.log(
-          "caseSearchState.caseDataSearchState----",
-          caseSearchState.caseDataSearchState
-        );
-        // setSearchData(response.data)
         setShowList(true);
       })
       .catch((error) => {
@@ -115,7 +111,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
   const handleClickEdit = (caseId) => {
     setLoading(true);
     setCaseDetail(caseId);
-    setHeader("Case");
+    setHeader("Create Case");
     setLoading(false);
   };
 
@@ -220,7 +216,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
                           )
                         );
                       })}
-                    <TableCell align="center">
+                    <TableCell align="center" style={{display: "flex", flexDirection: "row", columnGap: "8px"}}>
                       <Button
                         className="search-close"
                         onClick={() => {

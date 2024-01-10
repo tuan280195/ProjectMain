@@ -1,15 +1,23 @@
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import LoadingSpinner from "./until/LoadingSpinner";
 import Truncate from "./until/Truncate";
 import ConfirmDialog from "./until/ConfirmBox";
-import { Grid, Button } from "@mui/material";
 import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import Pagination from "./until/Pagination";
 import caseSearchState from "../stories/caseSearchState.ts";
 import caseSearchActions from "../actions/caseSearchActions.ts";
-
+import {
+  Button,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   const [data, setData] = useState({});
   const [showList, setShowList] = useState(false);
@@ -54,9 +62,10 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   };
 
   const handleClickEdit = (id) => {
+    console.log("handleClickEdit", id)
     setLoading(true);
-    setHeader("Customer");
     setCustomerDetail(id);
+    setHeader("Create Customer");
     setLoading(false);
   };
 
@@ -119,43 +128,54 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
           currentPage={caseSearchState.caseDataSearchState.currentPage}
           handleChangePageSize={handleChangePageSize}
           handleChangePage={handleChangePage} />
-
-        <ul id="results" className="search-results" style={{ marginTop: 10 }}>
-          {listItem && listItem.items.length > 0 ? (
-            listItem.items.map((item, index) => {
-              return (
-                <>
-                  <li className="search-result" key={item + "-" + index}>
-                    <Truncate str={item.name} maxLength={20} />
-                    <div className="search-action">
-                      <Link
-                        className="search-delete"
-                        to=""
-                        onClick={() => {
-                          setShowAlert(true);
-                          setDeleteItem(item);
-                        }}
-                      >
-                        Delete
-                      </Link>{" "}
-                      <Link
-                        className="search-edit"
-                        to=""
-                        onClick={() => handleClickEdit(item.id)}
-                      >
-                        Edit
-                      </Link>
-                    </div>
-                  </li>
-                </>
-              );
-            })
-          ) : (
-            <li>
-              <p>Not found</p>
-            </li>
-          )}
-        </ul>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Customer Name</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>Note</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {listItem && listItem.items && listItem.items.length > 0 ? (
+                listItem.items.map((item, index) => {
+                  return (
+                    <TableRow>
+                      <TableCell><Truncate str={item.name} maxLength={20} /></TableCell>
+                      <TableCell><Truncate str={item.phoneNumber} maxLength={20} /></TableCell>
+                      <TableCell style={{position: "relative"}}>
+                        <Truncate str={item.note} maxLength={20} />
+                        <div className="container-search-actions">
+                          <Button
+                            className="search-edit"
+                            to=""
+                            onClick={() => handleClickEdit(item.id)}
+                            style={{minWidth: "140px"}}
+                          >
+                            表示・編集
+                          </Button>
+                          <Button
+                            className="search-delete"
+                            to=""
+                            onClick={() => {
+                              setShowAlert(true);
+                              setDeleteItem(item);
+                            }}
+                          >
+                            削除
+                          </Button>{" "}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })) : (
+                <TableCell colSpan={3}><span style={{color: "#000"}}>Not Found!</span></TableCell>
+              )
+              }
+            </TableBody>
+          </Table>
+        </TableContainer>
       </>
     );
   };
