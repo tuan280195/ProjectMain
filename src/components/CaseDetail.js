@@ -80,14 +80,11 @@ const CaseDetail = ({ caseId }) => {
         signal: controller.signal,
       })
       .then((response) => {
-        let filteredTemplateKW = response.data.keywords.filter(
-          (x) => x.searchable
-        );
-        filteredTemplateKW.forEach((element) => {
+        response.data.keywords.forEach((element) => {
           element.value = "";
         });
-        setTemplate(filteredTemplateKW);
-        setData(filteredTemplateKW);
+        setTemplate(response.data.keywords);
+        setData(response.data.keywords);
       })
       .catch((error) => {
         console.log(error);
