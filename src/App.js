@@ -28,7 +28,7 @@ function App() {
         <Route path="unauthorized" element={<Unauthorized />} />
         <Route path="/main" element={<Sidebar />} />
         <Route
-          element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.User]} />}
+          element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.User, ROLES.SuperAdmin]} />}
         >
           <Route path="/" element={<Sidebar />} />
           <Route path="/home" element={<Home />} />
