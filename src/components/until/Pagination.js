@@ -16,7 +16,7 @@ export default function PaginationRounded(props) {
   return (
     <div className='pagination-class'>
     
-      <span>Page Size</span>
+      <span>ページサイズ</span>
       <Select
         value={props.pageSize}
         onChange={props.handleChangePageSize}

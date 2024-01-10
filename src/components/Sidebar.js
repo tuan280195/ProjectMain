@@ -21,6 +21,7 @@ import CustomerSearch from "./CustomerSearch";
 import CustomerDetail from "./CustomerDetail";
 import CaseSearch from "./CaseSearch";
 import CaseDetail from "./CaseDetail";
+import DocumentSearch from "./document-magement/DocumentSearch";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 
@@ -35,13 +36,8 @@ const Sidebar = () => {
   const [customerId, setCustomerDetail] = React.useState("");
   const navigate = useNavigate();
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-  const handleClick = (item) => {
-    setCaseDetail("");
-    setCustomerDetail("");
-    switch (item) {
+  const mapPage = (page) => {
+    switch (page) {
       case "Customer":
         setCustomerOpen(!customerOpen);
         break;
@@ -60,10 +56,28 @@ const Sidebar = () => {
       case "Create Case":
         setHeader("案件情報");
         break;
+      case "Document Search":
+        setHeader("書類管理");
+        break;
       default:
         setHeader("Home");
         break;
     }
+  };
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleRedirectPage = (page) => {
+    console.log("handleRedirectPage",page)
+    mapPage(page);
+  };
+  
+  const handleClick = (item) => {
+    setCaseDetail("");
+    setCustomerDetail("");
+    mapPage(item);
   };
 
   const hoverButton = {
@@ -84,7 +98,7 @@ const Sidebar = () => {
     localStorage.removeItem("AuthToken");
     navigate('/login', { replace: true });
   };
-  
+
   const drawer = (
     <div style={{ color: "#11596f", fontFamily: "inherit" }}>
       <Toolbar>
@@ -160,6 +174,14 @@ const Sidebar = () => {
             </ListItemButton>
           </List>
         </Collapse>
+      </List>
+      <List>
+        <ListItemButton sx={hoverButton} onClick={() => handleClick("Document Search")}>
+          <ListItemIcon>
+            <SearchIcon />
+          </ListItemIcon>
+          <ListItemText primary="書類管理"></ListItemText>
+        </ListItemButton>
       </List>
     </div>
   );
@@ -245,15 +267,16 @@ const Sidebar = () => {
       >
         {header === "顧客情報の検索" && (
           <CustomerSearch
-            setHeader={setHeader}
+            setHeader={handleRedirectPage}
             setCustomerDetail={setCustomerDetail}
           />
         )}
         {header === "顧客情報" && <CustomerDetail customerId={customerId} />}
         {header === "案件の検索" && (
-          <CaseSearch setHeader={setHeader} setCaseDetail={setCaseDetail} />
+          <CaseSearch setHeader={handleRedirectPage} setCaseDetail={setCaseDetail} />
         )}
         {header === "案件情報" && <CaseDetail caseId={caseId} />}
+        {header === "書類管理" && <DocumentSearch />}
       </Box>
     </Box>
   );
