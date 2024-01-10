@@ -140,7 +140,7 @@ const CustomerDetail = ({ customerId }) => {
         <Grid container columnSpacing={5} rowSpacing={3}>
           <Grid item xs={6}>
             <FormInput
-              label="Customer Name"
+              label="顧客名"
               value={latestData.name}
               type="text"
               onChange={(e) =>
@@ -156,7 +156,7 @@ const CustomerDetail = ({ customerId }) => {
           </Grid>
           <Grid item xs={6}>
             <FormInput
-              label="Phone Number"
+              label="電話番号"
               value={latestData.phoneNumber}
               type="text"
               className="section-input"

@@ -23,14 +23,15 @@ body {
   padding: 1rem 0.5rem;
 }
 
-section {
-  min-height: 400px;
+section {  
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   padding: 1rem;
-  border-radius: 0.5rem;
   max-width: 1080px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  
 }
 
 form {
@@ -51,6 +52,7 @@ textarea {
   padding: 0.25rem;
   border-radius: 0.2rem;
   border-width: 2px;
+  
 }
 
 input.section-input,
@@ -59,17 +61,21 @@ select {
   padding: 10px;
   border-radius: 0.3rem;
   width: 100%;
-  box-sizing: border-box;
+  box-sizing: border-box;  
+  
 }
 
 textarea {
-  height: 3rem;
+  height: 5rem;  
 }
 
 input.section-input,
 select {
   height: 2rem;
+  
 }
+
+
 
 fieldset.MuiOutlinedInput-notchedOutline,
 select {
@@ -164,16 +170,18 @@ errors {
 }
 
 /* Search */
-ul.search-results {
-  width: 100%;
+ul.search-results {  
+  width: auto;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 1rem;
-  background-color: rgba(47, 47, 47, 0.4);
-  box-sizing: border-box;
+  padding: 1rem;  
+  background-color: #11596F;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 li.search-result {
+  background-color: #11596F;
+  color: white;
   display: flex;
   justify-content: space-between;
 }
@@ -232,27 +240,4 @@ button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected{
   flex-direction: column !important;
   align-items: center;
   padding-top: 8px !important;
-}
-
-.search-action {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  column-gap: 8px;
-}
-.search-close, .search-edit, .search-delete {
-  background-color: #14873a !important;
-  color: #fff !important;
-}
-
-.container-search-actions {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: row;
-  column-gap: 8px;
-  align-items: center;
-  justify-content: center;
 }
