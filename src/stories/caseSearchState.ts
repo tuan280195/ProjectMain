@@ -10,7 +10,8 @@ const paginationState: iPagination = {
 const keywordsSearchState = {
     currentPage: paginationState.currentPage,
     pageSize: paginationState.pageSize,
-    keywordValues: []
+    keywordValues: [],
+    keywordDateValues: []
 };
 
 const caseDataSearchState = {

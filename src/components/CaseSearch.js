@@ -25,6 +25,8 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
   const controller = new AbortController();
   const [template, setTemplate] = useState([]);
   const [data, setData] = useState([]);
+  const [keyWordSearch, setKeyWordSearch] = useState([]);
+  const [keyWordDateSearch, setKeyWordDateSearch] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,27 +45,21 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     // setSearchData([]);
     setShowList(false);
     setData([]);
+    setKeyWordSearch([]);
     await getCaseTemplate();
   }, []);
 
   const getCaseTemplate = async (e) => {
     // call API get template
     setLoading(true);
-    let templateURL = "/api/Template/template";
+    let templateURL = "/api/Case/template";
     await axiosPrivate
       .get(templateURL, {
         signal: controller.signal,
       })
       .then((response) => {
-        response.data.keywords = response.data.keywords.filter(
-          (x) => x.searchable
-        );
-        response.data.keywords.forEach((element) => {
-          element.value = "";
-        });
-        setTemplate(response.data.keywords);
-        caseSearchActions.setKeywordsSearchState(response.data.keywords);
-        setData(response.data.keywords);
+        setTemplate(response.data);
+        setKeyWordSearch(response.data);
       })
       .catch((error) => {
         console.log(error.response);
@@ -75,12 +71,14 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
   const getCaseList = async () => {
     const searchCaseUrl = "/api/Case/getAll";
     const payload = {
-      keywordValues: caseSearchState.keywordsSearchState.keywordValues,
+      keywordValues: keyWordSearch.filter(n => !n.fromTo),
+      keywordDateValues: keyWordSearch.filter(n => n.fromTo),
       pageSize: caseSearchState.paginationState.pageSize,
       pageNumber: caseSearchState.paginationState.currentPage,
     };
+    console.log("payload", payload);
     let payloadFilterd =
-      caseSearchState.keywordsSearchState.keywordValues.filter((n) => n.value);
+    keyWordSearch.filter((n) => n.value);
     payload.keywordValues = payloadFilterd;
     // caseSearchActions.setKeywordsSearchState(payloadFilterd);
     setShowList(false);
@@ -154,10 +152,6 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
   };
   const Results = () => {
     let totalCount = 0;
-    console.log(
-      "caseSearchState.caseDataSearchState",
-      caseSearchState.caseDataSearchState
-    );
     if (
       caseSearchState.caseDataSearchState &&
       caseSearchState.caseDataSearchState.totalCount > 0
@@ -248,50 +242,45 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     return (
       <GenericItems
         value={item.value}
-        value1={item.value.split("/")[0]}
-        value2={item.value.split("/")[1]}
+        value1={item.fromValue}
+        value2={item.toValue}
         label={templateItem.keywordName}
-        type={templateItem.typeValue === 'datetime' ? 'daterange' : templateItem.typeValue}
+        type={templateItem.fromTo ? 'daterange' : templateItem.typeValue}
         key={templateItem.order}
         handleInput={(e) => {
-          const newState = data.map((value) => {
+          const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.value };
             } else return { ...value };
           });
-          caseSearchActions.setKeywordsSearchState(newState);
-          setData(newState);
+          setKeyWordSearch(newState);
         }}
         // using for date range
         handleInput1={(e) => {
-          const newState = data.map((value) => {
+          const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
-              const item2 = item.value.split("/")[1];
-              return { ...value, value: e.target.value + "/" + item2 };
+              return { ...value, fromValue: e.target.value};
             } else return { ...value };
           });
-          caseSearchActions.setKeywordsSearchState(newState);
-          setData(newState);
+
+          setKeyWordSearch(newState);
         }}
         handleInput2={(e) => {
-          const newState = data.map((value) => {
+          const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
-              const item1 = item.value.split("/")[0];
-              return { ...value, value: item1 + "/" + e.target.value };
+              return { ...value, toValue: e.target.value };
             } else return { ...value };
           });
-          caseSearchActions.setKeywordsSearchState(newState);
-          setData(newState);
+          setKeyWordSearch(newState);
         }}
         handleInput3={(e) => {
           console.log(e.target.outerText);
-          const newState = data.map((value) => {
+          const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.outerText };
             } else return { ...value };
           });
-          setData(newState);
-          caseSearchActions.setKeywordsSearchState(newState);
+          setKeyWordSearch(newState);
         }}
         options={item.metadata}
       />
@@ -308,7 +297,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
             if (index + 1 <= mid) {
-              return data.map((item) => {
+              return keyWordSearch.map((item) => {
                 if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
                 }
@@ -319,7 +308,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
             if (index + 1 > mid) {
-              return data.map((item) => {
+              return keyWordSearch.map((item) => {
                 if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
                 }

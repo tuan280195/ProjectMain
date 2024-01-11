@@ -80,6 +80,27 @@ function GenericItems({ label, type, options, children, ...props }) {
           {children}
         </FormInput>
       );
+    case "decimalrange":
+        return (
+          <div className="section-item">
+            <label className="section-label">{label}</label>
+            <div className="section-range" style={{ marginBottom: 10 }}>
+              <input
+                value={props.value1}
+                type="number"
+                onChange={props.handleInput1}
+                className="section-input"
+              ></input>
+              <span>〜</span>
+              <input
+                value={props.value2}
+                type="number"
+                onChange={props.handleInput2}
+                className="section-input"
+              ></input>
+            </div>
+          </div>
+        );
     case "int":
       return (
         <FormInput

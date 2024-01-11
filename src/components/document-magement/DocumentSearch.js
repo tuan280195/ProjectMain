@@ -3,7 +3,7 @@ import Truncate from "../until/Truncate";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import CircularProgress from "@mui/material/CircularProgress";
 import ConfirmDialog from "../until/ConfirmBox";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FormButton from "../until/FormButton";
 import Pagination from "../until/Pagination";
 import FormSelection from "../until/FormSelection";
@@ -31,9 +31,14 @@ const DocumentSearch = () => {
         name: null,
         phoneNumber: null,
     });
+    const [optionFileType, setOptionFileType] = useState([]);
     const [condition, setCondition] = useState({ minWidth: "400px", xs: 4 });
     const axiosPrivate = useAxiosPrivate();
     const controller = new AbortController();
+
+    useEffect(async () => {
+        await getDocumentTemplate();
+    }, []);
 
     const getCustomers = async (e) => {
         setLoading(true);
@@ -58,6 +63,30 @@ const DocumentSearch = () => {
         } catch (error) {
             console.log(error);
         }
+        setLoading(false);
+    };
+
+    const getDocumentTemplate = async () => {
+        setLoading(true);
+        let getFileTypesURL = "/api/document/template";
+        await axiosPrivate
+            .get(getFileTypesURL, {
+                signal: controller.signal,
+            })
+            .then((response) => {
+                console.log("response", response)
+                let options = [];
+                response.data.fileType.fileTypes.forEach(function (item) {
+                    options.push({
+                        "id": item.id,
+                        "label": item.name,
+                    });
+                });
+                setOptionFileType(options);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         setLoading(false);
     };
 
@@ -185,7 +214,7 @@ const DocumentSearch = () => {
                     <div className="section-item">
                         <label className="section-label">File Type</label>
                         <FormSelection
-                            
+                            options={optionFileType} 
                         />
                     </div>
                     <div className="section-item">
