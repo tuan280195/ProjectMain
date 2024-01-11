@@ -5,11 +5,29 @@ html {
   font-family: "MS Mincho", sans-serif;
   font-size: 24px;
   color: #11596f;
+  line-height: 180%;
+  font-weight: bold;
 }
 
 body {
   min-height: 100vh;
   background-color: #fff;
+}
+
+.my-button {
+  background-color: white;
+  color: #004862;    
+  cursor: pointer;
+  border: 2px solid #004862;    
+}
+
+.my-button:hover {
+  background-color: #2AA252;
+  color: white;
+}
+
+.my-button:active {
+  background-color: #5ebc7e;
 }
 
 .App {
@@ -254,3 +272,4 @@ button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected{
   align-items: center;
   justify-content: center;
 }
+

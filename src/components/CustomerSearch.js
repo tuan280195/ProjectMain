@@ -18,6 +18,9 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import * as Icons from '@mui/icons-material';
+import "../styles/styles.css";
+
 const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   const [data, setData] = useState({});
   const [showList, setShowList] = useState(false);
@@ -133,8 +136,8 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
             <TableHead>
               <TableRow>
                 <TableCell>取引先名</TableCell>
-                <TableCell>電話番号</TableCell>
-                <TableCell>備考</TableCell>
+                <TableCell>電話番号</TableCell>                
+                <TableCell>操作</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -142,31 +145,37 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
                 listItem.items.map((item, index) => {
                   return (
                     <TableRow>
-                      <TableCell><Truncate str={item.name} maxLength={20} /></TableCell>
-                      <TableCell><Truncate str={item.phoneNumber} maxLength={20} /></TableCell>
-                      <TableCell style={{position: "relative"}}>
-                        <Truncate str={item.note} maxLength={20} />
-                        <div className="container-search-actions">
-                          <Button
-                            className="search-edit"
-                            to=""
+                      <TableCell>
+                        <Truncate str={item.name} maxLength={20} />
+                      </TableCell>
+                      <TableCell>
+                        <Truncate str={item.phoneNumber} maxLength={20} />
+                      </TableCell>                      
+                      
+                      <TableCell>
+                          <Button                            
+                            startIcon={<Icons.Edit />}
+                            className="my-button"
                             onClick={() => handleClickEdit(item.id)}
-                            style={{minWidth: "140px"}}
+                            style={{ marginRight: '5px' }}
                           >
                             表示・編集
                           </Button>
-                          <Button
-                            className="search-delete"
-                            to=""
+
+                          <Button                                                        
+                            startIcon={<Icons.Delete />}
+                            className="my-button"
                             onClick={() => {
                               setShowAlert(true);
                               setDeleteItem(item);
                             }}
+                            
                           >
                             削除
-                          </Button>{" "}
-                        </div>
-                      </TableCell>
+                            
+                          </Button>                        
+					            </TableCell>
+
                     </TableRow>
                   )
                 })) : (
