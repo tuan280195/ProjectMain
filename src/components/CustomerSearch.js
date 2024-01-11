@@ -166,13 +166,12 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
                             startIcon={<Icons.Delete />}
                             className="my-button"
                             onClick={() => {
-                              setShowAlert(true);
+                              setShowAlert(true);                              
                               setDeleteItem(item);
                             }}
                             
                           >
-                            削除
-                            
+                            削除                            
                           </Button>                        
 					            </TableCell>
 
@@ -231,6 +230,8 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
         closeDialog={() => setShowAlert(false)}
         item={deleteItem.name}
         handleFunction={handleClickDelete}
+        typeDialog="削除確認"
+        mainContent="顧客情報を削除すると、電話番号情報、住所などの情報がすべて失われます。本当に削除しますか？"
       ></ConfirmDialog>
     </section>
   );
