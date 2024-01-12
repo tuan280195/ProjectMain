@@ -202,13 +202,6 @@ const DocumentSearch = () => {
                     handleChangePage={handleChangePage} />
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        {/* <TableHead>
-                            <TableRow>
-                                <TableCell>Customer Name</TableCell>
-                                <TableCell>Phone</TableCell>
-                                <TableCell>Note</TableCell>
-                            </TableRow>
-                        </TableHead> */}
                         <TableBody>
                             {listItem && listItem.items && listItem.items.length > 0 ? (
                                 listItem.items.map((item, index) => {
@@ -321,7 +314,7 @@ const DocumentSearch = () => {
                     options={fileTypeSearch.fileTypes}
                     handleInput3={(e, item) => {
                         const newState = fileTypeSearch;
-                        newState.value = item ? item.id : "";
+                        newState.value = item ? (item.id ? item.id : null) : null;
                         setFileTypeSearch(newState);
                     }}
                 />

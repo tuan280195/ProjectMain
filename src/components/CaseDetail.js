@@ -246,7 +246,7 @@ const CaseDetail = ({ caseId }) => {
             }
             if(value.keywordName === '住所'){
               let fiteredCustomer = customer && customer.id ? customerList.find(x => x.id === customer.id): "";
-              value.value = fiteredCustomer ? customer.stateProvince + customer.city : "";
+              value.value = fiteredCustomer ? [fiteredCustomer.stateProvince, fiteredCustomer.city, fiteredCustomer.street, fiteredCustomer.buildingName, fiteredCustomer.roomNumber].join('') : "";
             }
             if (value.keywordId === item.keywordId) {
               
