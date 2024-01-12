@@ -185,9 +185,8 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
                             
                           >
                             削除                            
-                          </Button>                        
+                          </Button>
 					            </TableCell>
-
                     </TableRow>
                   )
                 })) : (
