@@ -32,6 +32,7 @@ const CaseDetail = ({ caseId }) => {
   const [disableAttach, setDisableAttach] = useState(false);
   const [errors, setErrors] = useState([]);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [customerList, setCustomerList] = useState([]);
 
   useEffect(async () => {
     setLoading(true);
@@ -82,7 +83,12 @@ const CaseDetail = ({ caseId }) => {
       .then((response) => {
         response.data.keywords.forEach((element) => {
           element.value = "";
+          element.customerId = "";
         });
+        response.data.customers.forEach(function (item) {
+          item.label = item.name;
+        });
+        setCustomerList(response.data.customers);
         setTemplate(response.data.keywords);
         setData(response.data.keywords);
       })
@@ -100,7 +106,6 @@ const CaseDetail = ({ caseId }) => {
     await axiosPrivate
       .get(templateURL, {
         validateStatus: function (status) {
-          console.log(status);
           return status < 500; // Resolve only if the status code is less than 500
         },
       })
@@ -140,13 +145,11 @@ const CaseDetail = ({ caseId }) => {
         caseId: caseIdName.caseId,
         keywordValues: data,
       };
-      console.log(axiosPrivate);
       await axiosPrivate
         .put(caseCreateURL, payload, {
           signal: controller.signal,
         })
         .then((response) => {
-          console.log(response);
           setSnackbar({
             isOpen: true,
             status: "success",
@@ -162,13 +165,11 @@ const CaseDetail = ({ caseId }) => {
       let payload = {
         keywordValues: data,
       };
-      console.log(axiosPrivate);
       await axiosPrivate
         .post(caseCreateURL, payload, {
           signal: controller.signal,
         })
         .then((response) => {
-          console.log(response);
           setSnackbar({
             isOpen: true,
             status: "success",
@@ -185,7 +186,7 @@ const CaseDetail = ({ caseId }) => {
   };
 
   const getFileTypes = async () => {
-    let getFileTypesURL = "/api/FileType?pageSize=25&pageNumber=1";
+    let getFileTypesURL = "/api/Type/file-type";
     await axiosPrivate
       .get(getFileTypesURL, {
         signal: controller.signal,
@@ -212,37 +213,20 @@ const CaseDetail = ({ caseId }) => {
   };
 
   const dynamicGenerate = (item, templateItem) => {
+    let typeValue = templateItem.typeValue
+    if(templateItem.keywordName === '取引先名'){
+      typeValue = 'customerlist'
+    }
     return (
       <GenericItems
         value={item.value}
-        value1={item.value.split("-")[0]}
-        value2={item.value.split("-")[1]}
         label={templateItem.keywordName}
-        type={templateItem.typeValue}
+        type={typeValue}
         key={templateItem.order}
         handleInput={(e) => {
           const newState = data.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.value };
-            } else return { ...value };
-          });
-          setData(newState);
-        }}
-        // using for date range
-        handleInput1={(newVlue) => {
-          const newState = data.map((value) => {
-            if (value.keywordId === item.keywordId) {
-              const item2 = item.value.split("-")[1];
-              return { ...value, value: newVlue + "-" + item2 };
-            } else return { ...value };
-          });
-          setData(newState);
-        }}
-        handleInput2={(newVlue) => {
-          const newState = data.map((value) => {
-            if (value.keywordId === item.keywordId) {
-              const item1 = item.value.split("-")[0];
-              return { ...value, value: item1 + "-" + newVlue };
             } else return { ...value };
           });
           setData(newState);
@@ -255,6 +239,23 @@ const CaseDetail = ({ caseId }) => {
           });
           setData(newState);
         }}
+        handleInputCustomer={(e, customer) => {
+          const newState = data.map((value) => {
+            if(value.keywordName === '電話番号'){
+              value.value = customer && customer.id ? customerList.find(x => x.id === customer.id).phoneNumber : "";
+            }
+            if(value.keywordName === '住所'){
+              let fiteredCustomer = customer && customer.id ? customerList.find(x => x.id === customer.id): "";
+              value.value = fiteredCustomer ? customer.stateProvince + customer.city : "";
+            }
+            if (value.keywordId === item.keywordId) {
+              
+              return { ...value, value: customer ? customer.label : "", customerId: customer ? customer.id: "" };
+            } else return { ...value };
+          });
+          setData(newState);
+        }}
+        optionCustomers={customerList}
         options={item.metadata}
         required={templateItem.isRequired}
         maxLength={templateItem.maxLength}

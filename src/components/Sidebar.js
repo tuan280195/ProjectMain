@@ -70,7 +70,6 @@ const Sidebar = () => {
   };
 
   const handleRedirectPage = (page) => {
-    console.log("handleRedirectPage", page);
     mapPage(page);
   };
 

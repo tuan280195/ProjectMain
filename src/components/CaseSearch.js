@@ -27,7 +27,10 @@ const CaseSearch = () => {
   const controller = new AbortController();
   const [template, setTemplate] = useState([]);
   const [data, setData] = useState([]);
-  const [searchData, setSearchData] = useState([]);
+  const [keyWordSearch, setKeyWordSearch] = useState([]);
+  const [keyWordDateSearch, setKeyWordDateSearch] = useState([]);
+  
+  const [customerList, setCustomerList] = useState([]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -48,27 +51,28 @@ const CaseSearch = () => {
     // setSearchData([]);
     setShowList(false);
     setData([]);
+    setKeyWordSearch([]);
     await getCaseTemplate();
   }, []);
 
   const getCaseTemplate = async (e) => {
     // call API get template
     setLoading(true);
-    let templateURL = "/api/Template/template";
+    let templateURL = "/api/Case/template";
     await axiosPrivate
       .get(templateURL, {
         signal: controller.signal,
       })
       .then((response) => {
-        response.data.keywords = response.data.keywords.filter(
-          (x) => x.searchable
-        );
-        response.data.keywords.forEach((element) => {
-          element.value = "";
+        response.data.caseKeywordValues.forEach(function (item) {
+          item.customerId = "";
         });
-        setTemplate(response.data.keywords);
-        caseSearchActions.setKeywordsSearchState(response.data.keywords);
-        setData(response.data.keywords);
+        response.data.customers.forEach(function (item) {
+          item.label = item.name;
+        });
+        setCustomerList(response.data.customers);
+        setTemplate(response.data.caseKeywordValues);
+        setKeyWordSearch(response.data.caseKeywordValues);
       })
       .catch((error) => {
         console.log(error.response);
@@ -80,19 +84,19 @@ const CaseSearch = () => {
   const getCaseList = async () => {
     const searchCaseUrl = "/api/Case/getAll";
     const payload = {
-      keywordValues: caseSearchState.keywordsSearchState.keywordValues,
+      keywordValues: keyWordSearch.filter(n => !n.fromTo && n.value),
+      keywordDateValues: keyWordSearch.filter(n => n.fromTo && (n.fromValue || n.toValue)),
       pageSize: caseSearchState.paginationState.pageSize,
       pageNumber: caseSearchState.paginationState.currentPage,
     };
     let payloadFilterd =
-      caseSearchState.keywordsSearchState.keywordValues.filter((n) => n.value);
+    keyWordSearch.filter((n) => n.value);
     payload.keywordValues = payloadFilterd;
     // caseSearchActions.setKeywordsSearchState(payloadFilterd);
     setShowList(false);
     axiosPrivate
       .post(searchCaseUrl, payload)
       .then((response) => {
-        console.log(response.data);
         caseSearchActions.setPaginationState(
           response.data.totalCount,
           response.data.pageSize,
@@ -160,10 +164,6 @@ const CaseSearch = () => {
   };
   const Results = () => {
     let totalCount = 0;
-    console.log(
-      "caseSearchState.caseDataSearchState",
-      caseSearchState.caseDataSearchState
-    );
     if (
       caseSearchState.caseDataSearchState &&
       caseSearchState.caseDataSearchState.totalCount > 0
@@ -256,58 +256,67 @@ const CaseSearch = () => {
   };
 
   const dynamicGenerate = (item, templateItem) => {
+    let typeValue = templateItem.typeValue
+    if(templateItem.fromTo){
+      typeValue = 'daterange'
+    }else if(templateItem.keywordName === '取引先名'){
+      typeValue = 'customerlist'
+    }
     return (
       <GenericItems
         value={item.value}
-        value1={item.value.split("/")[0]}
-        value2={item.value.split("/")[1]}
+        value1={item.fromValue}
+        value2={item.toValue}
         label={templateItem.keywordName}
-        type={
-          templateItem.typeValue === "datetime"
-            ? "daterange"
-            : templateItem.typeValue
-        }
+        type={typeValue}
         key={templateItem.order}
         handleInput={(e) => {
-          const newState = data.map((value) => {
+          const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.value };
             } else return { ...value };
           });
-          caseSearchActions.setKeywordsSearchState(newState);
-          setData(newState);
+          setKeyWordSearch(newState);
         }}
         // using for date range
         handleInput1={(e) => {
-          const newState = data.map((value) => {
+          const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
-              const item2 = item.value.split("/")[1];
-              return { ...value, value: e.target.value + "/" + item2 };
+              return { ...value, fromValue: e.target.value};
             } else return { ...value };
           });
-          caseSearchActions.setKeywordsSearchState(newState);
-          setData(newState);
+
+          setKeyWordSearch(newState);
         }}
         handleInput2={(e) => {
-          const newState = data.map((value) => {
+          const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
-              const item1 = item.value.split("/")[0];
-              return { ...value, value: item1 + "/" + e.target.value };
+              return { ...value, toValue: e.target.value };
             } else return { ...value };
           });
-          caseSearchActions.setKeywordsSearchState(newState);
-          setData(newState);
+          setKeyWordSearch(newState);
         }}
         handleInput3={(e) => {
-          console.log(e.target.outerText);
-          const newState = data.map((value) => {
+          const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.outerText };
             } else return { ...value };
           });
-          setData(newState);
-          caseSearchActions.setKeywordsSearchState(newState);
+          setKeyWordSearch(newState);
         }}
+        handleInputCustomer={(e, customer) => {
+          const newState = keyWordSearch.map((value) => {
+            if(value.keywordName === '電話番号'){
+              value.value = customer && customer.id ? customerList.find(x => x.id === customer.id).phoneNumber : "";
+            }
+            if (value.keywordId === item.keywordId) {
+              
+              return { ...value, value: customer ? customer.label : "", customerId: customer ? customer.id: "" };
+            } else return { ...value };
+          });
+          setKeyWordSearch(newState);
+        }}
+        optionCustomers={customerList}
         options={item.metadata}
       />
     );
@@ -323,7 +332,7 @@ const CaseSearch = () => {
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
             if (index + 1 <= mid) {
-              return data.map((item) => {
+              return keyWordSearch.map((item) => {
                 if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
                 }
@@ -334,7 +343,7 @@ const CaseSearch = () => {
         <Grid item xs={6}>
           {template.map((templateItem, index) => {
             if (index + 1 > mid) {
-              return data.map((item) => {
+              return keyWordSearch.map((item) => {
                 if (item.keywordId === templateItem.keywordId) {
                   return dynamicGenerate(item, templateItem);
                 }
