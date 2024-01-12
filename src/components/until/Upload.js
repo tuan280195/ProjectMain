@@ -1,10 +1,7 @@
 import { TextField } from "@mui/material";
-import axios from "axios";
 import FormButton from "./FormButton";
 import FormSelection from "./FormSelection";
-import { useState } from "react";
 import FormInput from "./FormInput";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const Upload = (props) => {
   return (
