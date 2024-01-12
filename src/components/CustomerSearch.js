@@ -18,10 +18,13 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import * as Icons from '@mui/icons-material';
+import ContentDialog from "./until/ContentDialog.js";
+import CustomerDetail from "./CustomerDetail.js";
+
+import * as Icons from "@mui/icons-material";
 import "../styles/styles.css";
 
-const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
+const CustomerSearch = () => {
   const [data, setData] = useState({});
   const [showList, setShowList] = useState(false);
   const [listItem, setListItem] = useState([
@@ -35,6 +38,8 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
     phoneNumber: null,
   });
   const [condition, setCondition] = useState({ width: "400px", xs: 12 });
+  const [showDialog, setShowDialog] = useState(false);
+  const [customerId, setCustomerId] = useState();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   // State for phone number error
@@ -49,12 +54,12 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
       searchURL =
         data.customerName && data.phoneNumber
           ? searchURL +
-          `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}`
+            `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}`
           : data.phoneNumber
-            ? searchURL + `?phoneNumber=${data.phoneNumber}`
-            : data.customerName
-              ? searchURL + `?customerName=${data.customerName}`
-              : searchURL;
+          ? searchURL + `?phoneNumber=${data.phoneNumber}`
+          : data.customerName
+          ? searchURL + `?customerName=${data.customerName}`
+          : searchURL;
 
       const response = await axiosPrivate.get(searchURL, {
         signal: controller.signal,
@@ -67,10 +72,10 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   };
 
   const handleClickEdit = (id) => {
-    console.log("handleClickEdit", id)
+    console.log("handleClickEdit", id);
     setLoading(true);
-    setCustomerDetail(id);
-    setHeader("Create Customer");
+    setCustomerId(id);
+    setShowDialog(true);
     setLoading(false);
   };
 
@@ -78,14 +83,17 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
     setLoading(true);
     e.preventDefault();
     var deleteURL = "/api/Customer/" + deleteItem.id;
-    await axiosPrivate.delete(deleteURL).then(async (res) => {
-      setShowAlert(false);
-      await getCustomers(e);
-      setCondition({ width: "1080px", xs: 4 });
-      setShowList(true);
-    }).catch((error) => {
-      console.log(error)
-    });
+    await axiosPrivate
+      .delete(deleteURL)
+      .then(async (res) => {
+        setShowAlert(false);
+        await getCustomers(e);
+        setCondition({ width: "1080px", xs: 4 });
+        setShowList(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setLoading(false);
   };
 
@@ -107,9 +115,7 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
         setPhoneNumberError(undefined);
       }
       newData.phoneNumber = event.target.value;
-
     }
-      
 
     setData(newData);
   };
@@ -143,14 +149,27 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
           pageSize={caseSearchState.caseDataSearchState.pageSize}
           currentPage={caseSearchState.caseDataSearchState.currentPage}
           handleChangePageSize={handleChangePageSize}
-          handleChangePage={handleChangePage} />
+          handleChangePage={handleChangePage}
+        />
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell style={{ textAlign: 'center', width: 'fit-content' }}>取引先名</TableCell>
-                <TableCell style={{ textAlign: 'center', width: 'fit-content' }}>電話番号</TableCell>
-                <TableCell style={{ textAlign: 'center', width: 'fit-content' }}>操作</TableCell>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
+                  取引先名
+                </TableCell>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
+                  電話番号
+                </TableCell>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
+                  操作
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -163,36 +182,37 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
                       </TableCell>
                       <TableCell>
                         <Truncate str={item.phoneNumber} maxLength={20} />
-                      </TableCell>                      
-                      
-                      <TableCell>
-                          <Button                            
-                            className="my-button"
-                            startIcon={<Icons.Edit />}
-                            onClick={() => handleClickEdit(item.id)}
-                            style={{ marginRight: '5px' }}
-                          >
-                            編集
-                          </Button>
+                      </TableCell>
 
-                          <Button                                                        
-                            className="my-button"
-                            startIcon={<Icons.Delete />}                            
-                            onClick={() => {
-                              setShowAlert(true);                              
-                              setDeleteItem(item);
-                            }}
-                            
-                          >
-                            削除                            
-                          </Button>
-					            </TableCell>
+                      <TableCell>
+                        <Button
+                          className="my-button"
+                          startIcon={<Icons.Edit />}
+                          onClick={() => handleClickEdit(item.id)}
+                          style={{ marginRight: "5px" }}
+                        >
+                          編集
+                        </Button>
+
+                        <Button
+                          className="my-button"
+                          startIcon={<Icons.Delete />}
+                          onClick={() => {
+                            setShowAlert(true);
+                            setDeleteItem(item);
+                          }}
+                        >
+                          削除
+                        </Button>
+                      </TableCell>
                     </TableRow>
-                  )
-                })) : (
-                <TableCell colSpan={3}><span style={{color: "#000"}}>表示する項目がありません</span></TableCell>
-              )
-              }
+                  );
+                })
+              ) : (
+                <TableCell colSpan={3}>
+                  <span style={{ color: "#000" }}>Not Found!</span>
+                </TableCell>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -220,10 +240,12 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
               className="section-input"
               type="text"
               maxLength={11}
-              onChange={(e) => handleChange(e, "phoneNumber")}              
+              onChange={(e) => handleChange(e, "phoneNumber")}
             ></input>
-             {/* Display phone number error message */}
-             {phoneNumberError && <span style={{color: "red" }}>{phoneNumberError}</span>}
+            {/* Display phone number error message */}
+            {phoneNumberError && (
+              <span style={{ color: "red" }}>{phoneNumberError}</span>
+            )}
           </div>
           <br />
           <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
@@ -247,6 +269,9 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
         typeDialog="削除確認"
         mainContent="顧客情報を削除すると、電話番号情報、住所などの情報がすべて失われます。本当に削除しますか？"
       ></ConfirmDialog>
+      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+        <CustomerDetail customerId={customerId}></CustomerDetail>
+      </ContentDialog>
     </section>
   );
 };

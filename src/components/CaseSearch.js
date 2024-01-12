@@ -19,8 +19,10 @@ import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import caseSearchState from "../stories/caseSearchState.ts";
 import caseSearchActions from "../actions/caseSearchActions.ts";
+import ContentDialog from "./until/ContentDialog.js";
+import CaseDetail from "./CaseDetail.js";
 
-const CaseSearch = ({ setHeader, setCaseDetail }) => {
+const CaseSearch = () => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [template, setTemplate] = useState([]);
@@ -35,7 +37,10 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     phoneNumber: null,
   });
   const [caseIdClose, setCloseCase] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+  const [caseId, setCaseId] = useState();
   // const tableClassCustomize = useStyles();
+
   useEffect(async () => {
     caseSearchActions.setPaginationState(0, 25, 1);
     caseSearchActions.setKeywordsSearchState([]);
@@ -110,8 +115,9 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
   };
   const handleClickEdit = (caseId) => {
     setLoading(true);
-    setCaseDetail(caseId);
-    setHeader("Create Case");
+    setCaseId(caseId);
+    // setHeader("Create Case");
+    setShowDialog(true);
     setLoading(false);
   };
 
@@ -164,7 +170,7 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     ) {
       totalCount = Math.ceil(
         caseSearchState.caseDataSearchState.totalCount /
-        caseSearchState.caseDataSearchState.pageSize
+          caseSearchState.caseDataSearchState.pageSize
       );
     }
     return caseSearchState.caseDataSearchState &&
@@ -205,33 +211,38 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
                     <TableCell>
                       <Truncate str={row.caseName} maxlength={15} />
                     </TableCell>
-                    {row.caseKeywordValues.length > 0 && (
-                      row.caseKeywordValues.filter(n => n.isShowOnCaseList).map((item, index) => {
-                        return (
-                          <TableCell style={{position: "relative"}}>
-                            <Truncate str={item.value} />
-                            {(index + 1 === row.caseKeywordValues.filter(n => n.isShowOnCaseList).length) && (
-                              <div className="container-search-actions">
-                                <Button
-                                  className="search-close"
-                                  onClick={() => {
-                                    setShowAlert(true);
-                                    setCloseCase(row.caseId);
-                                  }}
-                                >
-                                  Close
-                                </Button>
-                                <Button
-                                  className="search-edit"
-                                  onClick={() => handleClickEdit(row.caseId)}
-                                >
-                                  Edit
-                                </Button>
-                              </div>
-                            )}
-                          </TableCell>
-                        );
-                      }))}
+                    {row.caseKeywordValues.length > 0 &&
+                      row.caseKeywordValues
+                        .filter((n) => n.isShowOnCaseList)
+                        .map((item, index) => {
+                          return (
+                            <TableCell style={{ position: "relative" }}>
+                              <Truncate str={item.value} />
+                              {index + 1 ===
+                                row.caseKeywordValues.filter(
+                                  (n) => n.isShowOnCaseList
+                                ).length && (
+                                <div className="container-search-actions">
+                                  <Button
+                                    className="search-close"
+                                    onClick={() => {
+                                      setShowAlert(true);
+                                      setCloseCase(row.caseId);
+                                    }}
+                                  >
+                                    Close
+                                  </Button>
+                                  <Button
+                                    className="search-edit"
+                                    onClick={() => handleClickEdit(row.caseId)}
+                                  >
+                                    Edit
+                                  </Button>
+                                </div>
+                              )}
+                            </TableCell>
+                          );
+                        })}
                   </TableRow>
                 );
               })}
@@ -251,7 +262,11 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         value1={item.value.split("/")[0]}
         value2={item.value.split("/")[1]}
         label={templateItem.keywordName}
-        type={templateItem.typeValue === 'datetime' ? 'daterange' : templateItem.typeValue}
+        type={
+          templateItem.typeValue === "datetime"
+            ? "daterange"
+            : templateItem.typeValue
+        }
         key={templateItem.order}
         handleInput={(e) => {
           const newState = data.map((value) => {
@@ -357,7 +372,10 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         item={deleteItem.customerName}
         handleFunction={confirmCloseCase}
         typeDialog="Close"
-      ></ConfirmDialog>
+      />
+      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+        <CaseDetail caseId={caseId}></CaseDetail>
+      </ContentDialog>
     </section>
   );
 };
