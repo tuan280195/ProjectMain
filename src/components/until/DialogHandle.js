@@ -137,6 +137,7 @@ const DialogHandle = ({
     await axiosPrivate
       .put(deleteFileUrl, payload)
       .then(async (response) => {
+        setUrlPreviewImg({...urlPreviewImg, blobUrl: "", fileName: ""})
         await getFilesOfCase();
         setShowAlert(false);
       })

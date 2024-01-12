@@ -38,6 +38,10 @@ const CaseDetail = ({ caseId }) => {
     setLoading(true);
     await getCaseTemplate();
     if (caseId) {
+      setCaseIdAndName({
+        caseId: caseId,
+        caseName: "",
+      });
       setDisableAttach(false);
       await getCaseByCaseId();
     } else {
@@ -170,6 +174,7 @@ const CaseDetail = ({ caseId }) => {
           signal: controller.signal,
         })
         .then((response) => {
+          setCaseIdAndName({...caseIdName, caseId: response.data});
           setSnackbar({
             isOpen: true,
             status: "success",
@@ -346,7 +351,7 @@ const CaseDetail = ({ caseId }) => {
         closeDialog={() => setShowDialog(false)}
         title="Attach Files"
         optionFileType={optionFileType}
-        caseId={caseId}
+        caseId={caseIdName.caseId}
       />
       <LoadingSpinner loading={loading}></LoadingSpinner>
       <FormSnackbar item={snackbar} setItem={setSnackbar} />

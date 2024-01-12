@@ -33,9 +33,9 @@ const DocumentSearch = () => {
     const [fileTypeSearch, setFileTypeSearch] = useState([]);
     const [customerList, setCustomerList] = useState([]);
     const [deleteItem, setDeleteItem] = useState({
-        id: null,
-        name: null,
-        phoneNumber: null,
+        keywordId: null,
+        caseId: null,
+        fileName: "",
     });
     const [optionFileType, setOptionFileType] = useState([]);
     const [condition, setCondition] = useState({ minWidth: "400px", xs: 4 });
@@ -138,17 +138,12 @@ const DocumentSearch = () => {
             });
         setLoading(false);
     }
-    const handleClickEdit = (id) => {
-        console.log("handleClickEdit", id)
-        setLoading(true);
-        setLoading(false);
-    };
 
     const handleClickDelete = async (e) => {
         setLoading(true);
         e.preventDefault();
-        var deleteURL = "/api/Customer/" + deleteItem.id;
-        await axiosPrivate.delete(deleteURL).then(async (res) => {
+        var deleteURL = "/api/FileUpload/Delete";
+        await axiosPrivate.put(deleteURL, deleteItem).then(async (res) => {
             setShowAlert(false);
             await getFiles(e);
             setCondition({ width: "1080px", xs: 4 });
@@ -163,14 +158,6 @@ const DocumentSearch = () => {
         await getFiles(e);
         setCondition({ width: "1080px", xs: 4 });
         setShowList(true);
-    };
-
-    const handleChange = (event, item) => {
-        let newData = data;
-        if (item === "customerName") newData.customerName = event.target.value;
-        else newData.phoneNumber = event.target.value;
-
-        setData(newData);
     };
 
     const handleChangePageSize = async (e) => {
@@ -228,7 +215,12 @@ const DocumentSearch = () => {
                                                         to=""
                                                         onClick={() => {
                                                             setShowAlert(true);
-                                                            setDeleteItem(item);
+                                                            let itemDelete = {
+                                                                keywordId: item.keywordId,
+                                                                caseId: item.caseId,
+                                                                fileName: item.keywordName,
+                                                            }
+                                                            setDeleteItem(itemDelete);
                                                         }}
                                                     >
                                                         削除
