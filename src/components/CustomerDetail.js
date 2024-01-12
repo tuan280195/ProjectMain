@@ -33,11 +33,11 @@ const CustomerDetail = ({ customerId }) => {
 
     // Validate name field
     if (!latestData.name) {
-      errors.name = "Name is required.";
+      errors.name = "取引先名は必須項目です。";
     }
 
     if (!latestData.phoneNumber) {
-      errors.phoneNumber = "Phone Number is required.";
+      errors.phoneNumber = "電話番号は必須項目です。";
     }else if (!validator.isNumeric(latestData.phoneNumber)) {
       errors.phoneNumber = "電話番号は半角数字のみです";
     }
@@ -169,7 +169,7 @@ const CustomerDetail = ({ customerId }) => {
                 setLatestData((value) => {
                   return { ...value, phoneNumber: e.target.value };
                 });
-                 // Display a message if hyphens are detected
+                // Display a message if hyphens are detected
                 if (e.target.value.includes("-")) {
                   setErrors((prevErrors) => ({
                     ...prevErrors,
