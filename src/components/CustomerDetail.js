@@ -7,6 +7,7 @@ import { Grid } from "@mui/material";
 import FormButton from "./until/FormButton";
 import FormSnackbar from "./until/FormSnackbar";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import validator from 'validator';
 
 const CustomerDetail = ({ customerId }) => {
   const [latestData, setLatestData] = useState({});
@@ -32,11 +33,13 @@ const CustomerDetail = ({ customerId }) => {
 
     // Validate name field
     if (!latestData.name) {
-      errors.name = "Name is required.";
+      errors.name = "取引先名は必須項目です。";
     }
 
     if (!latestData.phoneNumber) {
-      errors.phoneNumber = "Phone Number is required.";
+      errors.phoneNumber = "電話番号は必須項目です。";
+    }else if (!validator.isNumeric(latestData.phoneNumber)) {
+      errors.phoneNumber = "電話番号は半角数字のみです";
     }
 
     // Set the errors and update form validity
@@ -54,7 +57,7 @@ const CustomerDetail = ({ customerId }) => {
       setSnackbar({
         isOpen: true,
         status: "error",
-        message: "Form has errors. Please correct them.",
+        message: "問題が発生しました。入力内容を修正してください。",
       });
       setLoading(false);
       return;
@@ -140,7 +143,7 @@ const CustomerDetail = ({ customerId }) => {
         <Grid container columnSpacing={5} rowSpacing={3}>
           <Grid item xs={6}>
             <FormInput
-              label="Customer Name"
+              label="取引先名"
               value={latestData.name}
               type="text"
               onChange={(e) =>
@@ -156,7 +159,7 @@ const CustomerDetail = ({ customerId }) => {
           </Grid>
           <Grid item xs={6}>
             <FormInput
-              label="Phone Number"
+              label="電話番号"
               value={latestData.phoneNumber}
               type="text"
               className="section-input"
@@ -166,6 +169,20 @@ const CustomerDetail = ({ customerId }) => {
                 setLatestData((value) => {
                   return { ...value, phoneNumber: e.target.value };
                 });
+                // Display a message if hyphens are detected
+                if (e.target.value.includes("-")) {
+                  setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    phoneNumber: "「-」ハイフンを除いて番号のみを入力してください",
+                  }));
+                } else {
+                  // Clear the error message if no hyphens
+                  setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    phoneNumber: undefined,
+                  }));
+                }
+
               }}
               isRequired={true}
             >
@@ -174,7 +191,7 @@ const CustomerDetail = ({ customerId }) => {
           </Grid>
           <Grid item xs={6}>
             <div className="section-item">
-              <label className="section-label">Postal Code</label>
+              <label className="section-label">郵便番号</label>
               <div className="section-range">
                 <input
                   type="text"
@@ -222,7 +239,7 @@ const CustomerDetail = ({ customerId }) => {
               </div>
             </div>
             <div className="section-item">
-              <label className="section-label">State/Province</label>
+              <label className="section-label">都道府県</label>
               <input
                 type="text"
                 className="section-input"
@@ -235,7 +252,7 @@ const CustomerDetail = ({ customerId }) => {
               ></input>
             </div>
             <div className="section-item">
-              <label className="section-label">City</label>
+              <label className="section-label">市区町村</label>
               <input
                 value={latestData.city}
                 type="text"
@@ -250,7 +267,7 @@ const CustomerDetail = ({ customerId }) => {
           </Grid>
           <Grid item xs={6}>
             <div className="section-item">
-              <label className="section-label">Street</label>
+              <label className="section-label">丁目・番地・号</label>
               <input
                 value={latestData.street}
                 type="text"
@@ -263,7 +280,7 @@ const CustomerDetail = ({ customerId }) => {
               ></input>
             </div>
             <div className="section-item">
-              <label className="section-label">Building Name</label>
+              <label className="section-label">建物名</label>
               <input
                 value={latestData.buildingName}
                 type="text"
@@ -276,7 +293,7 @@ const CustomerDetail = ({ customerId }) => {
               ></input>
             </div>
             <div className="section-item">
-              <label className="section-label">Room Name</label>
+              <label className="section-label">部屋番号</label>
               <input
                 value={latestData.roomNumber}
                 type="text"
@@ -291,7 +308,7 @@ const CustomerDetail = ({ customerId }) => {
           </Grid>
           <Grid item xs={12}>
             <div className="section-item">
-              <label className="section-label">Note</label>
+              <label className="section-label">備考</label>
               <textarea
                 value={latestData.note}
                 onChange={(e) =>
