@@ -15,6 +15,8 @@ const ConfirmDialog = ({
   handleFunction,
   typeDialog = "削除",
   mainContent = "案件を削除すると、関連データ、添付書類、写真データの情報がすべて失われます。本当に削除しますか？",
+  cancelBtnDialog = "取消",
+  confirmBtnDialog = "削除",
 }) => {
   return (
     <Dialog
@@ -60,12 +62,12 @@ const ConfirmDialog = ({
             sx={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
           >
             <FormButton
-              itemName="取消"
+              itemName={cancelBtnDialog}
               buttonType="cancel"
               onClick={closeDialog}
             />
             <FormButton
-              itemName={typeDialog}
+              itemName={confirmBtnDialog}
               buttonType="delete"
               onClick={handleFunction}
             />

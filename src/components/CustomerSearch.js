@@ -20,6 +20,10 @@ import {
 } from "@mui/material";
 import ContentDialog from "./until/ContentDialog.js";
 import CustomerDetail from "./CustomerDetail.js";
+
+import * as Icons from "@mui/icons-material";
+import "../styles/styles.css";
+
 const CustomerSearch = () => {
   const [data, setData] = useState({});
   const [showList, setShowList] = useState(false);
@@ -38,6 +42,8 @@ const CustomerSearch = () => {
   const [customerId, setCustomerId] = useState();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
+  // State for phone number error
+  const [phoneNumberError, setPhoneNumberError] = useState(undefined);
 
   const getCustomers = async (e) => {
     setLoading(true);
@@ -100,7 +106,16 @@ const CustomerSearch = () => {
   const handleChange = (event, item) => {
     let newData = data;
     if (item === "customerName") newData.customerName = event.target.value;
-    else newData.phoneNumber = event.target.value;
+    else {
+      // Display a message if hyphens are detected in 電話番号 field
+      if (event.target.value.includes("-")) {
+        setPhoneNumberError("「-」ハイフンを除いて番号のみ");
+      } else {
+        // Clear the error message if no hyphens
+        setPhoneNumberError(undefined);
+      }
+      newData.phoneNumber = event.target.value;
+    }
 
     setData(newData);
   };
@@ -140,9 +155,21 @@ const CustomerSearch = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>取引先名</TableCell>
-                <TableCell>電話番号</TableCell>
-                <TableCell>備考</TableCell>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
+                  取引先名
+                </TableCell>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
+                  電話番号
+                </TableCell>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
+                  操作
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -156,28 +183,27 @@ const CustomerSearch = () => {
                       <TableCell>
                         <Truncate str={item.phoneNumber} maxLength={20} />
                       </TableCell>
-                      <TableCell style={{ position: "relative" }}>
-                        <Truncate str={item.note} maxLength={20} />
-                        <div className="container-search-actions">
-                          <Button
-                            className="search-edit"
-                            to=""
-                            onClick={() => handleClickEdit(item.id)}
-                            style={{ minWidth: "140px" }}
-                          >
-                            表示・編集
-                          </Button>
-                          <Button
-                            className="search-delete"
-                            to=""
-                            onClick={() => {
-                              setShowAlert(true);
-                              setDeleteItem(item);
-                            }}
-                          >
-                            削除
-                          </Button>{" "}
-                        </div>
+
+                      <TableCell>
+                        <Button
+                          className="my-button"
+                          startIcon={<Icons.Edit />}
+                          onClick={() => handleClickEdit(item.id)}
+                          style={{ marginRight: "5px" }}
+                        >
+                          編集
+                        </Button>
+
+                        <Button
+                          className="my-button"
+                          startIcon={<Icons.Delete />}
+                          onClick={() => {
+                            setShowAlert(true);
+                            setDeleteItem(item);
+                          }}
+                        >
+                          削除
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );
@@ -216,6 +242,10 @@ const CustomerSearch = () => {
               maxLength={11}
               onChange={(e) => handleChange(e, "phoneNumber")}
             ></input>
+            {/* Display phone number error message */}
+            {phoneNumberError && (
+              <span style={{ color: "red" }}>{phoneNumberError}</span>
+            )}
           </div>
           <br />
           <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
@@ -236,6 +266,8 @@ const CustomerSearch = () => {
         closeDialog={() => setShowAlert(false)}
         item={deleteItem.name}
         handleFunction={handleClickDelete}
+        typeDialog="削除確認"
+        mainContent="顧客情報を削除すると、電話番号情報、住所などの情報がすべて失われます。本当に削除しますか？"
       ></ConfirmDialog>
       <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
         <CustomerDetail customerId={customerId}></CustomerDetail>
