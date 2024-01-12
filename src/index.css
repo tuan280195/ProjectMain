@@ -5,6 +5,8 @@ html {
   font-family: "MS Mincho", sans-serif;
   font-size: 24px;
   color: #11596f;
+  line-height: 180%;
+  font-weight: bold;
 }
 
 body {
@@ -26,9 +28,9 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 1rem;
-  border-radius: 0.5rem;
+  padding: 1rem;  
   max-width: 1080px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 form {
@@ -61,7 +63,7 @@ select {
 }
 
 textarea {
-  height: 3rem;
+  height: 5rem;
 }
 
 input.section-input,
@@ -254,3 +256,4 @@ button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected{
   align-items: center;
   justify-content: center;
 }
+

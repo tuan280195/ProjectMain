@@ -72,7 +72,7 @@ const Sidebar = () => {
   const handleRedirectPage = (page) => {
     mapPage(page);
   };
-  
+
   const handleClick = (item) => {
     setCaseDetail("");
     setCustomerDetail("");
@@ -95,7 +95,7 @@ const Sidebar = () => {
 
   const logOut = () => {
     localStorage.removeItem("AuthToken");
-    navigate('/login', { replace: true });
+    navigate("/login", { replace: true });
   };
 
   const drawer = (
@@ -175,7 +175,10 @@ const Sidebar = () => {
         </Collapse>
       </List>
       <List>
-        <ListItemButton sx={hoverButton} onClick={() => handleClick("Document Search")}>
+        <ListItemButton
+          sx={hoverButton}
+          onClick={() => handleClick("Document Search")}
+        >
           <ListItemIcon>
             <SearchIcon />
           </ListItemIcon>
@@ -264,16 +267,9 @@ const Sidebar = () => {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        {header === "顧客情報の検索" && (
-          <CustomerSearch
-            setHeader={handleRedirectPage}
-            setCustomerDetail={setCustomerDetail}
-          />
-        )}
+        {header === "顧客情報の検索" && <CustomerSearch />}
         {header === "顧客情報" && <CustomerDetail customerId={customerId} />}
-        {header === "案件の検索" && (
-          <CaseSearch setHeader={handleRedirectPage} setCaseDetail={setCaseDetail} />
-        )}
+        {header === "案件の検索" && <CaseSearch />}
         {header === "案件情報" && <CaseDetail caseId={caseId} />}
         {header === "書類管理" && <DocumentSearch />}
       </Box>

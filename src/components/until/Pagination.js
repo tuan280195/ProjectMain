@@ -16,7 +16,7 @@ export default function PaginationRounded(props) {
   return (
     <div className='pagination-class'>
     
-      <span>ページサイズ</span>
+    <span>表示件数：</span>
       <Select
         value={props.pageSize}
         onChange={props.handleChangePageSize}
@@ -26,6 +26,7 @@ export default function PaginationRounded(props) {
         <MenuItem value={50}>50</MenuItem>
         <MenuItem value={100}>100</MenuItem>
       </Select>
+      
 
     <Stack spacing={2}>
       <Pagination count={props.totalCount} 

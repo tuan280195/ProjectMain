@@ -330,7 +330,7 @@ const CaseDetail = ({ caseId }) => {
                 itemName="関連書類"
                 buttonType="attach"
                 titleContent={
-                  disableAttach ? "Please Create Case Before Attach File!" : ""
+                  disableAttach ? "関連書類が存在しません。案件を保存してから書類の添付や管理が行えます。" : ""
                 }
                 onClick={handleAttach}
                 disabled={disableAttach}
