@@ -1,13 +1,14 @@
-import LoadingSpinner from "../until/LoadingSpinner";
-import Truncate from "../until/Truncate";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import LoadingSpinner from "../until/LoadingSpinner.js";
+import Truncate from "../until/Truncate.js";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 import CircularProgress from "@mui/material/CircularProgress";
-import ConfirmDialog from "../until/ConfirmBox";
+import ConfirmDialog from "../until/ConfirmBox.js";
 import { useState, useEffect } from "react";
-import FormButton from "../until/FormButton";
-import Pagination from "../until/Pagination";
-import FormSelection from "../until/FormSelection";
-import GenericItems from "../until/GenericItems";
+import FormButton from "../until/FormButton.js";
+import Pagination from "../until/Pagination.js";
+import FormSelection from "../until/FormSelection.js";
+import GenericItems from "../until/GenericItems.js";
+import ContentDialog from "../until/ContentDialog.js";
 import {
     Button,
     Grid,
@@ -32,16 +33,17 @@ const DocumentSearch = () => {
     const [fileTypeSearch, setFileTypeSearch] = useState([]);
     const [customerList, setCustomerList] = useState([]);
     const [deleteItem, setDeleteItem] = useState({
-        id: null,
-        name: null,
-        phoneNumber: null,
+        keywordId: null,
+        caseId: null,
+        fileName: "",
     });
     const [optionFileType, setOptionFileType] = useState([]);
     const [condition, setCondition] = useState({ minWidth: "400px", xs: 4 });
     const axiosPrivate = useAxiosPrivate();
     const controller = new AbortController();
     const [urlPreviewImg, setUrlPreviewImg] = useState({ blobUrl: "", fileName: "" });
-
+    const [showDialog, setShowDialog] = useState(false);
+    
     useEffect(async () => {
         setUrlPreviewImg({ blobUrl: "", fileName: "" });
         await getDocumentTemplate();
@@ -55,21 +57,21 @@ const DocumentSearch = () => {
         let keywordDateValues = keyWordSearch.filter(x => x.fromTo && x.typeValue === 'datetime' && (x.fromValue || x.toValue))
         let keywordDecimalValues = keyWordSearch.filter(x => x.fromTo && x.typeValue === 'decimal' && (x.fromValue || x.toValue))
         const payload = {
-            "fileTypeId" : fileTypeSearch.value,
+            "fileTypeId": fileTypeSearch.value,
             "keywordValues": keywordValues,
-              "keywordDateValues": keywordDateValues,
-              "keywordDecimalValues": keywordDecimalValues,
-              "pageSize": 25,
-              "pageNumber": 1
+            "keywordDateValues": keywordDateValues,
+            "keywordDecimalValues": keywordDecimalValues,
+            "pageSize": 25,
+            "pageNumber": 1
         };
         await axiosPrivate.post(searchURL, payload, {
             signal: controller.signal,
         }).then((response) => {
             setListItem(response.data);
-        }).catch((error)=>{
+        }).catch((error) => {
             console.log(error);
         });
-        
+
         setLoading(false);
     };
 
@@ -88,10 +90,10 @@ const DocumentSearch = () => {
                 response.data.customers.forEach(function (item) {
                     item.label = item.name;
                 });
-                response.data.keywords.forEach(function (item){
+                response.data.keywords.forEach(function (item) {
                     item.customerId = ""
                 })
-                response.data.fileType.value = "";
+                response.data.fileType.value = null;
                 setFileTypeSearch(response.data.fileType);
                 setKeyWordSearch(response.data.keywords);
                 setTemplate(response.data.keywords);
@@ -108,44 +110,40 @@ const DocumentSearch = () => {
         setLoading(true);
         let getFileUrl = `/api/FileUpload/Download`
         let payload = {
-          fileName: item.keywordName,
-          caseId: item.caseId
+            fileName: item.keywordName,
+            caseId: item.caseId
         }
         await axiosPrivate
-          .post(getFileUrl, payload)
-          .then(async (response) => {
-            const byteArray = Uint8Array.from(
-              atob(response.data)
-                .split('')
-                .map(char => char.charCodeAt(0))
-            );
-            const blob = new Blob([byteArray], { type: response.headers["content-type"] });
-            const blobUrl = window.URL.createObjectURL(blob);
-            if (!item.isImage) {
-              const link = document.createElement('a');
-              link.href = blobUrl
-              link.download = item.fileName;
-              link.click();
-            } else {
-              setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.fileName })
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+            .post(getFileUrl, payload)
+            .then(async (response) => {
+                const byteArray = Uint8Array.from(
+                    atob(response.data)
+                        .split('')
+                        .map(char => char.charCodeAt(0))
+                );
+                const blob = new Blob([byteArray], { type: response.headers["content-type"] });
+                const blobUrl = window.URL.createObjectURL(blob);
+                if (!item.isImage) {
+                    const link = document.createElement('a');
+                    link.href = blobUrl
+                    link.download = item.keywordName;
+                    link.click();
+                } else {
+                    setShowDialog(true);
+                    setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.keywordName })
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
         setLoading(false);
-      }
-    const handleClickEdit = (id) => {
-        console.log("handleClickEdit", id)
-        setLoading(true);
-        setLoading(false);
-    };
+    }
 
     const handleClickDelete = async (e) => {
         setLoading(true);
         e.preventDefault();
-        var deleteURL = "/api/Customer/" + deleteItem.id;
-        await axiosPrivate.delete(deleteURL).then(async (res) => {
+        var deleteURL = "/api/FileUpload/Delete";
+        await axiosPrivate.put(deleteURL, deleteItem).then(async (res) => {
             setShowAlert(false);
             await getFiles(e);
             setCondition({ width: "1080px", xs: 4 });
@@ -160,14 +158,6 @@ const DocumentSearch = () => {
         await getFiles(e);
         setCondition({ width: "1080px", xs: 4 });
         setShowList(true);
-    };
-
-    const handleChange = (event, item) => {
-        let newData = data;
-        if (item === "customerName") newData.customerName = event.target.value;
-        else newData.phoneNumber = event.target.value;
-
-        setData(newData);
     };
 
     const handleChangePageSize = async (e) => {
@@ -202,13 +192,6 @@ const DocumentSearch = () => {
                     handleChangePage={handleChangePage} />
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        {/* <TableHead>
-                            <TableRow>
-                                <TableCell>Customer Name</TableCell>
-                                <TableCell>Phone</TableCell>
-                                <TableCell>Note</TableCell>
-                            </TableRow>
-                        </TableHead> */}
                         <TableBody>
                             {listItem && listItem.items && listItem.items.length > 0 ? (
                                 listItem.items.map((item, index) => {
@@ -220,7 +203,9 @@ const DocumentSearch = () => {
                                                     <Button
                                                         className="search-edit"
                                                         to=""
-                                                        onClick={() => viewOrDownloadFile(item)}
+                                                        onClick={() => {
+                                                            viewOrDownloadFile(item)
+                                                        } }
                                                         style={{ minWidth: "140px" }}
                                                     >
                                                         表示・編集
@@ -230,7 +215,12 @@ const DocumentSearch = () => {
                                                         to=""
                                                         onClick={() => {
                                                             setShowAlert(true);
-                                                            setDeleteItem(item);
+                                                            let itemDelete = {
+                                                                keywordId: item.keywordId,
+                                                                caseId: item.caseId,
+                                                                fileName: item.keywordName,
+                                                            }
+                                                            setDeleteItem(itemDelete);
                                                         }}
                                                     >
                                                         削除
@@ -252,11 +242,11 @@ const DocumentSearch = () => {
 
     const dynamicGenerate = (item, templateItem) => {
         let typeValue = templateItem.typeValue;
-        if (templateItem.fromTo && templateItem.typeValue == 'decimal'){
+        if (templateItem.fromTo && templateItem.typeValue == 'decimal') {
             typeValue = 'decimalrange'
-        }else if(templateItem.fromTo && templateItem.typeValue == 'datetime'){
+        } else if (templateItem.fromTo && templateItem.typeValue == 'datetime') {
             typeValue = 'daterange';
-        }else if(templateItem.keywordName === '取引先名'){
+        } else if (templateItem.keywordName === '取引先名') {
             typeValue = 'list';
         }
         return (
@@ -296,7 +286,7 @@ const DocumentSearch = () => {
                 handleInput3={(e, customer) => {
                     const newState = keyWordSearch.map((value) => {
                         if (value.keywordId === item.keywordId) {
-                            return { ...value, value: customer ? customer.label : "", customerId: customer ? customer.id: "" };
+                            return { ...value, value: customer ? customer.label : "", customerId: customer ? customer.id : "" };
                         } else return { ...value };
                     });
                     setKeyWordSearch(newState);
@@ -314,30 +304,30 @@ const DocumentSearch = () => {
         }
         return (
             <>
-            <Grid item xs={condition.xs}>
-                <GenericItems
-                    label={"File Type"}
-                    type={'list'}
-                    options={fileTypeSearch.fileTypes}
-                    handleInput3={(e, item) => {
-                        const newState = fileTypeSearch;
-                        newState.value = item ? item.id : "";
-                        setFileTypeSearch(newState);
-                    }}
-                />
-                {template.map((templateItem) => {
-                    return keyWordSearch.map((item) => {
-                        if (item.keywordId === templateItem.keywordId) {
-                            return dynamicGenerate(item, templateItem);
-                        }
-                    });
-                })}
-                <br />
-                <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
-                    {/* Search Button */}
-                    <FormButton itemName="検索" onClick={handleClickSearch} />
+                <Grid item xs={condition.xs}>
+                    <GenericItems
+                        label={"File Type"}
+                        type={'list'}
+                        options={fileTypeSearch.fileTypes}
+                        handleInput3={(e, item) => {
+                            const newState = fileTypeSearch;
+                            newState.value = item ? (item.id ? item.id : null) : null;
+                            setFileTypeSearch(newState);
+                        }}
+                    />
+                    {template.map((templateItem) => {
+                        return keyWordSearch.map((item) => {
+                            if (item.keywordId === templateItem.keywordId) {
+                                return dynamicGenerate(item, templateItem);
+                            }
+                        });
+                    })}
+                    <br />
+                    <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
+                        {/* Search Button */}
+                        <FormButton itemName="検索" onClick={handleClickSearch} />
+                    </Grid>
                 </Grid>
-            </Grid>
             </>
         );
 
@@ -354,14 +344,17 @@ const DocumentSearch = () => {
                         <Results />
                     </Grid>
                 ) : null}
-                {urlPreviewImg.blobUrl && (
-                    <Grid item xs={12} className="preview-file">
-                    <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>Download Image</a>
-                    <img src={urlPreviewImg.blobUrl} style={{ width: "25%" }} />
-                    </Grid>
-                )}
             </Grid>
-
+            <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+                <Grid container columnSpacing={5} rowSpacing={5}>
+                    {urlPreviewImg.blobUrl && (
+                        <Grid item xs={12} className="preview-file">
+                            <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>Download Image</a>
+                            <img src={urlPreviewImg.blobUrl} style={{ width: "100%" }} />
+                        </Grid>
+                    )}
+                </Grid>
+            </ContentDialog>
             <LoadingSpinner loading={loading}></LoadingSpinner>
             <ConfirmDialog
                 open={showAlert}

@@ -21,7 +21,7 @@ import CustomerSearch from "./CustomerSearch";
 import CustomerDetail from "./CustomerDetail";
 import CaseSearch from "./CaseSearch";
 import CaseDetail from "./CaseDetail";
-import DocumentSearch from "./document-magement/DocumentSearch";
+import DocumentSearch from "./document-management/DocumentSearch";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 

@@ -309,8 +309,11 @@ const CaseSearch = () => {
             if(value.keywordName === '電話番号'){
               value.value = customer && customer.id ? customerList.find(x => x.id === customer.id).phoneNumber : "";
             }
+            if(value.keywordName === '住所'){
+              let fiteredCustomer = customer && customer.id ? customerList.find(x => x.id === customer.id): "";
+              value.value = fiteredCustomer ? [fiteredCustomer.stateProvince, fiteredCustomer.city, fiteredCustomer.street, fiteredCustomer.buildingName, fiteredCustomer.roomNumber].join('') : "";
+            }
             if (value.keywordId === item.keywordId) {
-              
               return { ...value, value: customer ? customer.label : "", customerId: customer ? customer.id: "" };
             } else return { ...value };
           });
