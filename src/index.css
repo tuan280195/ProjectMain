@@ -14,22 +14,6 @@ body {
   background-color: #fff;
 }
 
-.my-button {
-  background-color: white;
-  color: #004862;    
-  cursor: pointer;
-  border: 2px solid #004862;    
-}
-
-.my-button:hover {
-  background-color: #2AA252;
-  color: white;
-}
-
-.my-button:active {
-  background-color: #5ebc7e;
-}
-
 .App {
   display: flex;
   flex-direction: column;
@@ -44,9 +28,9 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 1rem;
-  border-radius: 0.5rem;
+  padding: 1rem;  
   max-width: 1080px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 form {
@@ -79,7 +63,7 @@ select {
 }
 
 textarea {
-  height: 3rem;
+  height: 5rem;
 }
 
 input.section-input,

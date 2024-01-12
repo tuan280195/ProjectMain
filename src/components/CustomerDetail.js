@@ -7,6 +7,7 @@ import { Grid } from "@mui/material";
 import FormButton from "./until/FormButton";
 import FormSnackbar from "./until/FormSnackbar";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import validator from 'validator';
 
 const CustomerDetail = ({ customerId }) => {
   const [latestData, setLatestData] = useState({});
@@ -37,6 +38,8 @@ const CustomerDetail = ({ customerId }) => {
 
     if (!latestData.phoneNumber) {
       errors.phoneNumber = "Phone Number is required.";
+    }else if (!validator.isNumeric(latestData.phoneNumber)) {
+      errors.phoneNumber = "電話番号は半角数字のみです";
     }
 
     // Set the errors and update form validity
@@ -166,6 +169,20 @@ const CustomerDetail = ({ customerId }) => {
                 setLatestData((value) => {
                   return { ...value, phoneNumber: e.target.value };
                 });
+                 // Display a message if hyphens are detected
+                if (e.target.value.includes("-")) {
+                  setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    phoneNumber: "「-」ハイフンを除いて番号のみを入力してください",
+                  }));
+                } else {
+                  // Clear the error message if no hyphens
+                  setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    phoneNumber: undefined,
+                  }));
+                }
+
               }}
               isRequired={true}
             >
