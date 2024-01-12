@@ -18,7 +18,9 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
+import ContentDialog from "./until/ContentDialog.js";
+import CustomerDetail from "./CustomerDetail.js";
+const CustomerSearch = () => {
   const [data, setData] = useState({});
   const [showList, setShowList] = useState(false);
   const [listItem, setListItem] = useState([
@@ -32,6 +34,8 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
     phoneNumber: null,
   });
   const [condition, setCondition] = useState({ width: "400px", xs: 12 });
+  const [showDialog, setShowDialog] = useState(false);
+  const [customerId, setCustomerId] = useState();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
@@ -44,12 +48,12 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
       searchURL =
         data.customerName && data.phoneNumber
           ? searchURL +
-          `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}`
+            `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}`
           : data.phoneNumber
-            ? searchURL + `?phoneNumber=${data.phoneNumber}`
-            : data.customerName
-              ? searchURL + `?customerName=${data.customerName}`
-              : searchURL;
+          ? searchURL + `?phoneNumber=${data.phoneNumber}`
+          : data.customerName
+          ? searchURL + `?customerName=${data.customerName}`
+          : searchURL;
 
       const response = await axiosPrivate.get(searchURL, {
         signal: controller.signal,
@@ -62,10 +66,10 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
   };
 
   const handleClickEdit = (id) => {
-    console.log("handleClickEdit", id)
+    console.log("handleClickEdit", id);
     setLoading(true);
-    setCustomerDetail(id);
-    setHeader("Create Customer");
+    setCustomerId(id);
+    setShowDialog(true);
     setLoading(false);
   };
 
@@ -73,14 +77,17 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
     setLoading(true);
     e.preventDefault();
     var deleteURL = "/api/Customer/" + deleteItem.id;
-    await axiosPrivate.delete(deleteURL).then(async (res) => {
-      setShowAlert(false);
-      await getCustomers(e);
-      setCondition({ width: "1080px", xs: 4 });
-      setShowList(true);
-    }).catch((error) => {
-      console.log(error)
-    });
+    await axiosPrivate
+      .delete(deleteURL)
+      .then(async (res) => {
+        setShowAlert(false);
+        await getCustomers(e);
+        setCondition({ width: "1080px", xs: 4 });
+        setShowList(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setLoading(false);
   };
 
@@ -127,7 +134,8 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
           pageSize={caseSearchState.caseDataSearchState.pageSize}
           currentPage={caseSearchState.caseDataSearchState.currentPage}
           handleChangePageSize={handleChangePageSize}
-          handleChangePage={handleChangePage} />
+          handleChangePage={handleChangePage}
+        />
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -142,16 +150,20 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
                 listItem.items.map((item, index) => {
                   return (
                     <TableRow>
-                      <TableCell><Truncate str={item.name} maxLength={20} /></TableCell>
-                      <TableCell><Truncate str={item.phoneNumber} maxLength={20} /></TableCell>
-                      <TableCell style={{position: "relative"}}>
+                      <TableCell>
+                        <Truncate str={item.name} maxLength={20} />
+                      </TableCell>
+                      <TableCell>
+                        <Truncate str={item.phoneNumber} maxLength={20} />
+                      </TableCell>
+                      <TableCell style={{ position: "relative" }}>
                         <Truncate str={item.note} maxLength={20} />
                         <div className="container-search-actions">
                           <Button
                             className="search-edit"
                             to=""
                             onClick={() => handleClickEdit(item.id)}
-                            style={{minWidth: "140px"}}
+                            style={{ minWidth: "140px" }}
                           >
                             表示・編集
                           </Button>
@@ -168,11 +180,13 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
                         </div>
                       </TableCell>
                     </TableRow>
-                  )
-                })) : (
-                <TableCell colSpan={3}><span style={{color: "#000"}}>Not Found!</span></TableCell>
-              )
-              }
+                  );
+                })
+              ) : (
+                <TableCell colSpan={3}>
+                  <span style={{ color: "#000" }}>Not Found!</span>
+                </TableCell>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -223,6 +237,9 @@ const CustomerSearch = ({ setHeader, setCustomerDetail }) => {
         item={deleteItem.name}
         handleFunction={handleClickDelete}
       ></ConfirmDialog>
+      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+        <CustomerDetail customerId={customerId}></CustomerDetail>
+      </ContentDialog>
     </section>
   );
 };
