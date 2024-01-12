@@ -57,7 +57,7 @@ const CustomerDetail = ({ customerId }) => {
       setSnackbar({
         isOpen: true,
         status: "error",
-        message: "Form has errors. Please correct them.",
+        message: "問題が発生しました。入力内容を修正してください。",
       });
       setLoading(false);
       return;
