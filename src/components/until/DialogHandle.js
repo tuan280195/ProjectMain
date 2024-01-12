@@ -31,7 +31,7 @@ const DialogHandle = ({
   const [urlPreviewImg, setUrlPreviewImg] = useState({ blobUrl: "", fileName: "" });
   const [fileDelete, setFileDelete] = useState({});
   const [showAlert, setShowAlert] = useState(false);
-  let dataUpload = {};
+  const [dataUpload, setDataUpload] = useState({fileTypeId: null, fileName: ""});
   useEffect(async () => {
     setListItem([]);
     setLoading(false);
@@ -86,13 +86,16 @@ const DialogHandle = ({
   };
 
   const handleSelectedFileType = (e, value) => {
-    dataUpload.fileTypeId = value.id;
+    var newState = {...dataUpload, fileTypeId: value.id}
+    setDataUpload(newState);
   };
   const handleInputFileName = (e) => {
-    dataUpload.fileName = e.target.value;
+    var newState = {...dataUpload, fileName: e.target.value}
+    setDataUpload(newState);
   };
   const handleFileChange = (e) => {
-    dataUpload.fileToUpload = e.target.files[0];
+    var newState = {...dataUpload, fileToUpload: e.target.files[0]}
+    setDataUpload(newState);
   };
   const viewOrDownloadFile = async (item) => {
     setLoading(true);
@@ -170,6 +173,8 @@ const DialogHandle = ({
             <Upload
               optionFileType={optionFileType}
               caseId={caseId}
+              valueTypeId={dataUpload.fileTypeId}
+              valueFileName={dataUpload.fileName}
               uploadFunction={uploadFunction}
               handleSelectedFileType={handleSelectedFileType}
               handleInputFileName={handleInputFileName}
