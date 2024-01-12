@@ -27,7 +27,8 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
   const [data, setData] = useState([]);
   const [keyWordSearch, setKeyWordSearch] = useState([]);
   const [keyWordDateSearch, setKeyWordDateSearch] = useState([]);
-  const [searchData, setSearchData] = useState([]);
+  
+  const [customerList, setCustomerList] = useState([]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -58,8 +59,15 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
         signal: controller.signal,
       })
       .then((response) => {
-        setTemplate(response.data);
-        setKeyWordSearch(response.data);
+        response.data.caseKeywordValues.forEach(function (item) {
+          item.customerId = "";
+        });
+        response.data.customers.forEach(function (item) {
+          item.label = item.name;
+        });
+        setCustomerList(response.data.customers);
+        setTemplate(response.data.caseKeywordValues);
+        setKeyWordSearch(response.data.caseKeywordValues);
       })
       .catch((error) => {
         console.log(error.response);
@@ -71,12 +79,11 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
   const getCaseList = async () => {
     const searchCaseUrl = "/api/Case/getAll";
     const payload = {
-      keywordValues: keyWordSearch.filter(n => !n.fromTo),
-      keywordDateValues: keyWordSearch.filter(n => n.fromTo),
+      keywordValues: keyWordSearch.filter(n => !n.fromTo && n.value),
+      keywordDateValues: keyWordSearch.filter(n => n.fromTo && (n.fromValue || n.toValue)),
       pageSize: caseSearchState.paginationState.pageSize,
       pageNumber: caseSearchState.paginationState.currentPage,
     };
-    console.log("payload", payload);
     let payloadFilterd =
     keyWordSearch.filter((n) => n.value);
     payload.keywordValues = payloadFilterd;
@@ -85,7 +92,6 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
     axiosPrivate
       .post(searchCaseUrl, payload)
       .then((response) => {
-        console.log(response.data);
         caseSearchActions.setPaginationState(
           response.data.totalCount,
           response.data.pageSize,
@@ -239,13 +245,19 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
   };
 
   const dynamicGenerate = (item, templateItem) => {
+    let typeValue = templateItem.typeValue
+    if(templateItem.fromTo){
+      typeValue = 'daterange'
+    }else if(templateItem.keywordName === '取引先名'){
+      typeValue = 'customerlist'
+    }
     return (
       <GenericItems
         value={item.value}
         value1={item.fromValue}
         value2={item.toValue}
         label={templateItem.keywordName}
-        type={templateItem.fromTo ? 'daterange' : templateItem.typeValue}
+        type={typeValue}
         key={templateItem.order}
         handleInput={(e) => {
           const newState = keyWordSearch.map((value) => {
@@ -274,7 +286,6 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
           setKeyWordSearch(newState);
         }}
         handleInput3={(e) => {
-          console.log(e.target.outerText);
           const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
               return { ...value, value: e.target.outerText };
@@ -282,6 +293,19 @@ const CaseSearch = ({ setHeader, setCaseDetail }) => {
           });
           setKeyWordSearch(newState);
         }}
+        handleInputCustomer={(e, customer) => {
+          const newState = keyWordSearch.map((value) => {
+            if(value.keywordName === '電話番号'){
+              value.value = customer && customer.id ? customerList.find(x => x.id === customer.id).phoneNumber : "";
+            }
+            if (value.keywordId === item.keywordId) {
+              
+              return { ...value, value: customer ? customer.label : "", customerId: customer ? customer.id: "" };
+            } else return { ...value };
+          });
+          setKeyWordSearch(newState);
+        }}
+        optionCustomers={customerList}
         options={item.metadata}
       />
     );

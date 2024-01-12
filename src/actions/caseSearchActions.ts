@@ -28,28 +28,12 @@ const getCaseList = async () => {
     }
     let payloadFilterd = caseSearchState.keywordsSearchState.keywordValues.filter(n => n['value']);
     payload.keywordValues = payloadFilterd;
-    console.log("actions", payload)
-    // caseSearchActions.setKeywordsSearchState(payloadFilterd);
-    // setShowList(false);
     let response = await GetCaseList(payload);
     if(response) {
         setPaginationState(response.totalCount, response.pageSize, response.currentPage)
         setCaseDataSearchState(response.items)
-        console.log('caseSearchState.caseDataSearchState----', caseSearchState.caseDataSearchState)
     }
     return response;
-    // axiosPrivate.post(searchCaseUrl, payload).then((response) => {
-    //   console.log(response.data)
-    //   caseSearchActions.setPaginationState(response.data.totalCount, response.data.pageSize, response.data.currentPage)
-    //   caseSearchActions.setCaseDataSearchState(response.data.items)
-    //   console.log('caseSearchState.caseDataSearchState----', caseSearchState.caseDataSearchState)
-    //   // setSearchData(response.data)
-    // //   setShowList(true);
-
-    // })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
 };
 
 const caseSearchActions = {
