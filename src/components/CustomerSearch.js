@@ -63,23 +63,20 @@ const CustomerSearch = () => {
       searchURL = searchURL + `?${pagination}`;
     }
 
-    const status = await axiosPrivate
-      .get(searchURL, {
-        signal: controller.signal,
-        validateStatus: () => true,
-      })
-      .then((response) => {
-        setListItem(response.data);
-        commonActions.setPaginationState({
-          totalCount: response.data.totalCount,
-          pageSize: response.data.pageSize,
-          currentPage: response.data.currentPage,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
+    const status = await axiosPrivate.get(searchURL, {
+      signal: controller.signal,
+      validateStatus: () => true
+    }).then((response) => {
+      setListItem(response.data);
+      commonActions.setPaginationState({
+        totalCount: response.data.totalCount,
+        pageSize: response.data.pageSize,
+        currentPage: response.data.currentPage,
       });
-    if (status === 404) {
+    }).catch((error) => {
+      console.log(error);
+    });
+    if (status == 404) {
       setListItem([]);
       commonActions.setPaginationState({
         totalCount: 0,
@@ -123,8 +120,9 @@ const CustomerSearch = () => {
 
   const handleChange = (event, item) => {
     if (item === "customerName") {
-      setData({ ...data, customerName: event.target.value });
-    } else {
+      setData({...data, customerName: event.target.value});
+    }
+    else {
       // Display a message if hyphens are detected in 電話番号 field
       if (event.target.value.includes("-")) {
         setPhoneNumberError("「-」ハイフンを除いて番号のみ");
@@ -132,8 +130,10 @@ const CustomerSearch = () => {
         // Clear the error message if no hyphens
         setPhoneNumberError(undefined);
       }
-      setData({ ...data, phoneNumber: event.target.value });
+      setData({...data, phoneNumber: event.target.value});
     }
+
+    
   };
 
   const handleChangePageSize = async (e) => {
@@ -143,10 +143,10 @@ const CustomerSearch = () => {
     });
     await getCustomers(e);
   };
-  const handleChangePage = async (e) => {
+  const handleChangePage = async (e, value) => {
     commonActions.setPaginationState({
       ...commonState.paginationState,
-      currentPage: parseInt(e.target.innerText),
+      currentPage: value,
     });
     await getCustomers(e);
   };

@@ -111,7 +111,7 @@ const CaseSearch = () => {
       .catch((error) => {
         console.log(error);
       });
-    setLoading(false);
+      setLoading(false);
   };
 
   const handleClickSearch = async (e) => {
@@ -155,11 +155,11 @@ const CaseSearch = () => {
     );
     await getCaseList(e);
   };
-  const handleChangePage = async (e) => {
+  const handleChangePage = async (e, value) => {
     caseSearchActions.setPaginationState(
       caseSearchState.paginationState.totalCount,
       caseSearchState.paginationState.pageSize,
-      parseInt(e.target.innerText)
+      value
     );
     await getCaseList(e);
   };

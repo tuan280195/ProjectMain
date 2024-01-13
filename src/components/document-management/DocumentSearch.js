@@ -189,10 +189,10 @@ const DocumentSearch = () => {
     });
     await getFiles(e);
   };
-  const handleChangePage = async (e) => {
+  const handleChangePage = async (e, value) => {
     commonActions.setPaginationState({
       ...commonState.paginationState,
-      currentPage: parseInt(e.target.innerText),
+      currentPage: value,
     });
     await getFiles(e);
   };
