@@ -64,14 +64,18 @@ const DocumentSearch = () => {
             "pageSize": 25,
             "pageNumber": 1
         };
-        await axiosPrivate.post(searchURL, payload, {
+        const status = await axiosPrivate.post(searchURL, payload, {
             signal: controller.signal,
+            validateStatus: () => true
         }).then((response) => {
             setListItem(response.data);
         }).catch((error) => {
             console.log(error);
         });
-
+        if(status == 404) {
+            console.log("validateStatus", status);
+            setListItem([]);
+        }
         setLoading(false);
     };
 
