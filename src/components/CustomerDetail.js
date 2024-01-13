@@ -22,7 +22,7 @@ const CustomerDetail = ({ customerId }) => {
     message: "Successfully!",
   });
   const [errors, setErrors] = useState({});
-  // const [isFormValid, setIsFormValid] = useState(false);
+  const [dataId, setDataId] = useState();
 
   useEffect(async () => {
     await getCustomerDetail();
@@ -66,9 +66,9 @@ const CustomerDetail = ({ customerId }) => {
       console.log("OK.");
     }
 
-    if (latestData.id) {
+    if (dataId) {
       await axiosPrivate
-        .put("/api/Customer/" + latestData.id, latestData)
+        .put("/api/Customer/" + dataId, latestData)
         .then((response) => {
           setSnackbar({
             isOpen: true,
@@ -90,6 +90,8 @@ const CustomerDetail = ({ customerId }) => {
             message: "取引先の登録は正常に完成しました！",
           });
 
+          console.log(response.data);
+          setDataId(response.data);
           return response;
         })
         .catch((error) => {
@@ -98,6 +100,14 @@ const CustomerDetail = ({ customerId }) => {
     }
 
     setLoading(false);
+  };
+
+  const handleClear = () => {
+    setDataId();
+    var newVal = latestData;
+    Object.keys(newVal).forEach((i) => {
+      setLatestData((value) => ({ ...value, [i]: "" }));
+    });
   };
 
   const handleAddress = async (getPostCode) => {
@@ -129,6 +139,7 @@ const CustomerDetail = ({ customerId }) => {
         const response = await axiosPrivate.get(
           "https://localhost:7265/api/Customer?id=" + customerId
         );
+        setDataId(customerId);
         setLatestData(response.data);
       }
     } catch (error) {
@@ -323,7 +334,8 @@ const CustomerDetail = ({ customerId }) => {
           <Grid item xs={12}>
             <div className="handle-button">
               {/* Submit Button */}
-              <FormButton itemName="保存 " type="submit" />
+              <FormButton itemName="保存" type="submit" />
+              <FormButton itemName="新規作成" onClick={handleClear} />
             </div>
           </Grid>
         </Grid>

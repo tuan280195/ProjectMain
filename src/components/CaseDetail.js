@@ -28,7 +28,7 @@ const CaseDetail = ({ caseId }) => {
     status: "success",
     message: "Successfully!",
   });
-  const [caseIdName, setCaseIdAndName] = useState({
+  const [caseIdName, setCaseIdName] = useState({
     caseId: null,
     caseName: "",
   });
@@ -46,7 +46,7 @@ const CaseDetail = ({ caseId }) => {
 
   useEffect(async () => {
     if (caseId) {
-      setCaseIdAndName((caseIdName) => ({ ...caseIdName, caseId: caseId }));
+      setCaseIdName((caseIdName) => ({ ...caseIdName, caseId: caseId }));
       setDisableAttach(false);
       await getCaseByCaseId();
     } else {
@@ -115,7 +115,7 @@ const CaseDetail = ({ caseId }) => {
         },
       })
       .then((response) => {
-        setCaseIdAndName({
+        setCaseIdName({
           caseId: response.data.caseId,
           caseName: response.data.caseName,
         });
@@ -127,6 +127,7 @@ const CaseDetail = ({ caseId }) => {
 
     setLoading(false);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -176,7 +177,7 @@ const CaseDetail = ({ caseId }) => {
           signal: controller.signal,
         })
         .then((response) => {
-          setCaseIdAndName({ ...caseIdName, caseId: response.data });
+          setCaseIdName({ ...caseIdName, caseId: response.data });
           setSnackbar({
             isOpen: true,
             status: "success",
@@ -190,6 +191,14 @@ const CaseDetail = ({ caseId }) => {
         });
     }
     setLoading(false);
+  };
+
+  const handleClear = () => {
+    setCaseIdName({ ...caseIdName, caseId: null });
+    const newState = data.map((value) => {
+      return { ...value, value: "" };
+    });
+    setData(newState);
   };
 
   const getFileTypes = async () => {
@@ -363,6 +372,7 @@ const CaseDetail = ({ caseId }) => {
               />
               {/* Save Button */}
               <FormButton itemName="保存" type="submit" />
+              <FormButton itemName="新規作成" onClick={handleClear} />
             </div>
           </Grid>
         </Grid>
