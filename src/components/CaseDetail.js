@@ -177,7 +177,10 @@ const CaseDetail = ({ caseId }) => {
           signal: controller.signal,
         })
         .then((response) => {
-          setCaseIdName({ ...caseIdName, caseId: response.data });
+          setCaseIdName({
+            caseName: response.data.caseName,
+            caseId: response.data.caseId,
+          });
           setSnackbar({
             isOpen: true,
             status: "success",
