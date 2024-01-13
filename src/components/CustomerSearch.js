@@ -61,8 +61,9 @@ const CustomerSearch = () => {
       searchURL = searchURL + `?${pagination}`;
     }
 
-    await axiosPrivate.get(searchURL, {
+    const status = await axiosPrivate.get(searchURL, {
       signal: controller.signal,
+      validateStatus: () => true
     }).then((response) => {
       setListItem(response.data);
       commonActions.setPaginationState({
@@ -73,6 +74,14 @@ const CustomerSearch = () => {
     }).catch((error) => {
       console.log(error);
     });
+    if (status == 404) {
+      setListItem([]);
+      commonActions.setPaginationState({
+        totalCount: 0,
+        pageSize: 25,
+        currentPage: 1,
+      });
+    }
     setLoading(false);
   };
 
@@ -108,8 +117,9 @@ const CustomerSearch = () => {
   };
 
   const handleChange = (event, item) => {
-    let newData = data;
-    if (item === "customerName") newData.customerName = event.target.value;
+    if (item === "customerName") {
+      setData({...data, customerName: event.target.value});
+    }
     else {
       // Display a message if hyphens are detected in 電話番号 field
       if (event.target.value.includes("-")) {
@@ -118,10 +128,10 @@ const CustomerSearch = () => {
         // Clear the error message if no hyphens
         setPhoneNumberError(undefined);
       }
-      newData.phoneNumber = event.target.value;
+      setData({...data, phoneNumber: event.target.value});
     }
 
-    setData(newData);
+    
   };
 
   const handleChangePageSize = async (e) => {

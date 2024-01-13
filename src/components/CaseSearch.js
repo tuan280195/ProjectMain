@@ -81,7 +81,9 @@ const CaseSearch = () => {
     setLoading(false);
   };
 
-  const getCaseList = async () => {
+  const getCaseList = async (e) => {
+    setLoading(true);
+    e.preventDefault();
     const searchCaseUrl = "/api/Case/getAll";
     const payload = {
       keywordValues: keyWordSearch.filter(n => !n.fromTo && n.value),
@@ -92,9 +94,8 @@ const CaseSearch = () => {
     let payloadFilterd =
     keyWordSearch.filter((n) => n.value);
     payload.keywordValues = payloadFilterd;
-    // caseSearchActions.setKeywordsSearchState(payloadFilterd);
     setShowList(false);
-    axiosPrivate
+    await axiosPrivate
       .post(searchCaseUrl, payload)
       .then((response) => {
         caseSearchActions.setPaginationState(
@@ -108,14 +109,10 @@ const CaseSearch = () => {
       .catch((error) => {
         console.log(error);
       });
+      setLoading(false);
   };
   const handleClickSearch = async (e) => {
-    setLoading(true);
-    e.preventDefault();
-
-    await getCaseList();
-
-    setLoading(false);
+    await getCaseList(e);
   };
   const handleClickEdit = (caseId) => {
     setLoading(true);
@@ -138,7 +135,7 @@ const CaseSearch = () => {
     axiosPrivate
       .post(closeCaseUrl, payload)
       .then(async (response) => {
-        await getCaseList();
+        await getCaseList(e);
       })
       .catch((error) => {
         console.log(error);
@@ -152,7 +149,7 @@ const CaseSearch = () => {
       e.target.value,
       caseSearchState.paginationState.currentPage
     );
-    await getCaseList();
+    await getCaseList(e);
   };
   const handleChangePage = async (e) => {
     caseSearchActions.setPaginationState(
@@ -160,7 +157,7 @@ const CaseSearch = () => {
       caseSearchState.paginationState.pageSize,
       parseInt(e.target.innerText)
     );
-    await getCaseList();
+    await getCaseList(e);
   };
   const Results = () => {
     let totalCount = 0;
