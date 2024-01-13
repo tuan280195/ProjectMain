@@ -4,6 +4,7 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogContentText,
   DialogTitle,
   Grid,
   IconButton,
@@ -192,6 +193,11 @@ const DialogHandle = ({
         sx={{ px: 4, py: 6, position: "relative" }}
         style={{ paddingTop: "5px" }}
       >
+        <DialogContentText style={{ color: "red", marginBottom: "20px" }}>
+          利用可能なファイル拡張子： .jpeg, .jpg, .png, .gif, .tiff, .psd, .pdf,
+          .eps, .raw, .txt, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .dwg, .dxf,
+          .jww
+        </DialogContentText>
         <Grid container spacing={5}>
           <Grid item xs={4}>
             <Upload
@@ -226,6 +232,7 @@ const DialogHandle = ({
                           onClick={async () => {
                             await viewOrDownloadFile(item);
                           }}
+                          style={{ minWidth: "150px" }}
                         >
                           {item.isImage ? "表示" : "ダウンロード"}
                         </Button>
