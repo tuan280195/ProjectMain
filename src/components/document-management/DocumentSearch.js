@@ -203,7 +203,7 @@ const DocumentSearch = () => {
                                                         }}
                                                         style={{ minWidth: "140px" }}
                                                     >
-                                                        表示・編集
+                                                        {item.isImage ? '表示' : 'ダウンロード'}
                                                     </Button>
                                                     <Button
                                                         className="search-delete"
