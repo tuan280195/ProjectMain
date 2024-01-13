@@ -1,14 +1,14 @@
 import LoadingSpinner from "../until/LoadingSpinner.js";
 import Truncate from "../until/Truncate.js";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
-import CircularProgress from "@mui/material/CircularProgress";
 import ConfirmDialog from "../until/ConfirmBox.js";
 import { useState, useEffect } from "react";
 import FormButton from "../until/FormButton.js";
 import Pagination from "../until/Pagination.js";
-import FormSelection from "../until/FormSelection.js";
 import GenericItems from "../until/GenericItems.js";
 import ContentDialog from "../until/ContentDialog.js";
+import commonState from "../../stories/commonState.ts";
+import commonActions from "../../actions/commonAction.ts";
 import {
     Button,
     Grid,
@@ -17,15 +17,11 @@ import {
     TableBody,
     TableCell,
     TableContainer,
-    TableHead,
     TableRow,
 } from "@mui/material";
 const DocumentSearch = () => {
-    const [data, setData] = useState({});
     const [showList, setShowList] = useState(true);
-    const [listItem, setListItem] = useState([
-        { id: null, customerName: null, phoneNumber: null },
-    ]);
+    const [listItem, setListItem] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [template, setTemplate] = useState([]);
@@ -37,21 +33,21 @@ const DocumentSearch = () => {
         caseId: null,
         fileName: "",
     });
-    const [optionFileType, setOptionFileType] = useState([]);
     const [condition, setCondition] = useState({ minWidth: "400px", xs: 4 });
     const axiosPrivate = useAxiosPrivate();
     const controller = new AbortController();
     const [urlPreviewImg, setUrlPreviewImg] = useState({ blobUrl: "", fileName: "" });
     const [showDialog, setShowDialog] = useState(false);
-    
+
     useEffect(async () => {
+        setListItem([]);
         setUrlPreviewImg({ blobUrl: "", fileName: "" });
         await getDocumentTemplate();
     }, []);
 
     const getFiles = async (e) => {
         setLoading(true);
-        e.preventDefault();
+        if (e) e.preventDefault();
         let searchURL = "/api/Document/search";
         let keywordValues = keyWordSearch.filter(x => !x.fromTo && x.value)
         let keywordDateValues = keyWordSearch.filter(x => x.fromTo && x.typeValue === 'datetime' && (x.fromValue || x.toValue))
@@ -61,24 +57,28 @@ const DocumentSearch = () => {
             "keywordValues": keywordValues,
             "keywordDateValues": keywordDateValues,
             "keywordDecimalValues": keywordDecimalValues,
-            "pageSize": 25,
-            "pageNumber": 1
+            "pageSize": commonState.paginationState.pageSize,
+            "pageNumber": commonState.paginationState.currentPage
         };
         const status = await axiosPrivate.post(searchURL, payload, {
             signal: controller.signal,
             validateStatus: () => true
         }).then((response) => {
             setListItem(response.data);
+            commonActions.setPaginationState({
+                totalCount: response.data.totalCount,
+                pageSize: response.data.pageSize,
+                currentPage: response.data.currentPage,
+            });
         }).catch((error) => {
             console.log(error);
         });
-        if(status == 404) {
+        if (status == 404) {
             console.log("validateStatus", status);
             setListItem([]);
         }
         setLoading(false);
     };
-
 
     const getDocumentTemplate = async () => {
         setLoading(true);
@@ -102,7 +102,6 @@ const DocumentSearch = () => {
                 setKeyWordSearch(response.data.keywords);
                 setTemplate(response.data.keywords);
                 setCustomerList(response.data.customers);
-                setOptionFileType(response.data.fileType.fileTypes);
             })
             .catch((error) => {
                 console.log(error);
@@ -165,33 +164,25 @@ const DocumentSearch = () => {
     };
 
     const handleChangePageSize = async (e) => {
-        // caseSearchActions.setPaginationState(
-        //   caseSearchState.paginationState.totalCount,
-        //   e.target.value,
-        //   caseSearchState.paginationState.currentPage
-        // );
-        // await getCustomers(e);
+        commonActions.setPaginationState({...commonState.paginationState, pageSize: parseInt(e.target.value)});
+        await getFiles(e);
     };
     const handleChangePage = async (e) => {
-        // caseSearchActions.setPaginationState(
-        //   caseSearchState.paginationState.totalCount,
-        //   caseSearchState.paginationState.pageSize,
-        //   parseInt(e.target.innerText)
-        // );
-        // await getCustomers(e);
+        commonActions.setPaginationState({...commonState.paginationState, currentPage: parseInt(e.target.innerText)});
+        await getFiles(e);
     };
 
     const Results = () => {
         let totalCount = 0;
-        if (listItem && listItem.totalCount > 0) {
-            totalCount = Math.ceil(listItem.totalCount / listItem.pageSize);
+        if (commonState.paginationState && commonState.paginationState.totalCount > 0) {
+            totalCount = Math.ceil(commonState.paginationState.totalCount / commonState.paginationState.pageSize);
         }
         return (
             <>
                 <Pagination
                     totalCount={totalCount}
-                    pageSize={25}
-                    currentPage={1}
+                    pageSize={commonState.paginationState.pageSize}
+                    currentPage={commonState.paginationState.currentPage}
                     handleChangePageSize={handleChangePageSize}
                     handleChangePage={handleChangePage} />
                 <TableContainer component={Paper}>
@@ -209,7 +200,7 @@ const DocumentSearch = () => {
                                                         to=""
                                                         onClick={() => {
                                                             viewOrDownloadFile(item)
-                                                        } }
+                                                        }}
                                                         style={{ minWidth: "140px" }}
                                                     >
                                                         表示・編集
