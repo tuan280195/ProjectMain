@@ -13,20 +13,20 @@ const FormInput = (props) => {
         {label}
         {props.isRequired ? <span className="required-icon"> *</span> : null}
       </label>
-      {props.type === 'textarea' ? (
-        <textarea 
-        {...inputProps}
+      {props.type === "textarea" ? (
+        <textarea
+          {...inputProps}
           onChange={onChange}
           onBlur={handleFocus}
           focused={focused.toString()}
         />
       ) : (
         <input
-        {...inputProps}
-        onChange={onChange}
-        onBlur={handleFocus}
-        focused={focused.toString()}
-      />
+          {...inputProps}
+          onChange={onChange}
+          onBlur={handleFocus}
+          focused={focused.toString()}
+        />
       )}
       {children}
     </div>

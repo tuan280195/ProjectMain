@@ -33,22 +33,22 @@ function GenericItems({ label, type, options, children, ...props }) {
           {children}
         </div>
       );
-      case "customerlist":
-        return (
-          <div className="section-item">
-            <label className="section-label">
-              {label}
-              {props.required ? <span className="required-icon"> *</span> : null}
-            </label>
-            <FormSelection
-              options={props.optionCustomers}
-              optionSelected={props.handleInputCustomer}
-              value={props.value}
-              isRequired={props.required}
-            />
-            {children}
-          </div>
-        );  
+    case "customerlist":
+      return (
+        <div className="section-item">
+          <label className="section-label">
+            {label}
+            {props.required ? <span className="required-icon"> *</span> : null}
+          </label>
+          <FormSelection
+            options={props.optionCustomers}
+            optionSelected={props.handleInputCustomer}
+            value={props.value}
+            isRequired={props.required}
+          />
+          {children}
+        </div>
+      );
     case "daterange":
       return (
         <div className="section-item">
@@ -97,26 +97,26 @@ function GenericItems({ label, type, options, children, ...props }) {
         </FormInput>
       );
     case "decimalrange":
-        return (
-          <div className="section-item">
-            <label className="section-label">{label}</label>
-            <div className="section-range" style={{ marginBottom: 10 }}>
-              <input
-                value={props.value1}
-                type="number"
-                onChange={props.handleInput1}
-                className="section-input"
-              ></input>
-              <span>〜</span>
-              <input
-                value={props.value2}
-                type="number"
-                onChange={props.handleInput2}
-                className="section-input"
-              ></input>
-            </div>
+      return (
+        <div className="section-item">
+          <label className="section-label">{label}</label>
+          <div className="section-range" style={{ marginBottom: 10 }}>
+            <input
+              value={props.value1}
+              type="number"
+              onChange={props.handleInput1}
+              className="section-input"
+            ></input>
+            <span>〜</span>
+            <input
+              value={props.value2}
+              type="number"
+              onChange={props.handleInput2}
+              className="section-input"
+            ></input>
           </div>
-        );
+        </div>
+      );
     case "int":
       return (
         <FormInput
@@ -130,21 +130,8 @@ function GenericItems({ label, type, options, children, ...props }) {
           {children}
         </FormInput>
       );
-    case "textarea":
-      return (
-        <div className="section-item">
-          <label className="section-label">{label}</label>
-          <textarea
-            value={props.value}
-            onChange={props.handleInput}
-            className="section-input"
-          >
-            {children}
-          </textarea>
-        </div>
-      );
     default:
-      return <></>
+      return <></>;
   }
 }
 

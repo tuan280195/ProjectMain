@@ -78,10 +78,6 @@ const Sidebar = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleRedirectPage = (page) => {
-    mapPage(page);
-  };
-
   const handleClick = (item) => {
     setCaseDetail("");
     setCustomerDetail("");
