@@ -106,7 +106,7 @@ const CustomerSearch = () => {
       .then(async (res) => {
         setShowAlert(false);
         await getCustomers(e);
-        setCondition({ width: "1080px", xs: 4 });
+        setCondition({ maxWidth: "1080px", xs: 4 });
         setShowList(true);
       })
       .catch((error) => {
