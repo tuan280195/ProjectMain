@@ -106,7 +106,7 @@ const CustomerSearch = () => {
       .then(async (res) => {
         setShowAlert(false);
         await getCustomers(e);
-        setCondition({ maxWidth: "1080px", xs: 4 });
+        setCondition({ width: "1080px", xs: 4 });
         setShowList(true);
       })
       .catch((error) => {
@@ -117,7 +117,7 @@ const CustomerSearch = () => {
 
   const handleClickSearch = async (e) => {
     await getCustomers(e);
-    setCondition({ width: "1080px", xs: 4 });
+    setCondition({ width: "1440px", xs: 4 });
     setShowList(true);
   };
 
@@ -184,7 +184,7 @@ const CustomerSearch = () => {
                 >
                   電話番号
                 </TableCell>
-                <TableCell style={{ textAlign: "center", width: "20%" }}>
+                <TableCell style={{ textAlign: "center", width: "25%" }}>
                   操作
                 </TableCell>
               </TableRow>
@@ -207,7 +207,7 @@ const CustomerSearch = () => {
                           color="success"
                           startIcon={<Icons.Edit />}
                           onClick={() => handleClickEdit(item.id)}
-                          style={{ marginBottom: "5px" }}
+                          style={{ marginRight: "5px" }}
                         >
                           編集
                         </Button>
@@ -289,6 +289,8 @@ const CustomerSearch = () => {
         handleFunction={handleClickDelete}
         typeDialog="削除確認"
         mainContent="顧客情報を削除すると、電話番号情報、住所などの情報がすべて失われます。本当に削除しますか？"
+        cancelBtnDialog="いいえ"
+        confirmBtnDialog="はい"
       ></ConfirmDialog>
       <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
         <CustomerDetail customerId={customerId}></CustomerDetail>
