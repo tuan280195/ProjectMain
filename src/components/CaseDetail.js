@@ -194,7 +194,7 @@ const CaseDetail = ({ caseId }) => {
   };
 
   const handleClear = () => {
-    setCaseIdName({ ...caseIdName, caseId: null });
+    setCaseIdName({ caseName: "", caseId: null });
     const newState = data.map((value) => {
       return { ...value, value: "" };
     });
