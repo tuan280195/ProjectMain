@@ -110,7 +110,7 @@ const Sidebar = () => {
   const drawer = (
     <div style={{ color: "#11596F" }}>
       <Toolbar>
-        <ListItemButton sx={{ maxWidth: "12rem" }} onClick={logOut}>
+        <ListItemButton sx={{ maxWidth: "10rem" }} onClick={logOut}>
           <ListItemIcon>
             <LogoutIcon />
           </ListItemIcon>
