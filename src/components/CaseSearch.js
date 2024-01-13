@@ -21,6 +21,7 @@ import caseSearchState from "../stories/caseSearchState.ts";
 import caseSearchActions from "../actions/caseSearchActions.ts";
 import ContentDialog from "./until/ContentDialog.js";
 import CaseDetail from "./CaseDetail.js";
+import * as Icons from "@mui/icons-material";
 
 const CaseSearch = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -29,7 +30,7 @@ const CaseSearch = () => {
   const [data, setData] = useState([]);
   const [keyWordSearch, setKeyWordSearch] = useState([]);
   const [keyWordDateSearch, setKeyWordDateSearch] = useState([]);
-  
+
   const [customerList, setCustomerList] = useState([]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -86,13 +87,14 @@ const CaseSearch = () => {
     e.preventDefault();
     const searchCaseUrl = "/api/Case/getAll";
     const payload = {
-      keywordValues: keyWordSearch.filter(n => !n.fromTo && n.value),
-      keywordDateValues: keyWordSearch.filter(n => n.fromTo && (n.fromValue || n.toValue)),
+      keywordValues: keyWordSearch.filter((n) => !n.fromTo && n.value),
+      keywordDateValues: keyWordSearch.filter(
+        (n) => n.fromTo && (n.fromValue || n.toValue)
+      ),
       pageSize: caseSearchState.paginationState.pageSize,
       pageNumber: caseSearchState.paginationState.currentPage,
     };
-    let payloadFilterd =
-    keyWordSearch.filter((n) => n.value);
+    let payloadFilterd = keyWordSearch.filter((n) => n.value);
     payload.keywordValues = payloadFilterd;
     setShowList(false);
     await axiosPrivate
@@ -184,83 +186,105 @@ const CaseSearch = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Case Name</TableCell>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
+                  案件番号
+                </TableCell>
                 {caseSearchState.caseDataSearchState.items[0].caseKeywordValues
                   .length > 0 &&
                   caseSearchState.caseDataSearchState.items[0].caseKeywordValues.map(
                     (item) => {
                       return (
                         item.isShowOnCaseList && (
-                          <TableCell>{item.keywordName}</TableCell>
+                          <TableCell
+                            style={{
+                              textAlign: "center",
+                              width: "fit-content",
+                            }}
+                          >
+                            {item.keywordName}
+                          </TableCell>
                         )
                       );
                     }
                   )}
+                <TableCell style={{ textAlign: "center", width: "100px" }}>
+                  操作
+                </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {caseSearchState.caseDataSearchState.items.map((row) => {
-                return (
-                  <TableRow
-                    key={row.caseId}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell>
-                      <Truncate str={row.caseName} maxlength={15} />
-                    </TableCell>
-                    {row.caseKeywordValues.length > 0 &&
-                      row.caseKeywordValues
-                        .filter((n) => n.isShowOnCaseList)
-                        .map((item, index) => {
-                          return (
-                            <TableCell style={{ position: "relative" }}>
-                              <Truncate str={item.value} />
-                              {index + 1 ===
-                                row.caseKeywordValues.filter(
-                                  (n) => n.isShowOnCaseList
-                                ).length && (
-                                <div className="container-search-actions">
-                                  <Button
-                                    className="search-close"
-                                    onClick={() => {
-                                      setShowAlert(true);
-                                      setCloseCase(row.caseId);
-                                    }}
-                                  >
-                                    Close
-                                  </Button>
-                                  <Button
-                                    className="search-edit"
-                                    onClick={() => {
-                                      console.log("row.caseId", row.caseId)
-                                      handleClickEdit(row.caseId)
-                                    }}
-                                  >
-                                    Edit
-                                  </Button>
-                                </div>
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                  </TableRow>
-                );
-              })}
+              {caseSearchState.caseDataSearchState.items.map((row) => (
+                <TableRow
+                  key={row.caseId}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell>
+                    <Truncate str={row.caseName} maxlength={15} />
+                  </TableCell>
+                  {row.caseKeywordValues
+                    .filter((n) => n.isShowOnCaseList)
+                    .map((item, index) => (
+                      <TableCell key={`${row.caseId}-${item.keywordName}`}>
+                        <Truncate str={item.value} />
+                      </TableCell>
+                    ))}
+                  <TableCell style={{ position: "relative" }}>
+                    {row.caseKeywordValues
+                      .filter((n) => n.isShowOnCaseList)
+                      .map((item, index) => (
+                        <div key={`${row.caseId}-${item.keywordName}-actions`}>
+                          {index + 1 ===
+                            row.caseKeywordValues.filter(
+                              (n) => n.isShowOnCaseList
+                            ).length && (
+                            <>
+                              {/*
+                              <Button
+                                className="search-close"
+                                onClick={() => {
+                                  setShowAlert(true);
+                                  setCloseCase(row.caseId);
+                                }}
+                              >
+                                Close
+                              </Button>
+                              */}
+                              <Button
+                                variant="contained"
+                                color="success"
+                                startIcon={<Icons.Edit />}
+                                onClick={() => {
+                                  console.log("row.caseId", row.caseId);
+                                  handleClickEdit(row.caseId);
+                                }}
+                              >
+                                編集
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      ))}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
       </>
     ) : (
-      <h3>Not Found!</h3>
+      <h3>表示する項目がありません。</h3>
     );
   };
 
   const dynamicGenerate = (item, templateItem) => {
-    let typeValue = templateItem.typeValue
-    if(templateItem.fromTo){
-      typeValue = 'daterange'
-    }else if(templateItem.keywordName === '取引先名'){
-      typeValue = 'customerlist'
+    let typeValue = templateItem.typeValue;
+    if (templateItem.fromTo) {
+      typeValue = "daterange";
+    } else if (templateItem.keywordName === "取引先名") {
+      typeValue = "customerlist";
     }
     return (
       <GenericItems
@@ -282,7 +306,7 @@ const CaseSearch = () => {
         handleInput1={(e) => {
           const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
-              return { ...value, fromValue: e.target.value};
+              return { ...value, fromValue: e.target.value };
             } else return { ...value };
           });
 
@@ -306,15 +330,33 @@ const CaseSearch = () => {
         }}
         handleInputCustomer={(e, customer) => {
           const newState = keyWordSearch.map((value) => {
-            if(value.keywordName === '電話番号'){
-              value.value = customer && customer.id ? customerList.find(x => x.id === customer.id).phoneNumber : "";
+            if (value.keywordName === "電話番号") {
+              value.value =
+                customer && customer.id
+                  ? customerList.find((x) => x.id === customer.id).phoneNumber
+                  : "";
             }
-            if(value.keywordName === '住所'){
-              let fiteredCustomer = customer && customer.id ? customerList.find(x => x.id === customer.id): "";
-              value.value = fiteredCustomer ? [fiteredCustomer.stateProvince, fiteredCustomer.city, fiteredCustomer.street, fiteredCustomer.buildingName, fiteredCustomer.roomNumber].join('') : "";
+            if (value.keywordName === "住所") {
+              let fiteredCustomer =
+                customer && customer.id
+                  ? customerList.find((x) => x.id === customer.id)
+                  : "";
+              value.value = fiteredCustomer
+                ? [
+                    fiteredCustomer.stateProvince,
+                    fiteredCustomer.city,
+                    fiteredCustomer.street,
+                    fiteredCustomer.buildingName,
+                    fiteredCustomer.roomNumber,
+                  ].join("")
+                : "";
             }
             if (value.keywordId === item.keywordId) {
-              return { ...value, value: customer ? customer.label : "", customerId: customer ? customer.id: "" };
+              return {
+                ...value,
+                value: customer ? customer.label : "",
+                customerId: customer ? customer.id : "",
+              };
             } else return { ...value };
           });
           setKeyWordSearch(newState);
@@ -362,11 +404,6 @@ const CaseSearch = () => {
     <section>
       <Grid container spacing={5}>
         {generateCode()}
-        {showList ? (
-          <Grid item xs={12}>
-            <Results />
-          </Grid>
-        ) : null}
         <Grid
           item
           xs={12}
@@ -376,6 +413,11 @@ const CaseSearch = () => {
           <FormButton onClick={handleClickSearch} itemName="検索"></FormButton>
         </Grid>
       </Grid>
+      {showList ? (
+        <Grid item xs={12}>
+          <Results />
+        </Grid>
+      ) : null}
 
       <LoadingSpinner loading={loading}></LoadingSpinner>
       <ConfirmDialog

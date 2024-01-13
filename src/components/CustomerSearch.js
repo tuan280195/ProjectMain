@@ -51,12 +51,14 @@ const CustomerSearch = () => {
     let searchURL = "/api/Customer/getAll";
     let pagination = `pageSize=${commonState.paginationState.pageSize}&pageNumber=${commonState.paginationState.currentPage}`;
     if (data.customerName && data.phoneNumber) {
-      searchURL = searchURL +
-        `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}&${pagination}`
+      searchURL =
+        searchURL +
+        `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}&${pagination}`;
     } else if (data.phoneNumber) {
-      searchURL = searchURL + `?phoneNumber=${data.phoneNumber}&${pagination}`
+      searchURL = searchURL + `?phoneNumber=${data.phoneNumber}&${pagination}`;
     } else if (data.customerName) {
-      searchURL = searchURL + `?customerName=${data.customerName}&${pagination}`
+      searchURL =
+        searchURL + `?customerName=${data.customerName}&${pagination}`;
     } else {
       searchURL = searchURL + `?${pagination}`;
     }
@@ -67,9 +69,9 @@ const CustomerSearch = () => {
     }).then((response) => {
       setListItem(response.data);
       commonActions.setPaginationState({
-        totalCount: response.data.totalCount,
-        pageSize: response.data.pageSize,
-        currentPage: response.data.currentPage,
+        totalCount: 0,
+        pageSize: 25,
+        currentPage: 1,
       });
     }).catch((error) => {
       console.log(error);
@@ -101,7 +103,7 @@ const CustomerSearch = () => {
       .then(async (res) => {
         setShowAlert(false);
         await getCustomers(e);
-        setCondition({ width: "1080px", xs: 4 });
+        setCondition({ width: "1440px", xs: 4 });
         setShowList(true);
       })
       .catch((error) => {
@@ -112,7 +114,7 @@ const CustomerSearch = () => {
 
   const handleClickSearch = async (e) => {
     await getCustomers(e);
-    setCondition({ width: "1080px", xs: 4 });
+    setCondition({ width: "1440px", xs: 4 });
     setShowList(true);
   };
 
@@ -135,17 +137,29 @@ const CustomerSearch = () => {
   };
 
   const handleChangePageSize = async (e) => {
-    commonActions.setPaginationState({ ...commonState.paginationState, pageSize: parseInt(e.target.value) });
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      pageSize: parseInt(e.target.value),
+    });
     await getCustomers(e);
   };
   const handleChangePage = async (e) => {
-    commonActions.setPaginationState({ ...commonState.paginationState, currentPage: parseInt(e.target.innerText) });
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      currentPage: parseInt(e.target.innerText),
+    });
     await getCustomers(e);
   };
   const Results = () => {
     let totalCount = 0;
-    if (commonState.paginationState && commonState.paginationState.totalCount > 0) {
-      totalCount = Math.ceil(commonState.paginationState.totalCount / commonState.paginationState.pageSize);
+    if (
+      commonState.paginationState &&
+      commonState.paginationState.totalCount > 0
+    ) {
+      totalCount = Math.ceil(
+        commonState.paginationState.totalCount /
+          commonState.paginationState.pageSize
+      );
     }
     return (
       <>
@@ -170,9 +184,7 @@ const CustomerSearch = () => {
                 >
                   電話番号
                 </TableCell>
-                <TableCell
-                  style={{ textAlign: "center", width: "fit-content" }}
-                >
+                <TableCell style={{ textAlign: "center", width: "25%" }}>
                   操作
                 </TableCell>
               </TableRow>
@@ -191,7 +203,8 @@ const CustomerSearch = () => {
 
                       <TableCell>
                         <Button
-                          className="my-button"
+                          variant="contained"
+                          color="success"
                           startIcon={<Icons.Edit />}
                           onClick={() => handleClickEdit(item.id)}
                           style={{ marginRight: "5px" }}
@@ -200,7 +213,8 @@ const CustomerSearch = () => {
                         </Button>
 
                         <Button
-                          className="my-button"
+                          variant="contained"
+                          color="success"
                           startIcon={<Icons.Delete />}
                           onClick={() => {
                             setShowAlert(true);
@@ -215,7 +229,9 @@ const CustomerSearch = () => {
                 })
               ) : (
                 <TableCell colSpan={3}>
-                  <span style={{ color: "#000" }}>Not Found!</span>
+                  <span style={{ color: "#000" }}>
+                    表示する項目がありません。
+                  </span>
                 </TableCell>
               )}
             </TableBody>
@@ -273,6 +289,8 @@ const CustomerSearch = () => {
         handleFunction={handleClickDelete}
         typeDialog="削除確認"
         mainContent="顧客情報を削除すると、電話番号情報、住所などの情報がすべて失われます。本当に削除しますか？"
+        cancelBtnDialog="いいえ"
+        confirmBtnDialog="はい"
       ></ConfirmDialog>
       <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
         <CustomerDetail customerId={customerId}></CustomerDetail>

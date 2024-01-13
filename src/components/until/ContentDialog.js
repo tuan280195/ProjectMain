@@ -1,8 +1,10 @@
 import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
+import * as Icons from "@mui/icons-material";
 
 const ContentDialog = ({ open, closeDialog, title, ...props }) => {
   return (
     <Dialog
+      maxWidth="lg"
       fullWidth
       open={open}
       onClose={closeDialog}
@@ -20,7 +22,7 @@ const ContentDialog = ({ open, closeDialog, title, ...props }) => {
           height: "2rem",
         }}
       >
-        X
+        <Icons.Close sx={{ color: "red" }} />
       </IconButton>
       <DialogContent>{props.children}</DialogContent>
     </Dialog>

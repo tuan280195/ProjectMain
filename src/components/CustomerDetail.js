@@ -7,7 +7,7 @@ import { Grid } from "@mui/material";
 import FormButton from "./until/FormButton";
 import FormSnackbar from "./until/FormSnackbar";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import validator from 'validator';
+import validator from "validator";
 
 const CustomerDetail = ({ customerId }) => {
   const [latestData, setLatestData] = useState({});
@@ -22,7 +22,7 @@ const CustomerDetail = ({ customerId }) => {
     message: "Successfully!",
   });
   const [errors, setErrors] = useState({});
-  // const [isFormValid, setIsFormValid] = useState(false);
+  const [dataId, setDataId] = useState();
 
   useEffect(async () => {
     await getCustomerDetail();
@@ -38,7 +38,7 @@ const CustomerDetail = ({ customerId }) => {
 
     if (!latestData.phoneNumber) {
       errors.phoneNumber = "電話番号は必須項目です。";
-    }else if (!validator.isNumeric(latestData.phoneNumber)) {
+    } else if (!validator.isNumeric(latestData.phoneNumber)) {
       errors.phoneNumber = "電話番号は半角数字のみです";
     }
 
@@ -66,14 +66,14 @@ const CustomerDetail = ({ customerId }) => {
       console.log("OK.");
     }
 
-    if (latestData.id) {
+    if (dataId) {
       await axiosPrivate
-        .put("/api/Customer/" + latestData.id, latestData)
+        .put("/api/Customer/" + dataId, latestData)
         .then((response) => {
           setSnackbar({
             isOpen: true,
             status: "success",
-            message: "Update Customer successfuly!",
+            message: "取引先情報の更新は正常に完了しました!",
           });
           return response;
         })
@@ -87,9 +87,11 @@ const CustomerDetail = ({ customerId }) => {
           setSnackbar({
             isOpen: true,
             status: "success",
-            message: "Create Customer successfuly!",
+            message: "取引先の登録は正常に完成しました！",
           });
 
+          console.log(response.data);
+          setDataId(response.data);
           return response;
         })
         .catch((error) => {
@@ -98,6 +100,14 @@ const CustomerDetail = ({ customerId }) => {
     }
 
     setLoading(false);
+  };
+
+  const handleClear = () => {
+    setDataId();
+    var newVal = latestData;
+    Object.keys(newVal).forEach((i) => {
+      setLatestData((value) => ({ ...value, [i]: "" }));
+    });
   };
 
   const handleAddress = async (getPostCode) => {
@@ -129,6 +139,7 @@ const CustomerDetail = ({ customerId }) => {
         const response = await axiosPrivate.get(
           "https://localhost:7265/api/Customer?id=" + customerId
         );
+        setDataId(customerId);
         setLatestData(response.data);
       }
     } catch (error) {
@@ -173,7 +184,8 @@ const CustomerDetail = ({ customerId }) => {
                 if (e.target.value.includes("-")) {
                   setErrors((prevErrors) => ({
                     ...prevErrors,
-                    phoneNumber: "「-」ハイフンを除いて番号のみを入力してください",
+                    phoneNumber:
+                      "「-」ハイフンを除いて番号のみを入力してください",
                   }));
                 } else {
                   // Clear the error message if no hyphens
@@ -182,7 +194,6 @@ const CustomerDetail = ({ customerId }) => {
                     phoneNumber: undefined,
                   }));
                 }
-
               }}
               isRequired={true}
             >
@@ -323,7 +334,8 @@ const CustomerDetail = ({ customerId }) => {
           <Grid item xs={12}>
             <div className="handle-button">
               {/* Submit Button */}
-              <FormButton itemName="保存 " type="submit" />
+              <FormButton itemName="保存" type="submit" />
+              <FormButton itemName="新規作成" onClick={handleClear} />
             </div>
           </Grid>
         </Grid>

@@ -2,11 +2,11 @@
 @import url("https://fonts.googleapis.com/css2?family=MS%20Mincho&display=swap");
 
 html {
-  font-family: "MS Mincho", sans-serif;
+  font-family: "Yu Gothic", sans-serif;
   font-size: 24px;
   color: #11596f;
-  line-height: 180%;
-  font-weight: bold;
+  line-height: 150%;
+  font-weight: 1000;
 }
 
 body {
@@ -28,8 +28,8 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 1rem;  
-  max-width: 1080px;
+  padding: 1rem;
+  max-width: 1440px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -170,7 +170,8 @@ ul.search-results {
   flex-direction: column;
   justify-content: flex-start;
   padding: 1rem;
-  background-color: rgba(47, 47, 47, 0.4);
+  background-color: #11596f;
+  color: white;
   box-sizing: border-box;
 }
 li.search-result {
@@ -179,20 +180,20 @@ li.search-result {
 }
 
 .MuiTableCell-root {
-  border-left: 1px solid rgba(224, 224, 224, 1) !important; 
+  border-left: 1px solid rgba(224, 224, 224, 1) !important;
 }
 .MuiTableCell-head {
   background-color: #004862;
   color: #fff !important;
 }
-.MuiTableCell-body{
+.MuiTableCell-body {
   color: white !important;
 }
 .MuiTableRow-root {
   color: white !important;
   background-color: #11596f;
 }
-.MuiTableRow-root:hover{
+.MuiTableRow-root:hover {
   background-color: #004862;
 }
 .MuiTableRow-root:not(:hover) .container-search-actions {
@@ -215,7 +216,7 @@ input:invalid[focused="true"] {
   justify-content: right;
   margin: 10px 0 10px 0;
 }
-button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected{
+button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
   background-color: #004862;
 }
 
@@ -240,7 +241,9 @@ button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected{
   align-items: center;
   column-gap: 8px;
 }
-.search-close, .search-edit, .search-delete {
+.search-close,
+.search-edit,
+.search-delete {
   background-color: #14873a !important;
   color: #fff !important;
 }
@@ -256,4 +259,3 @@ button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected{
   align-items: center;
   justify-content: center;
 }
-
