@@ -224,23 +224,27 @@ const DocumentSearch = () => {
                 listItem.items.map((item, index) => {
                   return (
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: "70%" }}>
                         <Truncate str={item.keywordName} maxLength={20} />
                       </TableCell>
-                      <TableCell style={{ position: "relative" }}>
-                        <div className="container-search-actions">
+                      <TableCell style={{ width: "30%" }}>
+                        <div>
                           <Button
-                            className="search-edit"
+                            variant="contained"
+                            color="success"
                             to=""
                             onClick={() => {
                               viewOrDownloadFile(item);
                             }}
-                            style={{ minWidth: "140px" }}
+                            style={{ minWidth: "100%", marginBottom: "10px" }}
                           >
                             {item.isImage ? "表示" : "ダウンロード"}
                           </Button>
                           <Button
-                            className="search-delete"
+                            variant="contained"
+                            color="success"
+                            startIcon={<Icons.Delete />}
+                            style={{ minWidth: "100%" }}
                             to=""
                             onClick={() => {
                               setShowAlert(true);
@@ -249,6 +253,7 @@ const DocumentSearch = () => {
                                 caseId: item.caseId,
                                 fileName: item.keywordName,
                               };
+
                               setDeleteItem(itemDelete);
                             }}
                           >
@@ -261,7 +266,9 @@ const DocumentSearch = () => {
                 })
               ) : (
                 <TableCell colSpan={3}>
-                  <span style={{ color: "#000" }}>Not Found!</span>
+                  <span style={{ color: "#000" }}>
+                    表示する項目がありません。
+                  </span>
                 </TableCell>
               )}
             </TableBody>
