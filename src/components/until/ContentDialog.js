@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 const ContentDialog = ({ open, closeDialog, title, ...props }) => {
   return (
     <Dialog
+      maxWidth="lg"
       fullWidth
       open={open}
       onClose={closeDialog}
