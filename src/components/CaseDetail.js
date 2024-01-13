@@ -62,7 +62,7 @@ const CaseDetail = ({ caseId }) => {
             return (currentValue = value.value);
           }
         });
-        if (currentValue === "") {
+        if (!currentValue) {
           errors.push({
             keywordId: item.keywordId,
             value: item.keywordName + " is required.",
@@ -71,9 +71,11 @@ const CaseDetail = ({ caseId }) => {
       }
     });
 
+    console.log("error validate", errors);
     // Set the errors and update form validity
-    setIsFormValid(errors.length === 0);
     setErrors(errors);
+    // setIsFormValid(errors.length === 0);
+    return errors.length === 0;
   };
 
   const getCaseTemplate = async (e) => {
@@ -128,8 +130,9 @@ const CaseDetail = ({ caseId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setIsFormValid(true);
     validateForm();
-    if (!isFormValid) {
+    if (!validateForm()) {
       // Form is valid, perform the submission logic
       setSnackbar({
         isOpen: true,

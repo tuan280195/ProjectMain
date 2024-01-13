@@ -22,7 +22,7 @@ const CustomerDetail = ({ customerId }) => {
     message: "Successfully!",
   });
   const [errors, setErrors] = useState({});
-  const [isFormValid, setIsFormValid] = useState(false);
+  // const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(async () => {
     await getCustomerDetail();
@@ -44,7 +44,7 @@ const CustomerDetail = ({ customerId }) => {
 
     // Set the errors and update form validity
     setErrors(errors);
-    setIsFormValid(Object.keys(errors).length === 0);
+    return Object.keys(errors).length === 0;
   };
 
   const onSubmit = async (e) => {
@@ -52,7 +52,7 @@ const CustomerDetail = ({ customerId }) => {
     e.preventDefault();
     // add moree event
     validateForm();
-    if (!isFormValid) {
+    if (!validateForm()) {
       // Form is valid, perform the submission logic
       setSnackbar({
         isOpen: true,
