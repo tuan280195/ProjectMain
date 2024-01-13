@@ -7,12 +7,6 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 export default function PaginationRounded(props) {
-  const [age, setAge] = React.useState(25);
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
-
   return (
     <div className='pagination-class'>
     
@@ -23,8 +17,8 @@ export default function PaginationRounded(props) {
         className='select-option'
       >
         <MenuItem value={25}>25</MenuItem>
+        <MenuItem value={35}>35</MenuItem>
         <MenuItem value={50}>50</MenuItem>
-        <MenuItem value={100}>100</MenuItem>
       </Select>
       
 

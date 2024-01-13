@@ -72,10 +72,8 @@ const CaseDetail = ({ caseId }) => {
       }
     });
 
-    console.log("error validate", errors);
     // Set the errors and update form validity
     setErrors(errors);
-    // setIsFormValid(errors.length === 0);
     return errors.length === 0;
   };
 

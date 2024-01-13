@@ -5,8 +5,8 @@ import ConfirmDialog from "./until/ConfirmBox";
 import FormButton from "./until/FormButton";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import Pagination from "./until/Pagination";
-import caseSearchState from "../stories/caseSearchState.ts";
-import caseSearchActions from "../actions/caseSearchActions.ts";
+import commonState from "../stories/commonState.ts";
+import commonActions from "../actions/commonAction.ts";
 import {
   Button,
   Grid,
@@ -48,31 +48,44 @@ const CustomerSearch = () => {
   const getCustomers = async (e) => {
     setLoading(true);
     e.preventDefault();
+    let searchURL = "/api/Customer/getAll";
+    let pagination = `pageSize=${commonState.paginationState.pageSize}&pageNumber=${commonState.paginationState.currentPage}`;
+    if (data.customerName && data.phoneNumber) {
+      searchURL = searchURL +
+        `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}&${pagination}`
+    } else if (data.phoneNumber) {
+      searchURL = searchURL + `?phoneNumber=${data.phoneNumber}&${pagination}`
+    } else if (data.customerName) {
+      searchURL = searchURL + `?customerName=${data.customerName}&${pagination}`
+    } else {
+      searchURL = searchURL + `?${pagination}`;
+    }
 
-    try {
-      let searchURL = "/api/Customer/getAll";
-      searchURL =
-        data.customerName && data.phoneNumber
-          ? searchURL +
-            `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}`
-          : data.phoneNumber
-          ? searchURL + `?phoneNumber=${data.phoneNumber}`
-          : data.customerName
-          ? searchURL + `?customerName=${data.customerName}`
-          : searchURL;
-
-      const response = await axiosPrivate.get(searchURL, {
-        signal: controller.signal,
+    const status = await axiosPrivate.get(searchURL, {
+      signal: controller.signal,
+      validateStatus: () => true
+    }).then((response) => {
+      setListItem(response.data);
+      commonActions.setPaginationState({
+        totalCount: response.data.totalCount,
+        pageSize: response.data.pageSize,
+        currentPage: response.data.currentPage,
       });
-      setListItem(response.data); /*set result list item here*/
-    } catch (error) {
+    }).catch((error) => {
       console.log(error);
+    });
+    if (status == 404) {
+      setListItem([]);
+      commonActions.setPaginationState({
+        totalCount: 0,
+        pageSize: 25,
+        currentPage: 1,
+      });
     }
     setLoading(false);
   };
 
   const handleClickEdit = (id) => {
-    console.log("handleClickEdit", id);
     setLoading(true);
     setCustomerId(id);
     setShowDialog(true);
@@ -104,8 +117,9 @@ const CustomerSearch = () => {
   };
 
   const handleChange = (event, item) => {
-    let newData = data;
-    if (item === "customerName") newData.customerName = event.target.value;
+    if (item === "customerName") {
+      setData({...data, customerName: event.target.value});
+    }
     else {
       // Display a message if hyphens are detected in 電話番号 field
       if (event.target.value.includes("-")) {
@@ -114,40 +128,31 @@ const CustomerSearch = () => {
         // Clear the error message if no hyphens
         setPhoneNumberError(undefined);
       }
-      newData.phoneNumber = event.target.value;
+      setData({...data, phoneNumber: event.target.value});
     }
 
-    setData(newData);
+    
   };
 
   const handleChangePageSize = async (e) => {
-    caseSearchActions.setPaginationState(
-      caseSearchState.paginationState.totalCount,
-      e.target.value,
-      caseSearchState.paginationState.currentPage
-    );
+    commonActions.setPaginationState({ ...commonState.paginationState, pageSize: parseInt(e.target.value) });
     await getCustomers(e);
   };
   const handleChangePage = async (e) => {
-    caseSearchActions.setPaginationState(
-      caseSearchState.paginationState.totalCount,
-      caseSearchState.paginationState.pageSize,
-      parseInt(e.target.innerText)
-    );
+    commonActions.setPaginationState({ ...commonState.paginationState, currentPage: parseInt(e.target.innerText) });
     await getCustomers(e);
   };
-
   const Results = () => {
     let totalCount = 0;
-    if (listItem && listItem.totalCount > 0) {
-      totalCount = Math.ceil(listItem.totalCount / listItem.pageSize);
+    if (commonState.paginationState && commonState.paginationState.totalCount > 0) {
+      totalCount = Math.ceil(commonState.paginationState.totalCount / commonState.paginationState.pageSize);
     }
     return (
       <>
         <Pagination
           totalCount={totalCount}
-          pageSize={caseSearchState.caseDataSearchState.pageSize}
-          currentPage={caseSearchState.caseDataSearchState.currentPage}
+          pageSize={commonState.paginationState.pageSize}
+          currentPage={commonState.paginationState.currentPage}
           handleChangePageSize={handleChangePageSize}
           handleChangePage={handleChangePage}
         />
