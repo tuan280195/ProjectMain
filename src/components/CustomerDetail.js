@@ -73,7 +73,7 @@ const CustomerDetail = ({ customerId }) => {
           setSnackbar({
             isOpen: true,
             status: "success",
-            message: "Update Customer successfuly!",
+            message: "取引先情報の更新は正常に完了しました!",
           });
           return response;
         })
