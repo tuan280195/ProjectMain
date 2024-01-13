@@ -15,7 +15,7 @@ export default function PaginationRounded(props) {
       >
         <MenuItem value={10}>10</MenuItem>
         <MenuItem value={30}>30</MenuItem>
-        <MenuItem value={50}>30</MenuItem>
+        <MenuItem value={50}>50</MenuItem>
       </Select>
 
       <Stack spacing={2}>
