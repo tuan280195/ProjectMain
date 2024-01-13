@@ -26,7 +26,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@emotion/react";
 
-const drawerWidth = 400;
+const drawerWidth = 300;
 
 const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
