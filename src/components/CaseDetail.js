@@ -27,7 +27,9 @@ const CaseDetail = ({ caseId }) => {
     status: "success",
     message: "Successfully!",
   });
-  const [caseIdName, setCaseIdAndName] = useState({});
+  const [caseIdName, setCaseIdAndName] = useState({
+    "caseId": null,
+    "caseName": "",});
   const [optionFileType, setOptionFileType] = useState([]);
   const [disableAttach, setDisableAttach] = useState(false);
   const [errors, setErrors] = useState([]);
@@ -37,23 +39,21 @@ const CaseDetail = ({ caseId }) => {
   useEffect(async () => {
     setLoading(true);
     await getCaseTemplate();
+    setLoading(false);
+  }, []);
+
+  useEffect(async () => {
     if (caseId) {
-      setCaseIdAndName({
-        caseId: caseId,
-        caseName: "",
-      });
+      setCaseIdAndName(caseIdName => ({ ...caseIdName, caseId: caseId }));
       setDisableAttach(false);
       await getCaseByCaseId();
     } else {
       setDisableAttach(true);
     }
-    setLoading(false);
-  }, []);
-
+  }, [caseId]);
   const validateForm = () => {
     let errors = [];
 
-    // Validate required fields
     template.map((item) => {
       if (item.isRequired) {
         let currentValue;
@@ -72,8 +72,8 @@ const CaseDetail = ({ caseId }) => {
     });
 
     // Set the errors and update form validity
-    setErrors(errors);
     setIsFormValid(errors.length === 0);
+    setErrors(errors);
   };
 
   const getCaseTemplate = async (e) => {
@@ -106,7 +106,6 @@ const CaseDetail = ({ caseId }) => {
   const getCaseByCaseId = async () => {
     setLoading(true);
     let templateURL = `/api/Case?caseId=${caseId}`;
-    // call API get template
     await axiosPrivate
       .get(templateURL, {
         validateStatus: function (status) {
@@ -115,8 +114,8 @@ const CaseDetail = ({ caseId }) => {
       })
       .then((response) => {
         setCaseIdAndName({
-          caseId: response.data.caseId,
-          caseName: response.data.caseName,
+          "caseId": response.data.caseId,
+          "caseName": response.data.caseName,
         });
         setData(response.data.caseKeywordValues);
       })
@@ -174,7 +173,7 @@ const CaseDetail = ({ caseId }) => {
           signal: controller.signal,
         })
         .then((response) => {
-          setCaseIdAndName({...caseIdName, caseId: response.data});
+          setCaseIdAndName({...caseIdName, "caseId": response.data});
           setSnackbar({
             isOpen: true,
             status: "success",
@@ -351,7 +350,7 @@ const CaseDetail = ({ caseId }) => {
         closeDialog={() => setShowDialog(false)}
         title="Attach Files"
         optionFileType={optionFileType}
-        caseId={caseIdName.caseId}
+        caseId={caseId || caseIdName.caseId}
       />
       <LoadingSpinner loading={loading}></LoadingSpinner>
       <FormSnackbar item={snackbar} setItem={setSnackbar} />

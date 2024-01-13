@@ -39,6 +39,7 @@ const DialogHandle = ({
     setUrlPreviewImg({ blobUrl: "", fileName: "" })
     setFileDelete({});
     setShowAlert(false);
+    console.log("caseID---dialog----------------", caseId)
     if (caseId) {
       await getFilesOfCase();
     }
@@ -47,17 +48,24 @@ const DialogHandle = ({
   const getFilesOfCase = async () => {
     setLoadingFile(true);
     let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseId}`;
-    await axiosPrivate
+   var {status} = await axiosPrivate
       .get(getFilesUploadURL, {
         signal: controller.signal,
+        validateStatus: () => true
       })
       .then((response) => {
+        console.log(response)
         setListItem(response.data);
         return response;
       })
       .catch((error) => {
-        console.log(error);
+        console.log(JSON.stringify(error));
       });
+      if(status == 404) {
+        console.log("validateStatus", status);
+        setListItem([]);
+      }
+      
     setLoadingFile(false);
   };
 
@@ -86,7 +94,7 @@ const DialogHandle = ({
   };
 
   const handleSelectedFileType = (e, value) => {
-    var newState = {...dataUpload, fileTypeId: value.id}
+    var newState = {...dataUpload, fileTypeId: value ? (value.id ? value.id : null) : null} 
     setDataUpload(newState);
   };
   const handleInputFileName = (e) => {

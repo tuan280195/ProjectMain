@@ -34,7 +34,6 @@ function GenericItems({ label, type, options, children, ...props }) {
         </div>
       );
       case "customerlist":
-        console.log("sadasdas",props.optionCustomers)
         return (
           <div className="section-item">
             <label className="section-label">
