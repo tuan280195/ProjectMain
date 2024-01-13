@@ -4,7 +4,7 @@ import iPagination from "../interfaces/iPagination.ts";
 const paginationState: iPagination = {
   totalCount: 0,
   currentPage: 1,
-  pageSize: 25,
+  pageSize: 10,
 };
 
 const commonState = {
