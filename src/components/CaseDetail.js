@@ -300,7 +300,7 @@ const CaseDetail = ({ caseId }) => {
       <>
         <Grid item xs={12}>
           <strong>
-            <h2 style={{ margin: "1px" }}>{caseIdName.caseName}</h2>
+            <h2 style={{ margin: "1px" }}>案件番号：{caseIdName.caseName}</h2>
           </strong>
         </Grid>
         <Grid item xs={6}>

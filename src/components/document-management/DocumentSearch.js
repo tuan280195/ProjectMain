@@ -417,6 +417,10 @@ const DocumentSearch = () => {
         open={showAlert}
         closeDialog={() => setShowAlert(false)}
         item={deleteItem.name}
+        typeDialog="書類削除の確認"
+        mainContent="書類を削除すると、案件から関連書類として参照できなくなります。本当に削除しますか"
+        cancelBtnDialog="いいえ"
+        confirmBtnDialog="はい"
         handleFunction={handleClickDelete}
       ></ConfirmDialog>
     </section>
