@@ -69,9 +69,9 @@ const CustomerSearch = () => {
     }).then((response) => {
       setListItem(response.data);
       commonActions.setPaginationState({
-        totalCount: 0,
-        pageSize: 25,
-        currentPage: 1,
+        totalCount: response.data.totalCount,
+        pageSize: response.data.pageSize,
+        currentPage: response.data.currentPage,
       });
     }).catch((error) => {
       console.log(error);
@@ -143,10 +143,10 @@ const CustomerSearch = () => {
     });
     await getCustomers(e);
   };
-  const handleChangePage = async (e) => {
+  const handleChangePage = async (e, value) => {
     commonActions.setPaginationState({
       ...commonState.paginationState,
-      currentPage: parseInt(e.target.innerText),
+      currentPage: value,
     });
     await getCustomers(e);
   };
