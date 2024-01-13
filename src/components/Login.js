@@ -64,7 +64,7 @@ const Login = () => {
       } else if (err.response?.status === 400) {
         setErrMsg("Missing Username or Password");
       } else if (err.response?.status === 401) {
-        setErrMsg("Unauthorized");
+        setErrMsg("ユーザー名またはパスワードが正しくありません。");
       } else {
         setErrMsg("Login Failed");
       }
@@ -81,9 +81,9 @@ const Login = () => {
       >
         {errMsg}
       </p>
-      <h1>Sign In</h1>
+
       <form onSubmit={handleSubmit}>
-        <label htmlFor="username">ユーザー名:</label>
+        <label htmlFor="username">ユーザー名を入力してください</label>
         <input
           type="text"
           id="username"
@@ -94,7 +94,7 @@ const Login = () => {
           required
         />
         <label htmlFor="password" style={{ marginTop: "1rem" }}>
-          パスワード:
+          パスワードを入力してください
         </label>
         <input
           type="password"
@@ -107,6 +107,7 @@ const Login = () => {
         {/* <button>ログイン</button> */}
         <FormButton itemName="ログイン" type="submit" />
       </form>
+      <div class="version-info">Version 24.1.1000 Powered by ITFreee</div>
       {/* <p>
         Need an Account?
         <br />

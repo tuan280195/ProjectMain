@@ -29,7 +29,7 @@ const CaseSearch = () => {
   const [data, setData] = useState([]);
   const [keyWordSearch, setKeyWordSearch] = useState([]);
   const [keyWordDateSearch, setKeyWordDateSearch] = useState([]);
-  
+
   const [customerList, setCustomerList] = useState([]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -86,13 +86,14 @@ const CaseSearch = () => {
     e.preventDefault();
     const searchCaseUrl = "/api/Case/getAll";
     const payload = {
-      keywordValues: keyWordSearch.filter(n => !n.fromTo && n.value),
-      keywordDateValues: keyWordSearch.filter(n => n.fromTo && (n.fromValue || n.toValue)),
+      keywordValues: keyWordSearch.filter((n) => !n.fromTo && n.value),
+      keywordDateValues: keyWordSearch.filter(
+        (n) => n.fromTo && (n.fromValue || n.toValue)
+      ),
       pageSize: caseSearchState.paginationState.pageSize,
       pageNumber: caseSearchState.paginationState.currentPage,
     };
-    let payloadFilterd =
-    keyWordSearch.filter((n) => n.value);
+    let payloadFilterd = keyWordSearch.filter((n) => n.value);
     payload.keywordValues = payloadFilterd;
     setShowList(false);
     await axiosPrivate
@@ -184,7 +185,7 @@ const CaseSearch = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Case Name</TableCell>
+                <TableCell>案件番号</TableCell>
                 {caseSearchState.caseDataSearchState.items[0].caseKeywordValues
                   .length > 0 &&
                   caseSearchState.caseDataSearchState.items[0].caseKeywordValues.map(
@@ -232,11 +233,11 @@ const CaseSearch = () => {
                                   <Button
                                     className="search-edit"
                                     onClick={() => {
-                                      console.log("row.caseId", row.caseId)
-                                      handleClickEdit(row.caseId)
+                                      console.log("row.caseId", row.caseId);
+                                      handleClickEdit(row.caseId);
                                     }}
                                   >
-                                    Edit
+                                    編集
                                   </Button>
                                 </div>
                               )}
@@ -251,16 +252,16 @@ const CaseSearch = () => {
         </TableContainer>
       </>
     ) : (
-      <h3>Not Found!</h3>
+      <h3>表示する項目がありません。</h3>
     );
   };
 
   const dynamicGenerate = (item, templateItem) => {
-    let typeValue = templateItem.typeValue
-    if(templateItem.fromTo){
-      typeValue = 'daterange'
-    }else if(templateItem.keywordName === '取引先名'){
-      typeValue = 'customerlist'
+    let typeValue = templateItem.typeValue;
+    if (templateItem.fromTo) {
+      typeValue = "daterange";
+    } else if (templateItem.keywordName === "取引先名") {
+      typeValue = "customerlist";
     }
     return (
       <GenericItems
@@ -282,7 +283,7 @@ const CaseSearch = () => {
         handleInput1={(e) => {
           const newState = keyWordSearch.map((value) => {
             if (value.keywordId === item.keywordId) {
-              return { ...value, fromValue: e.target.value};
+              return { ...value, fromValue: e.target.value };
             } else return { ...value };
           });
 
@@ -306,15 +307,33 @@ const CaseSearch = () => {
         }}
         handleInputCustomer={(e, customer) => {
           const newState = keyWordSearch.map((value) => {
-            if(value.keywordName === '電話番号'){
-              value.value = customer && customer.id ? customerList.find(x => x.id === customer.id).phoneNumber : "";
+            if (value.keywordName === "電話番号") {
+              value.value =
+                customer && customer.id
+                  ? customerList.find((x) => x.id === customer.id).phoneNumber
+                  : "";
             }
-            if(value.keywordName === '住所'){
-              let fiteredCustomer = customer && customer.id ? customerList.find(x => x.id === customer.id): "";
-              value.value = fiteredCustomer ? [fiteredCustomer.stateProvince, fiteredCustomer.city, fiteredCustomer.street, fiteredCustomer.buildingName, fiteredCustomer.roomNumber].join('') : "";
+            if (value.keywordName === "住所") {
+              let fiteredCustomer =
+                customer && customer.id
+                  ? customerList.find((x) => x.id === customer.id)
+                  : "";
+              value.value = fiteredCustomer
+                ? [
+                    fiteredCustomer.stateProvince,
+                    fiteredCustomer.city,
+                    fiteredCustomer.street,
+                    fiteredCustomer.buildingName,
+                    fiteredCustomer.roomNumber,
+                  ].join("")
+                : "";
             }
             if (value.keywordId === item.keywordId) {
-              return { ...value, value: customer ? customer.label : "", customerId: customer ? customer.id: "" };
+              return {
+                ...value,
+                value: customer ? customer.label : "",
+                customerId: customer ? customer.id : "",
+              };
             } else return { ...value };
           });
           setKeyWordSearch(newState);
@@ -362,11 +381,6 @@ const CaseSearch = () => {
     <section>
       <Grid container spacing={5}>
         {generateCode()}
-        {showList ? (
-          <Grid item xs={12}>
-            <Results />
-          </Grid>
-        ) : null}
         <Grid
           item
           xs={12}
@@ -376,6 +390,11 @@ const CaseSearch = () => {
           <FormButton onClick={handleClickSearch} itemName="検索"></FormButton>
         </Grid>
       </Grid>
+      {showList ? (
+        <Grid item xs={12}>
+          <Results />
+        </Grid>
+      ) : null}
 
       <LoadingSpinner loading={loading}></LoadingSpinner>
       <ConfirmDialog

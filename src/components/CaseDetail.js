@@ -28,8 +28,9 @@ const CaseDetail = ({ caseId }) => {
     message: "Successfully!",
   });
   const [caseIdName, setCaseIdAndName] = useState({
-    "caseId": null,
-    "caseName": "",});
+    caseId: null,
+    caseName: "",
+  });
   const [optionFileType, setOptionFileType] = useState([]);
   const [disableAttach, setDisableAttach] = useState(false);
   const [errors, setErrors] = useState([]);
@@ -44,7 +45,7 @@ const CaseDetail = ({ caseId }) => {
 
   useEffect(async () => {
     if (caseId) {
-      setCaseIdAndName(caseIdName => ({ ...caseIdName, caseId: caseId }));
+      setCaseIdAndName((caseIdName) => ({ ...caseIdName, caseId: caseId }));
       setDisableAttach(false);
       await getCaseByCaseId();
     } else {
@@ -65,7 +66,7 @@ const CaseDetail = ({ caseId }) => {
         if (!currentValue) {
           errors.push({
             keywordId: item.keywordId,
-            value: item.keywordName + " is required.",
+            value: item.keywordName + "は必須項目です。",
           });
         }
       }
@@ -114,8 +115,8 @@ const CaseDetail = ({ caseId }) => {
       })
       .then((response) => {
         setCaseIdAndName({
-          "caseId": response.data.caseId,
-          "caseName": response.data.caseName,
+          caseId: response.data.caseId,
+          caseName: response.data.caseName,
         });
         setData(response.data.caseKeywordValues);
       })
@@ -135,7 +136,7 @@ const CaseDetail = ({ caseId }) => {
       setSnackbar({
         isOpen: true,
         status: "error",
-        message: "Form has errors. Please correct them.",
+        message: "問題が発生しました。入力内容を修正してください。",
       });
       setLoading(false);
       return;
@@ -157,7 +158,7 @@ const CaseDetail = ({ caseId }) => {
           setSnackbar({
             isOpen: true,
             status: "success",
-            message: "Update Case successfuly!",
+            message: "案件情報の更新は正常に完了しました!",
           });
           setDisableAttach(false);
           return response;
@@ -174,11 +175,11 @@ const CaseDetail = ({ caseId }) => {
           signal: controller.signal,
         })
         .then((response) => {
-          setCaseIdAndName({...caseIdName, "caseId": response.data});
+          setCaseIdAndName({ ...caseIdName, caseId: response.data });
           setSnackbar({
             isOpen: true,
             status: "success",
-            message: "Create Case successfuly!",
+            message: "案件の作成は正常に完了しました!",
           });
           setDisableAttach(false);
           return response;
@@ -218,9 +219,9 @@ const CaseDetail = ({ caseId }) => {
   };
 
   const dynamicGenerate = (item, templateItem) => {
-    let typeValue = templateItem.typeValue
-    if(templateItem.keywordName === '取引先名'){
-      typeValue = 'customerlist'
+    let typeValue = templateItem.typeValue;
+    if (templateItem.keywordName === "取引先名") {
+      typeValue = "customerlist";
     }
     return (
       <GenericItems
@@ -246,16 +247,33 @@ const CaseDetail = ({ caseId }) => {
         }}
         handleInputCustomer={(e, customer) => {
           const newState = data.map((value) => {
-            if(value.keywordName === '電話番号'){
-              value.value = customer && customer.id ? customerList.find(x => x.id === customer.id).phoneNumber : "";
+            if (value.keywordName === "電話番号") {
+              value.value =
+                customer && customer.id
+                  ? customerList.find((x) => x.id === customer.id).phoneNumber
+                  : "";
             }
-            if(value.keywordName === '住所'){
-              let fiteredCustomer = customer && customer.id ? customerList.find(x => x.id === customer.id): "";
-              value.value = fiteredCustomer ? [fiteredCustomer.stateProvince, fiteredCustomer.city, fiteredCustomer.street, fiteredCustomer.buildingName, fiteredCustomer.roomNumber].join('') : "";
+            if (value.keywordName === "住所") {
+              let fiteredCustomer =
+                customer && customer.id
+                  ? customerList.find((x) => x.id === customer.id)
+                  : "";
+              value.value = fiteredCustomer
+                ? [
+                    fiteredCustomer.stateProvince,
+                    fiteredCustomer.city,
+                    fiteredCustomer.street,
+                    fiteredCustomer.buildingName,
+                    fiteredCustomer.roomNumber,
+                  ].join("")
+                : "";
             }
             if (value.keywordId === item.keywordId) {
-              
-              return { ...value, value: customer ? customer.label : "", customerId: customer ? customer.id: "" };
+              return {
+                ...value,
+                value: customer ? customer.label : "",
+                customerId: customer ? customer.id : "",
+              };
             } else return { ...value };
           });
           setData(newState);
@@ -335,7 +353,9 @@ const CaseDetail = ({ caseId }) => {
                 itemName="関連書類"
                 buttonType="attach"
                 titleContent={
-                  disableAttach ? "関連書類が存在しません。案件を保存してから書類の添付や管理が行えます。" : ""
+                  disableAttach
+                    ? "関連書類が存在しません。案件を保存してから書類の添付や管理が行えます。"
+                    : ""
                 }
                 onClick={handleAttach}
                 disabled={disableAttach}
@@ -349,7 +369,7 @@ const CaseDetail = ({ caseId }) => {
       <DialogHandle
         open={showDialog}
         closeDialog={() => setShowDialog(false)}
-        title="Attach Files"
+        title="関連書類の添付"
         optionFileType={optionFileType}
         caseId={caseId || caseIdName.caseId}
       />
