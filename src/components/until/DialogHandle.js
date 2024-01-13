@@ -39,6 +39,7 @@ const DialogHandle = ({
     setUrlPreviewImg({ blobUrl: "", fileName: "" })
     setFileDelete({});
     setShowAlert(false);
+    console.log("caseID---dialog----------------", caseId)
     if (caseId) {
       await getFilesOfCase();
     }

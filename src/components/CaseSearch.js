@@ -234,7 +234,10 @@ const CaseSearch = () => {
                                   </Button>
                                   <Button
                                     className="search-edit"
-                                    onClick={() => handleClickEdit(row.caseId)}
+                                    onClick={() => {
+                                      console.log("row.caseId", row.caseId)
+                                      handleClickEdit(row.caseId)
+                                    }}
                                   >
                                     Edit
                                   </Button>
