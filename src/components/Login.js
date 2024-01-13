@@ -73,7 +73,10 @@ const Login = () => {
   };
 
   return (
-    <section className="select-form" style={{ borderStyle: "solid" }}>
+    <section
+      className="select-form"
+      style={{ borderStyle: "solid", maxWidth: "600px" }}
+    >
       <p
         ref={errRef}
         className={errMsg ? "errmsg" : "offscreen"}
