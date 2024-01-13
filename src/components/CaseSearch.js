@@ -21,6 +21,7 @@ import caseSearchState from "../stories/caseSearchState.ts";
 import caseSearchActions from "../actions/caseSearchActions.ts";
 import ContentDialog from "./until/ContentDialog.js";
 import CaseDetail from "./CaseDetail.js";
+import * as Icons from "@mui/icons-material";
 
 const CaseSearch = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -110,7 +111,7 @@ const CaseSearch = () => {
       .catch((error) => {
         console.log(error);
       });
-      setLoading(false);
+    setLoading(false);
   };
   const handleClickSearch = async (e) => {
     await getCaseList(e);
@@ -185,68 +186,90 @@ const CaseSearch = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>案件番号</TableCell>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
+                  案件番号
+                </TableCell>
                 {caseSearchState.caseDataSearchState.items[0].caseKeywordValues
                   .length > 0 &&
                   caseSearchState.caseDataSearchState.items[0].caseKeywordValues.map(
                     (item) => {
                       return (
                         item.isShowOnCaseList && (
-                          <TableCell>{item.keywordName}</TableCell>
+                          <TableCell
+                            style={{
+                              textAlign: "center",
+                              width: "fit-content",
+                            }}
+                          >
+                            {item.keywordName}
+                          </TableCell>
                         )
                       );
                     }
                   )}
+                <TableCell style={{ textAlign: "center", width: "100px" }}>
+                  操作
+                </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {caseSearchState.caseDataSearchState.items.map((row) => {
-                return (
-                  <TableRow
-                    key={row.caseId}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell>
-                      <Truncate str={row.caseName} maxlength={15} />
-                    </TableCell>
-                    {row.caseKeywordValues.length > 0 &&
-                      row.caseKeywordValues
-                        .filter((n) => n.isShowOnCaseList)
-                        .map((item, index) => {
-                          return (
-                            <TableCell style={{ position: "relative" }}>
-                              <Truncate str={item.value} />
-                              {index + 1 ===
-                                row.caseKeywordValues.filter(
-                                  (n) => n.isShowOnCaseList
-                                ).length && (
-                                <div className="container-search-actions">
-                                  <Button
-                                    className="search-close"
-                                    onClick={() => {
-                                      setShowAlert(true);
-                                      setCloseCase(row.caseId);
-                                    }}
-                                  >
-                                    Close
-                                  </Button>
-                                  <Button
-                                    className="search-edit"
-                                    onClick={() => {
-                                      console.log("row.caseId", row.caseId);
-                                      handleClickEdit(row.caseId);
-                                    }}
-                                  >
-                                    編集
-                                  </Button>
-                                </div>
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                  </TableRow>
-                );
-              })}
+              {caseSearchState.caseDataSearchState.items.map((row) => (
+                <TableRow
+                  key={row.caseId}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell>
+                    <Truncate str={row.caseName} maxlength={15} />
+                  </TableCell>
+                  {row.caseKeywordValues
+                    .filter((n) => n.isShowOnCaseList)
+                    .map((item, index) => (
+                      <TableCell key={`${row.caseId}-${item.keywordName}`}>
+                        <Truncate str={item.value} />
+                      </TableCell>
+                    ))}
+                  <TableCell style={{ position: "relative" }}>
+                    {row.caseKeywordValues
+                      .filter((n) => n.isShowOnCaseList)
+                      .map((item, index) => (
+                        <div key={`${row.caseId}-${item.keywordName}-actions`}>
+                          {index + 1 ===
+                            row.caseKeywordValues.filter(
+                              (n) => n.isShowOnCaseList
+                            ).length && (
+                            <>
+                              {/*
+                              <Button
+                                className="search-close"
+                                onClick={() => {
+                                  setShowAlert(true);
+                                  setCloseCase(row.caseId);
+                                }}
+                              >
+                                Close
+                              </Button>
+                              */}
+                              <Button
+                                variant="contained"
+                                color="success"
+                                startIcon={<Icons.Edit />}
+                                onClick={() => {
+                                  console.log("row.caseId", row.caseId);
+                                  handleClickEdit(row.caseId);
+                                }}
+                              >
+                                編集
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      ))}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
