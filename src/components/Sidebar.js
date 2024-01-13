@@ -15,7 +15,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Collapse } from "@mui/material";
+import { Collapse, createTheme } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import CustomerSearch from "./CustomerSearch";
 import CustomerDetail from "./CustomerDetail";
@@ -24,6 +24,7 @@ import CaseDetail from "./CaseDetail";
 import DocumentSearch from "./document-management/DocumentSearch";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import { ThemeProvider } from "@emotion/react";
 
 const drawerWidth = 360;
 
@@ -35,6 +36,14 @@ const Sidebar = () => {
   const [caseId, setCaseDetail] = React.useState("");
   const [customerId, setCustomerDetail] = React.useState("");
   const navigate = useNavigate();
+
+  const theme = createTheme({
+    typography: {
+      fontFamily: ['"MS Mincho"', "sans-serif"].join(","),
+      fontWeight: 1000,
+    },
+    components: {},
+  });
 
   const mapPage = (page) => {
     switch (page) {
@@ -99,7 +108,7 @@ const Sidebar = () => {
   };
 
   const drawer = (
-    <div style={{ color: "#11596f", fontFamily: "inherit" }}>
+    <div style={{ color: "#11596F" }}>
       <Toolbar>
         <ListItemButton sx={{ maxWidth: "10rem" }} onClick={logOut}>
           <ListItemIcon>
@@ -189,91 +198,93 @@ const Sidebar = () => {
   );
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-        }}
-      >
-        <Toolbar sx={{ color: "#11596f", backgroundColor: "#fff" }}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h3"
-            noWrap
-            component="div"
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: "flex" }}>
+        <AppBar
+          position="fixed"
+          sx={{
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            ml: { sm: `${drawerWidth}px` },
+          }}
+        >
+          <Toolbar sx={{ color: "#11596f", backgroundColor: "#fff" }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="h3"
+              noWrap
+              component="div"
+              sx={{
+                fontWeight: "bold",
+                lineHeight: "180%",
+                flexGrow: 1,
+                textAlign: "center",
+              }}
+            >
+              {header}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Box
+          component="nav"
+          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          aria-label="mailbox folders"
+        >
+          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
             sx={{
-              fontWeight: "bold",
-              lineHeight: "180%",
-              flexGrow: 1,
-              textAlign: "center",
+              display: { xs: "block", sm: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
             }}
           >
-            {header}
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
+            {drawer}
+          </Drawer>
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: "none", sm: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Box>
+        <Box
+          component="main"
           sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
+            flexGrow: 1,
+            mt: "100px",
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
         >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
+          {header === "顧客情報の検索" && <CustomerSearch />}
+          {header === "顧客情報" && <CustomerDetail customerId={customerId} />}
+          {header === "案件の検索" && <CaseSearch />}
+          {header === "案件情報" && <CaseDetail caseId={caseId} />}
+          {header === "書類管理" && <DocumentSearch />}
+        </Box>
       </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          mt: "100px",
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-        }}
-      >
-        {header === "顧客情報の検索" && <CustomerSearch />}
-        {header === "顧客情報" && <CustomerDetail customerId={customerId} />}
-        {header === "案件の検索" && <CaseSearch />}
-        {header === "案件情報" && <CaseDetail caseId={caseId} />}
-        {header === "書類管理" && <DocumentSearch />}
-      </Box>
-    </Box>
+    </ThemeProvider>
   );
 };
 

@@ -87,7 +87,7 @@ const DocumentSearch = () => {
       .catch((error) => {
         console.log(error);
       });
-    if (status == 404) {
+    if (status === 404) {
       console.log("validateStatus", status);
       setListItem([]);
     }
@@ -280,9 +280,9 @@ const DocumentSearch = () => {
 
   const dynamicGenerate = (item, templateItem) => {
     let typeValue = templateItem.typeValue;
-    if (templateItem.fromTo && templateItem.typeValue == "decimal") {
+    if (templateItem.fromTo && templateItem.typeValue === "decimal") {
       typeValue = "decimalrange";
-    } else if (templateItem.fromTo && templateItem.typeValue == "datetime") {
+    } else if (templateItem.fromTo && templateItem.typeValue === "datetime") {
       typeValue = "daterange";
     } else if (templateItem.keywordName === "取引先名") {
       typeValue = "list";

@@ -69,7 +69,7 @@ const DialogHandle = ({
       .catch((error) => {
         console.log(JSON.stringify(error));
       });
-    if (status == 404) {
+    if (status === 404) {
       console.log("validateStatus", status);
       setListItem([]);
     }

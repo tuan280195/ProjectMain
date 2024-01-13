@@ -79,7 +79,7 @@ const CustomerSearch = () => {
       .catch((error) => {
         console.log(error);
       });
-    if (status == 404) {
+    if (status === 404) {
       setListItem([]);
       commonActions.setPaginationState({
         totalCount: 0,
