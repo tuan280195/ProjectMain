@@ -232,11 +232,14 @@ const DialogHandle = ({
                           onClick={async () => {
                             await viewOrDownloadFile(item);
                           }}
-                          style={{ minWidth: "150px" }}
+                          startIcon={
+                            item.isImage ? <Icons.Image /> : <Icons.Download />
+                          }
                         >
                           {item.isImage ? "表示" : "ダウンロード"}
                         </Button>
                         <Button
+                          startIcon={<Icons.Delete />}
                           className="search-edit"
                           onClick={() => {
                             setFileDelete(item);

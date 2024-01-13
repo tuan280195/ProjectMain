@@ -26,7 +26,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@emotion/react";
 
-const drawerWidth = 360;
+const drawerWidth = 300;
 
 const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -39,7 +39,7 @@ const Sidebar = () => {
 
   const theme = createTheme({
     typography: {
-      fontFamily: ['"MS Mincho"', "sans-serif"].join(","),
+      fontFamily: ['"MS Gothic"', "sans-serif"].join(","),
       fontWeight: 1000,
     },
     components: {},
@@ -147,7 +147,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <AddBusinessIcon />
               </ListItemIcon>
-              <ListItemText primary="顧客情報の新規作成" />
+              <ListItemText primary="顧客情報の作成" />
             </ListItemButton>
           </List>
         </Collapse>
@@ -178,7 +178,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <AddBusinessIcon />
               </ListItemIcon>
-              <ListItemText primary="案件の新規作成" />
+              <ListItemText primary="案件の作成" />
             </ListItemButton>
           </List>
         </Collapse>

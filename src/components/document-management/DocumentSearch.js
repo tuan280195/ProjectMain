@@ -178,7 +178,7 @@ const DocumentSearch = () => {
 
   const handleClickSearch = async (e) => {
     await getFiles(e);
-    setCondition({ width: "1080px", xs: 4 });
+    setCondition({ width: "1440px", xs: 4 });
     setShowList(true);
   };
 
@@ -224,10 +224,10 @@ const DocumentSearch = () => {
                 listItem.items.map((item, index) => {
                   return (
                     <TableRow>
-                      <TableCell style={{ width: "70%" }}>
+                      <TableCell style={{ width: "65%" }}>
                         <Truncate str={item.keywordName} maxLength={20} />
                       </TableCell>
-                      <TableCell style={{ width: "30%" }}>
+                      <TableCell style={{ width: "35%", textAlign: "right" }}>
                         <div>
                           <Button
                             variant="contained"
@@ -236,7 +236,14 @@ const DocumentSearch = () => {
                             onClick={() => {
                               viewOrDownloadFile(item);
                             }}
-                            style={{ minWidth: "100%", marginBottom: "10px" }}
+                            style={{ marginRight: "5px" }}
+                            startIcon={
+                              item.isImage ? (
+                                <Icons.Image />
+                              ) : (
+                                <Icons.Download />
+                              )
+                            }
                           >
                             {item.isImage ? "表示" : "ダウンロード"}
                           </Button>
@@ -244,7 +251,6 @@ const DocumentSearch = () => {
                             variant="contained"
                             color="success"
                             startIcon={<Icons.Delete />}
-                            style={{ minWidth: "100%" }}
                             to=""
                             onClick={() => {
                               setShowAlert(true);
