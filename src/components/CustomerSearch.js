@@ -80,7 +80,7 @@ const CustomerSearch = () => {
       setListItem([]);
       commonActions.setPaginationState({
         totalCount: 0,
-        pageSize: 25,
+        pageSize: 10,
         currentPage: 1,
       });
     }

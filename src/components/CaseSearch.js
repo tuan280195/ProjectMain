@@ -46,7 +46,7 @@ const CaseSearch = () => {
   // const tableClassCustomize = useStyles();
 
   useEffect(async () => {
-    caseSearchActions.setPaginationState(0, 25, 1);
+    caseSearchActions.setPaginationState(0, 10, 1);
     caseSearchActions.setKeywordsSearchState([]);
     caseSearchActions.setCaseDataSearchState([]);
     // setSearchData([]);
@@ -113,9 +113,11 @@ const CaseSearch = () => {
       });
       setLoading(false);
   };
+
   const handleClickSearch = async (e) => {
     await getCaseList(e);
   };
+
   const handleClickEdit = (caseId) => {
     setLoading(true);
     setCaseId(caseId);
@@ -136,7 +138,7 @@ const CaseSearch = () => {
 
     axiosPrivate
       .post(closeCaseUrl, payload)
-      .then(async (response) => {
+      .then(async () => {
         await getCaseList(e);
       })
       .catch((error) => {
