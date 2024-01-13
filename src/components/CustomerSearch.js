@@ -51,29 +51,34 @@ const CustomerSearch = () => {
     let searchURL = "/api/Customer/getAll";
     let pagination = `pageSize=${commonState.paginationState.pageSize}&pageNumber=${commonState.paginationState.currentPage}`;
     if (data.customerName && data.phoneNumber) {
-      searchURL = searchURL +
-        `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}&${pagination}`
+      searchURL =
+        searchURL +
+        `?customerName=${data.customerName}&phoneNumber=${data.phoneNumber}&${pagination}`;
     } else if (data.phoneNumber) {
-      searchURL = searchURL + `?phoneNumber=${data.phoneNumber}&${pagination}`
+      searchURL = searchURL + `?phoneNumber=${data.phoneNumber}&${pagination}`;
     } else if (data.customerName) {
-      searchURL = searchURL + `?customerName=${data.customerName}&${pagination}`
+      searchURL =
+        searchURL + `?customerName=${data.customerName}&${pagination}`;
     } else {
       searchURL = searchURL + `?${pagination}`;
     }
 
-    const status = await axiosPrivate.get(searchURL, {
-      signal: controller.signal,
-      validateStatus: () => true
-    }).then((response) => {
-      setListItem(response.data);
-      commonActions.setPaginationState({
-        totalCount: response.data.totalCount,
-        pageSize: response.data.pageSize,
-        currentPage: response.data.currentPage,
+    const status = await axiosPrivate
+      .get(searchURL, {
+        signal: controller.signal,
+        validateStatus: () => true,
+      })
+      .then((response) => {
+        setListItem(response.data);
+        commonActions.setPaginationState({
+          totalCount: response.data.totalCount,
+          pageSize: response.data.pageSize,
+          currentPage: response.data.currentPage,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
       });
-    }).catch((error) => {
-      console.log(error);
-    });
     if (status == 404) {
       setListItem([]);
       commonActions.setPaginationState({
@@ -118,9 +123,8 @@ const CustomerSearch = () => {
 
   const handleChange = (event, item) => {
     if (item === "customerName") {
-      setData({...data, customerName: event.target.value});
-    }
-    else {
+      setData({ ...data, customerName: event.target.value });
+    } else {
       // Display a message if hyphens are detected in 電話番号 field
       if (event.target.value.includes("-")) {
         setPhoneNumberError("「-」ハイフンを除いて番号のみ");
@@ -128,24 +132,34 @@ const CustomerSearch = () => {
         // Clear the error message if no hyphens
         setPhoneNumberError(undefined);
       }
-      setData({...data, phoneNumber: event.target.value});
+      setData({ ...data, phoneNumber: event.target.value });
     }
-
-    
   };
 
   const handleChangePageSize = async (e) => {
-    commonActions.setPaginationState({ ...commonState.paginationState, pageSize: parseInt(e.target.value) });
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      pageSize: parseInt(e.target.value),
+    });
     await getCustomers(e);
   };
   const handleChangePage = async (e) => {
-    commonActions.setPaginationState({ ...commonState.paginationState, currentPage: parseInt(e.target.innerText) });
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      currentPage: parseInt(e.target.innerText),
+    });
     await getCustomers(e);
   };
   const Results = () => {
     let totalCount = 0;
-    if (commonState.paginationState && commonState.paginationState.totalCount > 0) {
-      totalCount = Math.ceil(commonState.paginationState.totalCount / commonState.paginationState.pageSize);
+    if (
+      commonState.paginationState &&
+      commonState.paginationState.totalCount > 0
+    ) {
+      totalCount = Math.ceil(
+        commonState.paginationState.totalCount /
+          commonState.paginationState.pageSize
+      );
     }
     return (
       <>
@@ -170,9 +184,7 @@ const CustomerSearch = () => {
                 >
                   電話番号
                 </TableCell>
-                <TableCell
-                  style={{ textAlign: "center", width: "fit-content" }}
-                >
+                <TableCell style={{ textAlign: "center", width: "20%" }}>
                   操作
                 </TableCell>
               </TableRow>
@@ -191,16 +203,18 @@ const CustomerSearch = () => {
 
                       <TableCell>
                         <Button
-                          className="my-button"
+                          variant="contained"
+                          color="success"
                           startIcon={<Icons.Edit />}
                           onClick={() => handleClickEdit(item.id)}
-                          style={{ marginRight: "5px" }}
+                          style={{ marginBottom: "5px" }}
                         >
                           編集
                         </Button>
 
                         <Button
-                          className="my-button"
+                          variant="contained"
+                          color="success"
                           startIcon={<Icons.Delete />}
                           onClick={() => {
                             setShowAlert(true);
