@@ -210,7 +210,9 @@ const CustomerSearch = () => {
                 })
               ) : (
                 <TableCell colSpan={3}>
-                  <span style={{ color: "#000" }}>Not Found!</span>
+                  <span style={{ color: "#000" }}>
+                    表示する項目がありません。
+                  </span>
                 </TableCell>
               )}
             </TableBody>

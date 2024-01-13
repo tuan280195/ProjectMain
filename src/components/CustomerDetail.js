@@ -7,7 +7,7 @@ import { Grid } from "@mui/material";
 import FormButton from "./until/FormButton";
 import FormSnackbar from "./until/FormSnackbar";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import validator from 'validator';
+import validator from "validator";
 
 const CustomerDetail = ({ customerId }) => {
   const [latestData, setLatestData] = useState({});
@@ -38,7 +38,7 @@ const CustomerDetail = ({ customerId }) => {
 
     if (!latestData.phoneNumber) {
       errors.phoneNumber = "電話番号は必須項目です。";
-    }else if (!validator.isNumeric(latestData.phoneNumber)) {
+    } else if (!validator.isNumeric(latestData.phoneNumber)) {
       errors.phoneNumber = "電話番号は半角数字のみです";
     }
 
@@ -87,7 +87,7 @@ const CustomerDetail = ({ customerId }) => {
           setSnackbar({
             isOpen: true,
             status: "success",
-            message: "Create Customer successfuly!",
+            message: "取引先の登録は正常に完成しました！",
           });
 
           return response;
@@ -173,7 +173,8 @@ const CustomerDetail = ({ customerId }) => {
                 if (e.target.value.includes("-")) {
                   setErrors((prevErrors) => ({
                     ...prevErrors,
-                    phoneNumber: "「-」ハイフンを除いて番号のみを入力してください",
+                    phoneNumber:
+                      "「-」ハイフンを除いて番号のみを入力してください",
                   }));
                 } else {
                   // Clear the error message if no hyphens
@@ -182,7 +183,6 @@ const CustomerDetail = ({ customerId }) => {
                     phoneNumber: undefined,
                   }));
                 }
-
               }}
               isRequired={true}
             >

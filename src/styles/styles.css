@@ -1,16 +1,22 @@
-
 .my-button {
-    background-color: white;
-    color: #004862;    
-    cursor: pointer;
-    border: 2px solid #004862;    
-  }
-  
-  .my-button:hover {
-    background-color: #2AA252;
-    color: white;
-  }
-  
-  .my-button:active {
-    background-color: #5ebc7e;
-  }
+  background-color: white;
+  color: #004862;
+  cursor: pointer;
+  border: 2px solid #004862;
+}
+
+.my-button:hover {
+  background-color: #2aa252;
+  color: white;
+}
+
+.my-button:active {
+  background-color: #5ebc7e;
+}
+
+.version-info {
+  font-size: 12px;
+  color: #666;
+  margin-top: 10px;
+  text-align: center;
+}
