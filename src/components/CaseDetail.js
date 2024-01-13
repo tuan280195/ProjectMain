@@ -7,6 +7,7 @@ import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FormSnackbar from "./until/FormSnackbar";
 import LoadingSpinner from "./until/LoadingSpinner";
+
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 const CaseDetail = ({ caseId }) => {
