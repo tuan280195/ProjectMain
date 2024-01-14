@@ -16,10 +16,6 @@ const CaseDetail = ({ caseId }) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
-  // let tokenBuffer = Buffer.from(auth.accessToken.split('.')[1], 'base64');
-  // let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
-  // console.log('tokenParsed', tokenParsed)
-
   const [template, setTemplate] = useState([]);
   const [data, setData] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
