@@ -24,7 +24,7 @@ const ContentDialog = ({ open, closeDialog, title, ...props }) => {
       >
         <Icons.Close sx={{ color: "red" }} />
       </IconButton>
-      <DialogContent>{props.children}</DialogContent>
+      <DialogContent sx={{ color: "#11596f" }}>{props.children}</DialogContent>
     </Dialog>
   );
 };
