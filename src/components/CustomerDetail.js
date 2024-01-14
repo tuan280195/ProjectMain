@@ -102,12 +102,13 @@ const CustomerDetail = ({ customerId }) => {
     setLoading(false);
   };
 
-  const handleClear = () => {
+  const handleClear = async () => {
     setDataId();
     var newVal = latestData;
-    Object.keys(newVal).forEach((i) => {
+    await Object.keys(newVal).forEach((i) => {
       setLatestData((value) => ({ ...value, [i]: "" }));
     });
+    setLatestData({});
   };
 
   const handleAddress = async (getPostCode) => {
