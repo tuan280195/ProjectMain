@@ -60,13 +60,13 @@ const Login = () => {
     } catch (err) {
       console.log(err.response);
       if (!err?.response) {
-        setErrMsg("No Server Response");
+        setErrMsg("サーバーから応答がありません");
       } else if (err.response?.status === 400) {
-        setErrMsg("Missing Username or Password");
+        setErrMsg("ユーザー名またはパスワードが正しくありません。");
       } else if (err.response?.status === 401) {
         setErrMsg("ユーザー名またはパスワードが正しくありません。");
       } else {
-        setErrMsg("Login Failed");
+        setErrMsg("ログインに失敗しました");
       }
       errRef.current.focus();
     }

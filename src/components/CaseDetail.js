@@ -16,10 +16,6 @@ const CaseDetail = ({ caseId }) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
-  // let tokenBuffer = Buffer.from(auth.accessToken.split('.')[1], 'base64');
-  // let tokenParsed = JSON.parse(tokenBuffer.toString('utf-8'));
-  // console.log('tokenParsed', tokenParsed)
-
   const [template, setTemplate] = useState([]);
   const [data, setData] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
@@ -29,8 +25,8 @@ const CaseDetail = ({ caseId }) => {
     message: "Successfully!",
   });
   const [caseIdName, setCaseIdName] = useState({
-    caseId: null,
-    caseName: "",
+    id: null,
+    name: "",
   });
   const [optionFileType, setOptionFileType] = useState([]);
   const [disableAttach, setDisableAttach] = useState(false);
@@ -46,7 +42,7 @@ const CaseDetail = ({ caseId }) => {
 
   useEffect(async () => {
     if (caseId) {
-      setCaseIdName((caseIdName) => ({ ...caseIdName, caseId: caseId }));
+      setCaseIdName((caseIdName) => ({ ...caseIdName, id: caseId }));
       setDisableAttach(false);
       await getCaseByCaseId();
     } else {
@@ -116,8 +112,8 @@ const CaseDetail = ({ caseId }) => {
       })
       .then((response) => {
         setCaseIdName({
-          caseId: response.data.caseId,
-          caseName: response.data.caseName,
+          id: response.data.caseId,
+          name: response.data.caseName,
         });
         setData(response.data.caseKeywordValues);
       })
@@ -147,9 +143,9 @@ const CaseDetail = ({ caseId }) => {
     }
 
     let caseCreateURL = "/api/Case";
-    if (caseIdName.caseId) {
+    if (caseIdName.id) {
       let payload = {
-        caseId: caseIdName.caseId,
+        caseId: caseIdName.id,
         keywordValues: data,
       };
       await axiosPrivate
@@ -177,7 +173,10 @@ const CaseDetail = ({ caseId }) => {
           signal: controller.signal,
         })
         .then((response) => {
-          setCaseIdName({ ...caseIdName, caseId: response.data });
+          setCaseIdName({
+            name: response.data.name,
+            id: response.data.id,
+          });
           setSnackbar({
             isOpen: true,
             status: "success",
@@ -194,7 +193,7 @@ const CaseDetail = ({ caseId }) => {
   };
 
   const handleClear = () => {
-    setCaseIdName({ caseName: "", caseId: null });
+    setCaseIdName({ name: "", id: null });
     const newState = data.map((value) => {
       return { ...value, value: "" };
     });
@@ -310,7 +309,7 @@ const CaseDetail = ({ caseId }) => {
       <>
         <Grid item xs={12}>
           <strong>
-            <h2 style={{ margin: "1px" }}>案件番号：{caseIdName.caseName}</h2>
+            <h2 style={{ margin: "1px" }}>案件番号：{caseIdName.name}</h2>
           </strong>
         </Grid>
         <Grid item xs={6}>
@@ -382,7 +381,7 @@ const CaseDetail = ({ caseId }) => {
         closeDialog={() => setShowDialog(false)}
         title="関連書類の添付"
         optionFileType={optionFileType}
-        caseId={caseId || caseIdName.caseId}
+        caseId={caseId || caseIdName.id}
       />
       <LoadingSpinner loading={loading}></LoadingSpinner>
       <FormSnackbar item={snackbar} setItem={setSnackbar} />
