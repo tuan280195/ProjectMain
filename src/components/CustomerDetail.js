@@ -137,7 +137,7 @@ const CustomerDetail = ({ customerId }) => {
     try {
       if (customerId) {
         const response = await axiosPrivate.get(
-          "https://localhost:7265/api/Customer?id=" + customerId
+          "/api/Customer?id=" + customerId
         );
         setDataId(customerId);
         setLatestData(response.data);
