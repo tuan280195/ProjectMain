@@ -134,7 +134,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <SearchIcon />
               </ListItemIcon>
-              <ListItemText primary="顧客情報の検索" />
+              <ListItemText primary="顧客検索" />
             </ListItemButton>
             <ListItemButton
               sx={hoverChildButton}
@@ -143,7 +143,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <AddBusinessIcon />
               </ListItemIcon>
-              <ListItemText primary="顧客情報の作成" />
+              <ListItemText primary="顧客作成" />
             </ListItemButton>
           </List>
         </Collapse>
@@ -165,7 +165,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <SearchIcon />
               </ListItemIcon>
-              <ListItemText primary="案件の検索" />
+              <ListItemText primary="案件検索" />
             </ListItemButton>
             <ListItemButton
               sx={hoverChildButton}
@@ -174,7 +174,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <AddBusinessIcon />
               </ListItemIcon>
-              <ListItemText primary="案件の作成" />
+              <ListItemText primary="案件作成" />
             </ListItemButton>
           </List>
         </Collapse>
