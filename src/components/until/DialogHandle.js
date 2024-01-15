@@ -190,7 +190,7 @@ const DialogHandle = ({
         <Icons.Close sx={{ color: "red" }} />
       </IconButton>
       <DialogContent
-        sx={{ px: 4, py: 6, position: "relative" }}
+        sx={{ px: 4, py: 6, position: "relative", minHeight: 960 }}
         style={{ paddingTop: "5px" }}
       >
         <DialogContentText style={{ color: "red", marginBottom: "20px" }}>
