@@ -111,7 +111,7 @@ const CaseSearch = () => {
       .catch((error) => {
         console.log(error);
       });
-      setLoading(false);
+    setLoading(false);
   };
 
   const handleClickSearch = async (e) => {
@@ -243,17 +243,18 @@ const CaseSearch = () => {
                               (n) => n.isShowOnCaseList
                             ).length && (
                             <>
-                              {/*
                               <Button
-                                className="search-close"
+                                variant="contained"
+                                color="success"
+                                startIcon={<Icons.Delete />}
                                 onClick={() => {
                                   setShowAlert(true);
                                   setCloseCase(row.caseId);
                                 }}
+                                style={{ marginBottom: 5 }}
                               >
-                                Close
+                                削除
                               </Button>
-                              */}
                               <Button
                                 variant="contained"
                                 color="success"
