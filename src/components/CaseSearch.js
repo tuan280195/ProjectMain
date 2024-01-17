@@ -443,7 +443,7 @@ const CaseSearch = () => {
         closeDialog={() => setShowAlert(false)}
         item={deleteItem.customerName}
         handleFunction={confirmCloseCase}
-        typeDialog="Close"
+        typeDialog="案件削除の確認"
       />
       <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
         <CaseDetail caseId={caseId}></CaseDetail>
