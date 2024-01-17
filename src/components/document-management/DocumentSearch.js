@@ -21,6 +21,7 @@ import {
   IconButton,
 } from "@mui/material";
 import * as Icons from "@mui/icons-material";
+import CaseDetail from "../CaseDetail.js";
 
 const DocumentSearch = () => {
   const [showList, setShowList] = useState(true);
@@ -44,6 +45,7 @@ const DocumentSearch = () => {
     fileName: "",
   });
   const [showDialog, setShowDialog] = useState(false);
+  const [caseId, setCaseId] = useState();
 
   useEffect(async () => {
     setListItem([]);
@@ -176,6 +178,13 @@ const DocumentSearch = () => {
     setLoading(false);
   };
 
+  const handleClickEdit = (caseId) => {
+    setLoading(true);
+    setCaseId(caseId);
+    setShowDialog(true);
+    setLoading(false);
+  };
+
   const handleClickSearch = async (e) => {
     await getFiles(e);
     setCondition({ width: "1440px", xs: 4 });
@@ -264,6 +273,16 @@ const DocumentSearch = () => {
                             }}
                           >
                             削除
+                          </Button>
+                          <Button
+                            variant="contained"
+                            startIcon={<Icons.Assignment />}
+                            style={{ marginTop: "5px" }}
+                            onClick={() => {
+                              handleClickEdit(item.caseId);
+                            }}
+                          >
+                            案件表示
                           </Button>{" "}
                         </div>
                       </TableCell>
@@ -429,6 +448,9 @@ const DocumentSearch = () => {
         confirmBtnDialog="はい"
         handleFunction={handleClickDelete}
       ></ConfirmDialog>
+      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+        <CaseDetail caseId={caseId}></CaseDetail>
+      </ContentDialog>
     </section>
   );
 };

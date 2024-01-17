@@ -92,6 +92,15 @@ function GenericItems({ label, type, options, children, ...props }) {
           onChange={props.handleInput}
           value={props.value}
           isRequired={props.required}
+          onFocus={(e) =>
+            e.target.addEventListener(
+              "wheel",
+              function (e) {
+                e.preventDefault();
+              },
+              { passive: false }
+            )
+          }
         >
           {children}
         </FormInput>
@@ -106,14 +115,32 @@ function GenericItems({ label, type, options, children, ...props }) {
               type="number"
               onChange={props.handleInput1}
               className="section-input"
-            ></input>
+              onFocus={(e) =>
+                e.target.addEventListener(
+                  "wheel",
+                  function (e) {
+                    e.preventDefault();
+                  },
+                  { passive: false }
+                )
+              }
+            />
             <span>〜</span>
             <input
               value={props.value2}
               type="number"
               onChange={props.handleInput2}
               className="section-input"
-            ></input>
+              onFocus={(e) =>
+                e.target.addEventListener(
+                  "wheel",
+                  function (e) {
+                    e.preventDefault();
+                  },
+                  { passive: false }
+                )
+              }
+            />
           </div>
         </div>
       );
@@ -126,6 +153,15 @@ function GenericItems({ label, type, options, children, ...props }) {
           onChange={props.handleInput}
           value={props.value}
           isRequired={props.required}
+          onFocus={(e) =>
+            e.target.addEventListener(
+              "wheel",
+              function (e) {
+                e.preventDefault();
+              },
+              { passive: false }
+            )
+          }
         >
           {children}
         </FormInput>
