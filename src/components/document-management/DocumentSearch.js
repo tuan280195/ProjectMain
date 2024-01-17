@@ -48,6 +48,9 @@ const DocumentSearch = () => {
   const [caseId, setCaseId] = useState();
 
   useEffect(async () => {
+    commonActions.setPaginationState({...commonState.paginationState, 
+        totalCount: 0
+      });
     setListItem([]);
     setUrlPreviewImg({ blobUrl: "", fileName: "" });
     await getDocumentTemplate();
@@ -65,6 +68,14 @@ const DocumentSearch = () => {
     let keywordDecimalValues = keyWordSearch.filter(
       (x) => x.fromTo && x.typeValue === "decimal" && (x.fromValue || x.toValue)
     );
+    //取引先名
+    console.log("keywordValues 11",keywordValues)
+    keywordValues.forEach((item) => {
+      if(item.keywordName === '取引先名') {
+        item.value = item.customerId;
+      }
+    });
+    console.log("keywordValues",keywordValues)
     const payload = {
       fileTypeId: fileTypeSearch.value,
       keywordValues: keywordValues,
@@ -80,14 +91,13 @@ const DocumentSearch = () => {
       })
       .then((response) => {
         setListItem(response.data);
-        commonActions.setPaginationState({
-          totalCount: response.data.totalCount,
-          pageSize: response.data.pageSize,
-          currentPage: response.data.currentPage,
+        commonActions.setPaginationState({...commonState.paginationState, 
+          totalCount: response.data.totalCount
         });
       })
       .catch((error) => {
         console.log(error);
+        setListItem([]);
       });
     if (status === 404) {
       console.log("validateStatus", status);

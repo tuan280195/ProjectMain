@@ -3,6 +3,8 @@ import GenericItems from "./until/GenericItems";
 import LoadingSpinner from "./until/LoadingSpinner";
 import ConfirmDialog from "./until/ConfirmBox";
 import Pagination from "./until/Pagination";
+import commonState from "../stories/commonState.ts";
+import commonActions from "../actions/commonAction.ts";
 import {
   Button,
   Grid,
@@ -46,6 +48,9 @@ const CaseSearch = () => {
   // const tableClassCustomize = useStyles();
 
   useEffect(async () => {
+    commonActions.setPaginationState({...commonState.paginationState, 
+        totalCount: 0
+      });
     caseSearchActions.setPaginationState(0, 10, 1);
     caseSearchActions.setKeywordsSearchState([]);
     caseSearchActions.setCaseDataSearchState([]);
@@ -91,8 +96,8 @@ const CaseSearch = () => {
       keywordDateValues: keyWordSearch.filter(
         (n) => n.fromTo && (n.fromValue || n.toValue)
       ),
-      pageSize: caseSearchState.paginationState.pageSize,
-      pageNumber: caseSearchState.paginationState.currentPage,
+      pageSize: commonState.paginationState.pageSize,
+      pageNumber: commonState.paginationState.currentPage,
     };
     let payloadFilterd = keyWordSearch.filter((n) => n.value);
     payload.keywordValues = payloadFilterd;
@@ -100,15 +105,14 @@ const CaseSearch = () => {
     await axiosPrivate
       .post(searchCaseUrl, payload)
       .then((response) => {
-        caseSearchActions.setPaginationState(
-          response.data.totalCount,
-          response.data.pageSize,
-          response.data.currentPage
-        );
+        commonActions.setPaginationState({...commonState.paginationState, 
+          totalCount: response.data.totalCount,
+        });
         caseSearchActions.setCaseDataSearchState(response.data.items);
         setShowList(true);
       })
       .catch((error) => {
+        caseSearchActions.setCaseDataSearchState([]);
         console.log(error);
       });
     setLoading(false);
@@ -160,39 +164,47 @@ const CaseSearch = () => {
   };
 
   const handleChangePageSize = async (e) => {
-    caseSearchActions.setPaginationState(
-      caseSearchState.paginationState.totalCount,
-      e.target.value,
-      caseSearchState.paginationState.currentPage
-    );
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      pageSize: parseInt(e.target.value),
+    });
+    // caseSearchActions.setPaginationState(
+    //   caseSearchState.paginationState.totalCount,
+    //   e.target.value,
+    //   caseSearchState.paginationState.currentPage
+    // );
     await getCaseList(e);
   };
   const handleChangePage = async (e, value) => {
-    caseSearchActions.setPaginationState(
-      caseSearchState.paginationState.totalCount,
-      caseSearchState.paginationState.pageSize,
-      value
-    );
+    // caseSearchActions.setPaginationState(
+    //   caseSearchState.paginationState.totalCount,
+    //   caseSearchState.paginationState.pageSize,
+    //   value
+    // );
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      currentPage: value,
+    });
     await getCaseList(e);
   };
   const Results = () => {
     let totalCount = 0;
     if (
-      caseSearchState.caseDataSearchState &&
-      caseSearchState.caseDataSearchState.totalCount > 0
+      commonState.paginationState &&
+      commonState.paginationState.totalCount > 0
     ) {
       totalCount = Math.ceil(
-        caseSearchState.caseDataSearchState.totalCount /
-          caseSearchState.caseDataSearchState.pageSize
+        commonState.paginationState.totalCount /
+          commonState.paginationState.pageSize
       );
     }
-    return caseSearchState.caseDataSearchState &&
-      caseSearchState.caseDataSearchState.totalCount > 0 ? (
+    return commonState.paginationState &&
+          commonState.paginationState.totalCount > 0 ? (
       <>
         <Pagination
           totalCount={totalCount}
-          pageSize={caseSearchState.caseDataSearchState.pageSize}
-          currentPage={caseSearchState.caseDataSearchState.currentPage}
+          pageSize={commonState.paginationState.pageSize}
+          currentPage={commonState.paginationState.currentPage}
           handleChangePageSize={handleChangePageSize}
           handleChangePage={handleChangePage}
         />

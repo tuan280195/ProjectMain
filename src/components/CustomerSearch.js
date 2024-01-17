@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoadingSpinner from "./until/LoadingSpinner";
 import Truncate from "./until/Truncate";
 import ConfirmDialog from "./until/ConfirmBox";
@@ -44,10 +44,16 @@ const CustomerSearch = () => {
   const controller = new AbortController();
   // State for phone number error
   const [phoneNumberError, setPhoneNumberError] = useState(undefined);
+  useEffect(async () => {
+    commonActions.setPaginationState({...commonState.paginationState, 
+        totalCount: 0
+      });
+    }, []);
 
   const getCustomers = async (e) => {
     setLoading(true);
     e.preventDefault();
+    console.log("commonState.paginationState", commonState.paginationState)
     let searchURL = "/api/Customer/getAll";
     let pagination = `pageSize=${commonState.paginationState.pageSize}&pageNumber=${commonState.paginationState.currentPage}`;
     if (data.customerName && data.phoneNumber) {
@@ -68,21 +74,15 @@ const CustomerSearch = () => {
       validateStatus: () => true
     }).then((response) => {
       setListItem(response.data);
-      commonActions.setPaginationState({
+      commonActions.setPaginationState({...commonState.paginationState, 
         totalCount: response.data.totalCount,
-        pageSize: response.data.pageSize,
-        currentPage: response.data.currentPage,
       });
     }).catch((error) => {
       console.log(error);
+      setListItem([]);
     });
     if (status == 404) {
       setListItem([]);
-      commonActions.setPaginationState({
-        totalCount: 0,
-        pageSize: 10,
-        currentPage: 1,
-      });
     }
     setLoading(false);
   };
