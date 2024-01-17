@@ -225,7 +225,10 @@ const DocumentSearch = () => {
                   return (
                     <TableRow>
                       <TableCell style={{ width: "65%" }}>
-                        <Truncate str={item.keywordName} maxLength={20} />
+                        <Truncate
+                          str={"【" + item.typeName + "】" + item.keywordName}
+                          maxLength={20}
+                        />
                       </TableCell>
                       <TableCell style={{ width: "35%", textAlign: "right" }}>
                         <div>
