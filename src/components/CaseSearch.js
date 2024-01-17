@@ -118,6 +118,18 @@ const CaseSearch = () => {
     await getCaseList(e);
   };
 
+  const handleClear = () => {
+    setKeyWordSearch((prevKeyWordSearch) =>
+      prevKeyWordSearch.map((item) => ({
+        ...item,
+        value: "",
+        fromValue: "",
+        toValue: "",
+        customerId: "",
+      }))
+    );
+  };
+
   const handleClickEdit = (caseId) => {
     setLoading(true);
     setCaseId(caseId);
@@ -410,10 +422,13 @@ const CaseSearch = () => {
         <Grid
           item
           xs={12}
-          style={{ display: "flex", justifyContent: "center" }}
+          //style={{ display: "flex", justifyContent: "center" }}
         >
-          {/* Search Button */}
-          <FormButton onClick={handleClickSearch} itemName="検索"></FormButton>
+          <div className="handle-button">
+            {/* Search and Clear Button */}
+            <FormButton onClick={handleClickSearch} itemName="検索" />
+            <FormButton onClick={handleClear} itemName="クリア" />
+          </div>
         </Grid>
       </Grid>
       {showList ? (
