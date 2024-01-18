@@ -45,12 +45,14 @@ const DocumentSearch = () => {
     fileName: "",
   });
   const [showDialog, setShowDialog] = useState(false);
+  const [showDialogCase, setShowDialogCase] = useState(false);
   const [caseId, setCaseId] = useState();
 
   useEffect(async () => {
-    commonActions.setPaginationState({...commonState.paginationState, 
-        totalCount: 0
-      });
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      totalCount: 0,
+    });
     setListItem([]);
     setUrlPreviewImg({ blobUrl: "", fileName: "" });
     await getDocumentTemplate();
@@ -69,13 +71,13 @@ const DocumentSearch = () => {
       (x) => x.fromTo && x.typeValue === "decimal" && (x.fromValue || x.toValue)
     );
     //取引先名
-    console.log("keywordValues 11",keywordValues)
+    console.log("keywordValues 11", keywordValues);
     keywordValues.forEach((item) => {
-      if(item.keywordName === '取引先名') {
+      if (item.keywordName === "取引先名") {
         item.value = item.customerId;
       }
     });
-    console.log("keywordValues",keywordValues)
+    console.log("keywordValues", keywordValues);
     const payload = {
       fileTypeId: fileTypeSearch.value,
       keywordValues: keywordValues,
@@ -91,8 +93,9 @@ const DocumentSearch = () => {
       })
       .then((response) => {
         setListItem(response.data);
-        commonActions.setPaginationState({...commonState.paginationState, 
-          totalCount: response.data.totalCount
+        commonActions.setPaginationState({
+          ...commonState.paginationState,
+          totalCount: response.data.totalCount,
         });
       })
       .catch((error) => {
@@ -188,10 +191,10 @@ const DocumentSearch = () => {
     setLoading(false);
   };
 
-  const handleClickEdit = (caseId) => {
+  const handleClickViewCase = (caseId) => {
     setLoading(true);
     setCaseId(caseId);
-    setShowDialog(true);
+    setShowDialogCase(true);
     setLoading(false);
   };
 
@@ -289,7 +292,7 @@ const DocumentSearch = () => {
                             startIcon={<Icons.Assignment />}
                             style={{ marginTop: "5px" }}
                             onClick={() => {
-                              handleClickEdit(item.caseId);
+                              handleClickViewCase(item.caseId);
                             }}
                           >
                             案件表示
@@ -458,7 +461,10 @@ const DocumentSearch = () => {
         confirmBtnDialog="はい"
         handleFunction={handleClickDelete}
       ></ConfirmDialog>
-      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+      <ContentDialog
+        open={showDialogCase}
+        closeDialog={() => setShowDialogCase(false)}
+      >
         <CaseDetail caseId={caseId}></CaseDetail>
       </ContentDialog>
     </section>
