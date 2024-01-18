@@ -258,25 +258,25 @@ const CaseSearch = () => {
                               <Button
                                 variant="contained"
                                 color="success"
-                                startIcon={<Icons.Delete />}
-                                onClick={() => {
-                                  setShowAlert(true);
-                                  setCloseCase(row.caseId);
-                                }}
-                                style={{ marginBottom: 5 }}
-                              >
-                                削除
-                              </Button>
-                              <Button
-                                variant="contained"
-                                color="success"
                                 startIcon={<Icons.Edit />}
                                 onClick={() => {
                                   console.log("row.caseId", row.caseId);
                                   handleClickEdit(row.caseId);
                                 }}
+                                style={{ marginBottom: 5 }}
                               >
                                 編集
+                              </Button>
+                              <Button
+                                variant="contained"
+                                color="success"
+                                startIcon={<Icons.Delete />}
+                                onClick={() => {
+                                  setShowAlert(true);
+                                  setCloseCase(row.caseId);
+                                }}
+                              >
+                                削除
                               </Button>
                             </>
                           )}
@@ -427,7 +427,7 @@ const CaseSearch = () => {
           <div className="handle-button">
             {/* Search and Clear Button */}
             <FormButton onClick={handleClickSearch} itemName="検索" />
-            <FormButton onClick={handleClear} itemName="クリア" />
+            <FormButton onClick={handleClear} itemName="検索条件の初期化" />
           </div>
         </Grid>
       </Grid>
