@@ -1,3 +1,4 @@
+import LoadingSpinner from "./until/LoadingSpinner.js";
 import { useRef, useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -7,6 +8,8 @@ import FormButton from "./until/FormButton";
 const LOGIN_URL = "/api/Account/login";
 
 const Login = () => {
+  const [loading, setLoading] = useState(false);
+
   const { setAuth } = useAuth();
 
   const navigate = useNavigate();
@@ -32,6 +35,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      setLoading(true);
+
       const response = await axios.post(
         LOGIN_URL,
         JSON.stringify({ username, password }),
@@ -69,6 +74,8 @@ const Login = () => {
         setErrMsg("ログインに失敗しました");
       }
       errRef.current.focus();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,6 +91,8 @@ const Login = () => {
       >
         {errMsg}
       </p>
+
+      <LoadingSpinner loading={loading}></LoadingSpinner>
 
       <form onSubmit={handleSubmit}>
         <label htmlFor="username">ユーザー名を入力してください</label>
