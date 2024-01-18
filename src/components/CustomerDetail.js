@@ -78,7 +78,13 @@ const CustomerDetail = ({ customerId }) => {
           return response;
         })
         .catch((error) => {
-          console.log(error);
+          if (error.response.data === "Customer is already exists.") {
+            setSnackbar({
+              isOpen: true,
+              status: "error",
+              message: "顧客はすでに存在します。",
+            });
+          }
         });
     } else {
       await axiosPrivate
@@ -95,7 +101,13 @@ const CustomerDetail = ({ customerId }) => {
           return response;
         })
         .catch((error) => {
-          console.log(error);
+          if (error.response.data === "Customer is already exists.") {
+            setSnackbar({
+              isOpen: true,
+              status: "error",
+              message: "顧客はすでに存在します。",
+            });
+          }
         });
     }
 
