@@ -1,5 +1,4 @@
-import { Grid,
-  IconButton,Button } from "@mui/material";
+import { Grid, IconButton, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import GenericItems from "./until/GenericItems";
 import DialogHandle from "./until/DialogHandle";
@@ -55,9 +54,6 @@ const CaseDetail = ({ caseId }) => {
     setLoading(true);
     await getCaseTemplate();
     setLoading(false);
-  }, []);
-
-  useEffect(async () => {
     if (caseId) {
       setCaseIdName((caseIdName) => ({ ...caseIdName, id: caseId }));
       setDisableAttach(false);
@@ -67,6 +63,7 @@ const CaseDetail = ({ caseId }) => {
       setDisableAttach(true);
     }
   }, [caseId]);
+
   const validateForm = () => {
     let errors = [];
 
@@ -159,9 +156,9 @@ const CaseDetail = ({ caseId }) => {
         setListItemFile([]);
         console.log(JSON.stringify(error));
       });
-      if (status === 404) {
-        setListItemFile([]);
-      }
+    if (status === 404) {
+      setListItemFile([]);
+    }
 
     setLoadingFile(false);
   };
@@ -200,7 +197,7 @@ const CaseDetail = ({ caseId }) => {
       });
     setLoading(false);
   };
-const handleClickDeleteFile = async (e) => {
+  const handleClickDeleteFile = async (e) => {
     setLoading(true);
     e.preventDefault();
     let deleteFileUrl = `/api/FileUpload/Delete`;
@@ -329,7 +326,7 @@ const handleClickDeleteFile = async (e) => {
     setShowDialog(false);
     await getFilesOfCase();
   };
-  
+
   const handleGenerateCustomerName = (item, templateItem) => {
     if (templateItem.keywordName === "取引先名") {
       if (customerList.filter((a) => a.id === item.value)[0]?.name) {
@@ -489,71 +486,68 @@ const handleClickDeleteFile = async (e) => {
       </form>
       <>
         <Grid item xs={12}>
-            <ul
-              id="results"
-              className="search-results"
-              style={{ marginTop: 10 }}
-            >
-              {listItemFile && listItemFile[0] != null ? (
-                listItemFile.map((item, index) => {
-                  return (
-                    <li className="search-result" key={item.keywordId}>
-                      <Truncate
-                        str={item.fileName}
-                        maxLength={20}
-                        style={{ padding: "10px" }}
-                      />
-                      <div className="search-action">
-                        <Button
-                          className="search-delete"
-                          onClick={async () => {
-                            await viewOrDownloadFile(item);
-                          }}
-                          startIcon={
-                            <Icons.Image />
-                          }
-                          disabled={!item.isImage}
-                        >
+          <ul id="results" className="search-results" style={{ marginTop: 10 }}>
+            {listItemFile && listItemFile[0] != null ? (
+              listItemFile.map((item, index) => {
+                return (
+                  <li className="search-result" key={item.keywordId}>
+                    <Truncate
+                      str={item.fileName}
+                      maxLength={20}
+                      style={{ padding: "10px" }}
+                    />
+                    <div className="search-action">
+                      <Button
+                        className="search-delete"
+                        onClick={async () => {
+                          await viewOrDownloadFile(item);
+                        }}
+                        startIcon={<Icons.Image />}
+                        disabled={!item.isImage}
+                      >
                         表示
-                        </Button>
-                        <Button
-                          startIcon={<Icons.Download />}
-                          className="search-edit"
-                          onClick={() => {
-                            setFileDelete(item);
-                            setShowAlert(true);
-                          }}
-                          disabled={item.isImage}
-                        >
-                          ダウンロード
-                        </Button>
-                        <Button
-                          startIcon={<Icons.Delete />}
-                          className="search-edit"
-                          onClick={() => {
-                            setFileDelete(item);
-                            setShowAlert(true);
-                          }}
-                        >
-                          削除
-                        </Button>
-                      </div>
-                    </li>
-                  );
-                })
-              ) : (
-                <li style={{ textAlign: "center" }}>
-                  {loadingFile ? (
-                    <CircularProgress />
-                  ) : (
-                    <p>表示する項目がありません。</p>
-                  )}
-                </li>
-              )}
-            </ul>
+                      </Button>
+                      <Button
+                        startIcon={<Icons.Download />}
+                        className="search-edit"
+                        onClick={() => {
+                          setFileDelete(item);
+                          setShowAlert(true);
+                        }}
+                        disabled={item.isImage}
+                      >
+                        ダウンロード
+                      </Button>
+                      <Button
+                        startIcon={<Icons.Delete />}
+                        className="search-edit"
+                        onClick={() => {
+                          setFileDelete(item);
+                          setShowAlert(true);
+                        }}
+                      >
+                        削除
+                      </Button>
+                    </div>
+                  </li>
+                );
+              })
+            ) : (
+              <li style={{ textAlign: "center" }}>
+                {loadingFile ? (
+                  <CircularProgress />
+                ) : (
+                  <p>表示する項目がありません。</p>
+                )}
+              </li>
+            )}
+          </ul>
         </Grid>
         {urlPreviewImg.blobUrl && (
-          <ContentDialog open={showDialogPreivew} closeDialog={() => setShowDialogPreivew(false)}>
+          <ContentDialog
+            open={showDialogPreivew}
+            closeDialog={() => setShowDialogPreivew(false)}
+          >
             <Grid item xs={12} className="preview-file">
               <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>
                 <IconButton size="small" aria-label="download">
@@ -572,17 +566,17 @@ const handleClickDeleteFile = async (e) => {
             </Grid>
           </ContentDialog>
         )}
-        </>
-        <ConfirmDialog
-          open={showAlert}
-          closeDialog={() => setShowAlert(false)}
-          item={fileDelete.fileName}
-          handleFunction={handleClickDeleteFile}
-          typeDialog="書類削除の確認"
-          mainContent="書類を削除すると、案件から関連書類として参照できなくなります。本当に削除しますか"
-          cancelBtnDialog="いいえ"
-          confirmBtnDialog="はい"
-        ></ConfirmDialog>
+      </>
+      <ConfirmDialog
+        open={showAlert}
+        closeDialog={() => setShowAlert(false)}
+        item={fileDelete.fileName}
+        handleFunction={handleClickDeleteFile}
+        typeDialog="書類削除の確認"
+        mainContent="書類を削除すると、案件から関連書類として参照できなくなります。本当に削除しますか"
+        cancelBtnDialog="いいえ"
+        confirmBtnDialog="はい"
+      ></ConfirmDialog>
 
       <DialogHandle
         open={showDialog}
