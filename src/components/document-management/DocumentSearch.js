@@ -45,6 +45,7 @@ const DocumentSearch = () => {
     fileName: "",
   });
   const [showDialog, setShowDialog] = useState(false);
+  const [showDialogCase, setShowDialogCase] = useState(false);
   const [caseId, setCaseId] = useState();
 
   useEffect(async () => {
@@ -178,10 +179,10 @@ const DocumentSearch = () => {
     setLoading(false);
   };
 
-  const handleClickEdit = (caseId) => {
+  const handleClickViewCase = (caseId) => {
     setLoading(true);
     setCaseId(caseId);
-    setShowDialog(true);
+    setShowDialogCase(true);
     setLoading(false);
   };
 
@@ -279,7 +280,7 @@ const DocumentSearch = () => {
                             startIcon={<Icons.Assignment />}
                             style={{ marginTop: "5px" }}
                             onClick={() => {
-                              handleClickEdit(item.caseId);
+                              handleClickViewCase(item.caseId);
                             }}
                           >
                             案件表示
@@ -448,7 +449,10 @@ const DocumentSearch = () => {
         confirmBtnDialog="はい"
         handleFunction={handleClickDelete}
       ></ConfirmDialog>
-      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+      <ContentDialog
+        open={showDialogCase}
+        closeDialog={() => setShowDialogCase(false)}
+      >
         <CaseDetail caseId={caseId}></CaseDetail>
       </ContentDialog>
     </section>
