@@ -168,19 +168,9 @@ const CaseSearch = () => {
       ...commonState.paginationState,
       pageSize: parseInt(e.target.value),
     });
-    // caseSearchActions.setPaginationState(
-    //   caseSearchState.paginationState.totalCount,
-    //   e.target.value,
-    //   caseSearchState.paginationState.currentPage
-    // );
     await getCaseList(e);
   };
   const handleChangePage = async (e, value) => {
-    // caseSearchActions.setPaginationState(
-    //   caseSearchState.paginationState.totalCount,
-    //   caseSearchState.paginationState.pageSize,
-    //   value
-    // );
     commonActions.setPaginationState({
       ...commonState.paginationState,
       currentPage: value,
@@ -198,6 +188,13 @@ const CaseSearch = () => {
           commonState.paginationState.pageSize
       );
     }
+
+    const convertItem = (item) => {
+      if (item.keywordName === "取引先名") {
+        return customerList.filter((a) => a.id === item.value)[0]?.name;
+      } else return item.value;
+    };
+    
     return commonState.paginationState &&
           commonState.paginationState.totalCount > 0 ? (
       <>
@@ -252,11 +249,13 @@ const CaseSearch = () => {
                   </TableCell>
                   {row.caseKeywordValues
                     .filter((n) => n.isShowOnCaseList)
-                    .map((item, index) => (
-                      <TableCell key={`${row.caseId}-${item.keywordName}`}>
-                        <Truncate str={item.value} />
-                      </TableCell>
-                    ))}
+                    .map((item, index) => {
+                      return (
+                        <TableCell key={`${row.caseId}-${item.keywordName}`}>
+                          <Truncate str={convertItem(item)} />
+                        </TableCell>
+                      );
+                    })}
                   <TableCell style={{ position: "relative" }}>
                     {row.caseKeywordValues
                       .filter((n) => n.isShowOnCaseList)
@@ -270,25 +269,24 @@ const CaseSearch = () => {
                               <Button
                                 variant="contained"
                                 color="success"
+                                startIcon={<Icons.Edit />}
+                                onClick={() => {
+                                  handleClickEdit(row.caseId);
+                                }}
+                                style={{ marginBottom: 5 }}
+                              >
+                                編集
+                              </Button>
+                              <Button
+                                variant="contained"
+                                color="success"
                                 startIcon={<Icons.Delete />}
                                 onClick={() => {
                                   setShowAlert(true);
                                   setCloseCase(row.caseId);
                                 }}
-                                style={{ marginBottom: 5 }}
                               >
                                 削除
-                              </Button>
-                              <Button
-                                variant="contained"
-                                color="success"
-                                startIcon={<Icons.Edit />}
-                                onClick={() => {
-                                  console.log("row.caseId", row.caseId);
-                                  handleClickEdit(row.caseId);
-                                }}
-                              >
-                                編集
                               </Button>
                             </>
                           )}
@@ -382,7 +380,6 @@ const CaseSearch = () => {
               return {
                 ...value,
                 value: customer ? customer.label : "",
-                customerId: customer ? customer.id : "",
               };
             } else return { ...value };
           });
@@ -439,7 +436,7 @@ const CaseSearch = () => {
           <div className="handle-button">
             {/* Search and Clear Button */}
             <FormButton onClick={handleClickSearch} itemName="検索" />
-            <FormButton onClick={handleClear} itemName="クリア" />
+            <FormButton onClick={handleClear} itemName="検索条件の初期化" />
           </div>
         </Grid>
       </Grid>

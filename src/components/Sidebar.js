@@ -190,6 +190,22 @@ const Sidebar = () => {
           <ListItemText primary="書類管理"></ListItemText>
         </ListItemButton>
       </List>
+      {/* Footer (Version Information) */}
+      <div
+        className="version-info"
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          padding: "10px 0px",
+          borderTop: "1px solid #ccc",
+          backgroundColor: "#f8f9fa",
+          textAlign: "center",
+        }}
+      >
+        Powered by ITFreee
+      </div>
     </div>
   );
 
