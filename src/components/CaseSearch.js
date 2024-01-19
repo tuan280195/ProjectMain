@@ -186,6 +186,13 @@ const CaseSearch = () => {
           caseSearchState.caseDataSearchState.pageSize
       );
     }
+
+    const convertItem = (item) => {
+      if (item.keywordName === "取引先名") {
+        return customerList.filter((a) => a.id === item.value)[0]?.name;
+      } else return item.value;
+    };
+
     return caseSearchState.caseDataSearchState &&
       caseSearchState.caseDataSearchState.totalCount > 0 ? (
       <>
@@ -240,11 +247,13 @@ const CaseSearch = () => {
                   </TableCell>
                   {row.caseKeywordValues
                     .filter((n) => n.isShowOnCaseList)
-                    .map((item, index) => (
-                      <TableCell key={`${row.caseId}-${item.keywordName}`}>
-                        <Truncate str={item.value} />
-                      </TableCell>
-                    ))}
+                    .map((item, index) => {
+                      return (
+                        <TableCell key={`${row.caseId}-${item.keywordName}`}>
+                          <Truncate str={convertItem(item)} />
+                        </TableCell>
+                      );
+                    })}
                   <TableCell style={{ position: "relative" }}>
                     {row.caseKeywordValues
                       .filter((n) => n.isShowOnCaseList)
@@ -260,7 +269,6 @@ const CaseSearch = () => {
                                 color="success"
                                 startIcon={<Icons.Edit />}
                                 onClick={() => {
-                                  console.log("row.caseId", row.caseId);
                                   handleClickEdit(row.caseId);
                                 }}
                                 style={{ marginBottom: 5 }}
@@ -370,7 +378,6 @@ const CaseSearch = () => {
               return {
                 ...value,
                 value: customer ? customer.label : "",
-                customerId: customer ? customer.id : "",
               };
             } else return { ...value };
           });

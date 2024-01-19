@@ -85,7 +85,6 @@ const CaseDetail = ({ caseId }) => {
       .then((response) => {
         response.data.keywords.forEach((element) => {
           element.value = "";
-          element.customerId = "";
         });
         response.data.customers.forEach(function (item) {
           item.label = item.name;
@@ -162,7 +161,11 @@ const CaseDetail = ({ caseId }) => {
           return response;
         })
         .catch((error) => {
-          console.log(error);
+          setSnackbar({
+            isOpen: true,
+            status: "error",
+            message: "何か問題が発生しました。",
+          });
         });
     } else {
       let payload = {
@@ -227,6 +230,15 @@ const CaseDetail = ({ caseId }) => {
     setShowDialog(true);
   };
 
+  const handleGenerateCustomerName = (item, templateItem) => {
+    if (templateItem.keywordName === "取引先名") {
+      if (customerList.filter((a) => a.id === item.value)[0]?.name) {
+        return customerList.filter((a) => a.id === item.value)[0]?.name;
+      }
+    }
+    return item.value;
+  };
+
   const dynamicGenerate = (item, templateItem) => {
     let typeValue = templateItem.typeValue;
     if (templateItem.keywordName === "取引先名") {
@@ -234,7 +246,7 @@ const CaseDetail = ({ caseId }) => {
     }
     return (
       <GenericItems
-        value={item.value}
+        value={handleGenerateCustomerName(item, templateItem)}
         label={templateItem.keywordName}
         type={typeValue}
         key={templateItem.order}
@@ -280,8 +292,7 @@ const CaseDetail = ({ caseId }) => {
             if (value.keywordId === item.keywordId) {
               return {
                 ...value,
-                value: customer ? customer.label : "",
-                customerId: customer ? customer.id : "",
+                value: customer ? customer.id : "",
               };
             } else return { ...value };
           });
