@@ -1,4 +1,5 @@
-import { Grid } from "@mui/material";
+import { Grid,
+  IconButton,Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import GenericItems from "./until/GenericItems";
 import DialogHandle from "./until/DialogHandle";
@@ -7,17 +8,31 @@ import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FormSnackbar from "./until/FormSnackbar";
 import LoadingSpinner from "./until/LoadingSpinner";
+import CircularProgress from "@mui/material/CircularProgress";
+import Truncate from "./until/Truncate";
+import ConfirmDialog from "./until/ConfirmBox";
+import * as Icons from "@mui/icons-material";
+import ContentDialog from "./until/ContentDialog.js";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 const CaseDetail = ({ caseId }) => {
   const [loading, setLoading] = useState(false);
+  const [loadingFile, setLoadingFile] = useState(false);
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
   const [template, setTemplate] = useState([]);
   const [data, setData] = useState([]);
+  const [listItemFile, setListItemFile] = useState([]);
+  const [urlPreviewImg, setUrlPreviewImg] = useState({
+    blobUrl: "",
+    fileName: "",
+  });
+  const [fileDelete, setFileDelete] = useState({});
+  const [showAlert, setShowAlert] = useState(false);
+  const [showDialogPreivew, setShowDialogPreivew] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [snackbar, setSnackbar] = useState({
     isOpen: false,
@@ -35,6 +50,8 @@ const CaseDetail = ({ caseId }) => {
   const [customerList, setCustomerList] = useState([]);
 
   useEffect(async () => {
+    setShowDialogPreivew(false);
+    setShowDialog(false);
     setLoading(true);
     await getCaseTemplate();
     setLoading(false);
@@ -45,6 +62,7 @@ const CaseDetail = ({ caseId }) => {
       setCaseIdName((caseIdName) => ({ ...caseIdName, id: caseId }));
       setDisableAttach(false);
       await getCaseByCaseId();
+      await getFilesOfCase();
     } else {
       setDisableAttach(true);
     }
@@ -110,19 +128,96 @@ const CaseDetail = ({ caseId }) => {
         },
       })
       .then((response) => {
+        setData(response.data.caseKeywordValues);
         setCaseIdName({
           id: response.data.caseId,
           name: response.data.caseName,
         });
-        setData(response.data.caseKeywordValues);
       })
       .catch((error) => {
+        setData([]);
         console.log(error);
       });
 
     setLoading(false);
   };
 
+  const getFilesOfCase = async () => {
+    setLoadingFile(true);
+    let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseId}`;
+    var { status } = await axiosPrivate
+      .get(getFilesUploadURL, {
+        signal: controller.signal,
+        validateStatus: () => true,
+      })
+      .then((response) => {
+        console.log(response);
+        setListItemFile(response.data);
+        return response;
+      })
+      .catch((error) => {
+        setListItemFile([]);
+        console.log(JSON.stringify(error));
+      });
+      if (status === 404) {
+        setListItemFile([]);
+      }
+
+    setLoadingFile(false);
+  };
+
+  const viewOrDownloadFile = async (item) => {
+    setLoading(true);
+    let getFileUrl = `/api/FileUpload/Download`;
+    let payload = {
+      fileName: item.fileName,
+      caseId: caseId,
+    };
+    await axiosPrivate
+      .post(getFileUrl, payload)
+      .then(async (response) => {
+        const byteArray = Uint8Array.from(
+          atob(response.data)
+            .split("")
+            .map((char) => char.charCodeAt(0))
+        );
+        const blob = new Blob([byteArray], {
+          type: response.headers["content-type"],
+        });
+        const blobUrl = window.URL.createObjectURL(blob);
+        if (!item.isImage) {
+          const link = document.createElement("a");
+          link.href = blobUrl;
+          link.download = item.fileName;
+          link.click();
+        } else {
+          setShowDialogPreivew(true);
+          setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.fileName });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    setLoading(false);
+  };
+const handleClickDeleteFile = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+    let deleteFileUrl = `/api/FileUpload/Delete`;
+    let payload = fileDelete;
+    payload.caseId = caseId;
+    await axiosPrivate
+      .put(deleteFileUrl, payload)
+      .then(async (response) => {
+        setUrlPreviewImg({ ...urlPreviewImg, blobUrl: "", fileName: "" });
+        await getFilesOfCase();
+        setShowAlert(false);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    setLoading(false);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -230,6 +325,11 @@ const CaseDetail = ({ caseId }) => {
     setShowDialog(true);
   };
 
+  const closeDialogAttach = async () => {
+    setShowDialog(false);
+    await getFilesOfCase();
+  };
+  
   const handleGenerateCustomerName = (item, templateItem) => {
     if (templateItem.keywordName === "取引先名") {
       if (customerList.filter((a) => a.id === item.value)[0]?.name) {
@@ -387,9 +487,106 @@ const CaseDetail = ({ caseId }) => {
           </Grid>
         </Grid>
       </form>
+      <>
+        <Grid item xs={12}>
+            <ul
+              id="results"
+              className="search-results"
+              style={{ marginTop: 10 }}
+            >
+              {listItemFile && listItemFile[0] != null ? (
+                listItemFile.map((item, index) => {
+                  return (
+                    <li className="search-result" key={item.keywordId}>
+                      <Truncate
+                        str={item.fileName}
+                        maxLength={20}
+                        style={{ padding: "10px" }}
+                      />
+                      <div className="search-action">
+                        <Button
+                          className="search-delete"
+                          onClick={async () => {
+                            await viewOrDownloadFile(item);
+                          }}
+                          startIcon={
+                            <Icons.Image />
+                          }
+                          disabled={!item.isImage}
+                        >
+                        表示
+                        </Button>
+                        <Button
+                          startIcon={<Icons.Download />}
+                          className="search-edit"
+                          onClick={() => {
+                            setFileDelete(item);
+                            setShowAlert(true);
+                          }}
+                          disabled={item.isImage}
+                        >
+                          ダウンロード
+                        </Button>
+                        <Button
+                          startIcon={<Icons.Delete />}
+                          className="search-edit"
+                          onClick={() => {
+                            setFileDelete(item);
+                            setShowAlert(true);
+                          }}
+                        >
+                          削除
+                        </Button>
+                      </div>
+                    </li>
+                  );
+                })
+              ) : (
+                <li style={{ textAlign: "center" }}>
+                  {loadingFile ? (
+                    <CircularProgress />
+                  ) : (
+                    <p>表示する項目がありません。</p>
+                  )}
+                </li>
+              )}
+            </ul>
+        </Grid>
+        {urlPreviewImg.blobUrl && (
+          <ContentDialog open={showDialogPreivew} closeDialog={() => setShowDialogPreivew(false)}>
+            <Grid item xs={12} className="preview-file">
+              <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>
+                <IconButton size="small" aria-label="download">
+                  <Icons.CloudDownload sx={{ color: "green", fontSize: 40 }} />
+                </IconButton>
+                書類のダウンロード
+              </a>
+              <img
+                src={urlPreviewImg.blobUrl}
+                style={{
+                  width: "100%",
+                  marginTop: "10px",
+                  border: "3px solid #11596F",
+                }}
+              />
+            </Grid>
+          </ContentDialog>
+        )}
+        </>
+        <ConfirmDialog
+          open={showAlert}
+          closeDialog={() => setShowAlert(false)}
+          item={fileDelete.fileName}
+          handleFunction={handleClickDeleteFile}
+          typeDialog="書類削除の確認"
+          mainContent="書類を削除すると、案件から関連書類として参照できなくなります。本当に削除しますか"
+          cancelBtnDialog="いいえ"
+          confirmBtnDialog="はい"
+        ></ConfirmDialog>
+
       <DialogHandle
         open={showDialog}
-        closeDialog={() => setShowDialog(false)}
+        closeDialog={async () => await closeDialogAttach()}
         title="関連書類の添付"
         optionFileType={optionFileType}
         caseId={caseId || caseIdName.id}

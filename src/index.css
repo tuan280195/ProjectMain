@@ -247,7 +247,10 @@ button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
   background-color: #14873a !important;
   color: #fff !important;
 }
-
+.search-action .Mui-disabled {
+  color: white !important;
+  background-color: grey !important;
+};
 .container-search-actions {
   position: absolute;
   top: 50%;

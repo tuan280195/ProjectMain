@@ -24,6 +24,7 @@ const Login = () => {
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
+    setLoading(false);
     userRef.current.focus();
   }, []);
 
@@ -32,6 +33,7 @@ const Login = () => {
   }, [username, password]);
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
     try {
@@ -62,7 +64,9 @@ const Login = () => {
       console.log("from");
       console.log(from);
       navigate(from, { replace: true });
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.log(err.response);
       if (!err?.response) {
         setErrMsg("サーバーから応答がありません");

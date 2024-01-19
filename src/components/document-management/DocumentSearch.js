@@ -9,6 +9,7 @@ import GenericItems from "../until/GenericItems.js";
 import ContentDialog from "../until/ContentDialog.js";
 import commonState from "../../stories/commonState.ts";
 import commonActions from "../../actions/commonAction.ts";
+import * as _ from 'lodash';
 import {
   Button,
   Grid,
@@ -45,10 +46,15 @@ const DocumentSearch = () => {
     fileName: "",
   });
   const [showDialog, setShowDialog] = useState(false);
+  const [showDialogPreview, setShowDialogPreview] = useState(false);
+  
   const [showDialogCase, setShowDialogCase] = useState(false);
   const [caseId, setCaseId] = useState();
 
   useEffect(async () => {
+    commonActions.setPaginationState({...commonState.paginationState, 
+        totalCount: 0
+      });
     setListItem([]);
     setUrlPreviewImg({ blobUrl: "", fileName: "" });
     await getDocumentTemplate();
@@ -58,7 +64,8 @@ const DocumentSearch = () => {
     setLoading(true);
     if (e) e.preventDefault();
     let searchURL = "/api/Document/search";
-    let keywordValues = keyWordSearch.filter((x) => !x.fromTo && x.value);
+    const keywordSearchCopy = _.cloneDeep(keyWordSearch);
+    const keywordValues = keywordSearchCopy.filter((x) => !x.fromTo && x.value);
     let keywordDateValues = keyWordSearch.filter(
       (x) =>
         x.fromTo && x.typeValue === "datetime" && (x.fromValue || x.toValue)
@@ -66,6 +73,11 @@ const DocumentSearch = () => {
     let keywordDecimalValues = keyWordSearch.filter(
       (x) => x.fromTo && x.typeValue === "decimal" && (x.fromValue || x.toValue)
     );
+    keywordValues.forEach((item) => {
+      if(item.keywordName === '取引先名') {
+        item.value = item.customerId;
+      }
+    });
     const payload = {
       fileTypeId: fileTypeSearch.value,
       keywordValues: keywordValues,
@@ -81,14 +93,13 @@ const DocumentSearch = () => {
       })
       .then((response) => {
         setListItem(response.data);
-        commonActions.setPaginationState({
-          totalCount: response.data.totalCount,
-          pageSize: response.data.pageSize,
-          currentPage: response.data.currentPage,
+        commonActions.setPaginationState({...commonState.paginationState, 
+          totalCount: response.data.totalCount
         });
       })
       .catch((error) => {
         console.log(error);
+        setListItem([]);
       });
     if (status === 404) {
       console.log("validateStatus", status);
@@ -151,7 +162,7 @@ const DocumentSearch = () => {
           link.download = item.keywordName;
           link.click();
         } else {
-          setShowDialog(true);
+          setShowDialogPreview(true);
           setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.keywordName });
         }
       })
@@ -312,6 +323,7 @@ const DocumentSearch = () => {
       typeValue = "daterange";
     } else if (templateItem.keywordName === "取引先名") {
       typeValue = "list";
+      console.log("item customer", item)
     }
     return (
       <GenericItems
@@ -353,7 +365,7 @@ const DocumentSearch = () => {
               return {
                 ...value,
                 value: customer ? customer.label : "",
-                customerId: customer ? customer.id : "",
+                customerId: customer ? customer.id : null,
               };
             } else return { ...value };
           });
@@ -411,7 +423,7 @@ const DocumentSearch = () => {
           </Grid>
         ) : null}
       </Grid>
-      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+      <ContentDialog open={showDialogPreview} closeDialog={() => setShowDialogPreview(false)}>
         <Grid container columnSpacing={5} rowSpacing={5}>
           {urlPreviewImg.blobUrl && (
             <Grid
