@@ -23,6 +23,7 @@ import CustomerDetail from "./CustomerDetail.js";
 
 import * as Icons from "@mui/icons-material";
 import "../styles/styles.css";
+import FormSnackbar from "./until/FormSnackbar.js";
 
 const CustomerSearch = () => {
   const [data, setData] = useState({});
@@ -44,6 +45,12 @@ const CustomerSearch = () => {
   const controller = new AbortController();
   // State for phone number error
   const [phoneNumberError, setPhoneNumberError] = useState(undefined);
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
+
   useEffect(async () => {
     commonActions.setPaginationState({...commonState.paginationState, 
         totalCount: 0
@@ -107,7 +114,23 @@ const CustomerSearch = () => {
         setShowList(true);
       })
       .catch((error) => {
-        console.log(error);
+        if (
+          error.response.data ===
+          "You can't delete this customer because it is still used in one open case."
+        ) {
+          setSnackbar({
+            isOpen: true,
+            status: "error",
+            message:
+              "この顧客は 1 つの未解決のケースでまだ使用されているため、削除できません。",
+          });
+        } else {
+          setSnackbar({
+            isOpen: true,
+            status: "error",
+            message: "何か問題が発生しました。",
+          });
+        }
       });
     setLoading(false);
   };
@@ -120,9 +143,8 @@ const CustomerSearch = () => {
 
   const handleChange = (event, item) => {
     if (item === "customerName") {
-      setData({...data, customerName: event.target.value});
-    }
-    else {
+      setData({ ...data, customerName: event.target.value });
+    } else {
       // Display a message if hyphens are detected in 電話番号 field
       if (event.target.value.includes("-")) {
         setPhoneNumberError("「-」ハイフンを除いて番号のみ");
@@ -130,10 +152,8 @@ const CustomerSearch = () => {
         // Clear the error message if no hyphens
         setPhoneNumberError(undefined);
       }
-      setData({...data, phoneNumber: event.target.value});
+      setData({ ...data, phoneNumber: event.target.value });
     }
-
-    
   };
 
   const handleChangePageSize = async (e) => {
@@ -295,6 +315,7 @@ const CustomerSearch = () => {
       <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
         <CustomerDetail customerId={customerId}></CustomerDetail>
       </ContentDialog>
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>
   );
 };
