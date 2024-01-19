@@ -5,7 +5,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import axios from "../api/axios";
 import FormButton from "./until/FormButton";
-import LoadingSpinner from "./until/LoadingSpinner";
 const LOGIN_URL = "/api/Account/login";
 
 const Login = () => {
@@ -16,7 +15,6 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-  const [loading, setLoading] = useState(false);
 
   const userRef = useRef();
   const errRef = useRef();
@@ -133,7 +131,6 @@ const Login = () => {
           <Link to="/register">Sign Up</Link>
         </span>
       </p> */}
-      <LoadingSpinner loading={loading}></LoadingSpinner>
     </section>
   );
 };
