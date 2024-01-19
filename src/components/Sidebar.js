@@ -198,7 +198,7 @@ const Sidebar = () => {
           bottom: 0,
           left: 0,
           width: "100%",
-          padding: "10px",
+          padding: "10px 0px",
           borderTop: "1px solid #ccc",
           backgroundColor: "#f8f9fa",
           textAlign: "center",
