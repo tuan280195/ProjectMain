@@ -52,15 +52,15 @@ const CustomerSearch = () => {
   });
 
   useEffect(async () => {
-    commonActions.setPaginationState({...commonState.paginationState, 
-        totalCount: 0
-      });
-    }, []);
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      totalCount: 0,
+    });
+  }, []);
 
   const getCustomers = async (e) => {
     setLoading(true);
     e.preventDefault();
-    console.log("commonState.paginationState", commonState.paginationState)
     let searchURL = "/api/Customer/getAll";
     let pagination = `pageSize=${commonState.paginationState.pageSize}&pageNumber=${commonState.paginationState.currentPage}`;
     if (data.customerName && data.phoneNumber) {
@@ -76,18 +76,22 @@ const CustomerSearch = () => {
       searchURL = searchURL + `?${pagination}`;
     }
 
-    const status = await axiosPrivate.get(searchURL, {
-      signal: controller.signal,
-      validateStatus: () => true
-    }).then((response) => {
-      setListItem(response.data);
-      commonActions.setPaginationState({...commonState.paginationState, 
-        totalCount: response.data.totalCount,
+    const status = await axiosPrivate
+      .get(searchURL, {
+        signal: controller.signal,
+        validateStatus: () => true,
+      })
+      .then((response) => {
+        setListItem(response.data);
+        commonActions.setPaginationState({
+          ...commonState.paginationState,
+          totalCount: response.data.totalCount,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        setListItem([]);
       });
-    }).catch((error) => {
-      console.log(error);
-      setListItem([]);
-    });
     if (status == 404) {
       setListItem([]);
     }
@@ -170,6 +174,12 @@ const CustomerSearch = () => {
     });
     await getCustomers(e);
   };
+
+  const closeDialog = (e) => {
+    setShowDialog(false);
+    handleClickSearch(e);
+  };
+
   const Results = () => {
     let totalCount = 0;
     if (
@@ -312,7 +322,7 @@ const CustomerSearch = () => {
         cancelBtnDialog="いいえ"
         confirmBtnDialog="はい"
       ></ConfirmDialog>
-      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+      <ContentDialog open={showDialog} closeDialog={(e) => closeDialog(e)}>
         <CustomerDetail customerId={customerId}></CustomerDetail>
       </ContentDialog>
       <FormSnackbar item={snackbar} setItem={setSnackbar} />

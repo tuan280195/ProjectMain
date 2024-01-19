@@ -154,7 +154,6 @@ const CaseDetail = ({ caseId }) => {
       })
       .catch((error) => {
         setListItemFile([]);
-        console.log(JSON.stringify(error));
       });
     if (status === 404) {
       setListItemFile([]);
@@ -230,7 +229,6 @@ const CaseDetail = ({ caseId }) => {
       setLoading(false);
       return;
     } else {
-      console.log("OK.");
     }
 
     let caseCreateURL = "/api/Case";

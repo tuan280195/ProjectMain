@@ -29,9 +29,7 @@ const CaseSearch = () => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [template, setTemplate] = useState([]);
-  const [data, setData] = useState([]);
   const [keyWordSearch, setKeyWordSearch] = useState([]);
-  const [keyWordDateSearch, setKeyWordDateSearch] = useState([]);
 
   const [customerList, setCustomerList] = useState([]);
   const [showList, setShowList] = useState(false);
@@ -48,15 +46,15 @@ const CaseSearch = () => {
   // const tableClassCustomize = useStyles();
 
   useEffect(async () => {
-    commonActions.setPaginationState({...commonState.paginationState, 
-        totalCount: 0
-      });
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      totalCount: 0,
+    });
     caseSearchActions.setPaginationState(0, 10, 1);
     caseSearchActions.setKeywordsSearchState([]);
     caseSearchActions.setCaseDataSearchState([]);
     // setSearchData([]);
     setShowList(false);
-    setData([]);
     setKeyWordSearch([]);
     await getCaseTemplate();
   }, []);
@@ -105,7 +103,8 @@ const CaseSearch = () => {
     await axiosPrivate
       .post(searchCaseUrl, payload)
       .then((response) => {
-        commonActions.setPaginationState({...commonState.paginationState, 
+        commonActions.setPaginationState({
+          ...commonState.paginationState,
           totalCount: response.data.totalCount,
         });
         caseSearchActions.setCaseDataSearchState(response.data.items);
@@ -177,6 +176,12 @@ const CaseSearch = () => {
     });
     await getCaseList(e);
   };
+
+  const closeDialog = (e) => {
+    setShowDialog(false);
+    handleClickSearch(e);
+  };
+
   const Results = () => {
     let totalCount = 0;
     if (
@@ -194,9 +199,9 @@ const CaseSearch = () => {
         return customerList.filter((a) => a.id === item.value)[0]?.name;
       } else return item.value;
     };
-    
+
     return commonState.paginationState &&
-          commonState.paginationState.totalCount > 0 ? (
+      commonState.paginationState.totalCount > 0 ? (
       <>
         <Pagination
           totalCount={totalCount}
@@ -304,6 +309,15 @@ const CaseSearch = () => {
     );
   };
 
+  const handleGenerateCustomerName = (item, templateItem) => {
+    if (templateItem.keywordName === "取引先名") {
+      if (customerList.filter((a) => a.id === item.value)[0]?.name) {
+        return customerList.filter((a) => a.id === item.value)[0]?.name;
+      }
+    }
+    return item.value;
+  };
+
   const dynamicGenerate = (item, templateItem) => {
     let typeValue = templateItem.typeValue;
     if (templateItem.fromTo) {
@@ -313,7 +327,7 @@ const CaseSearch = () => {
     }
     return (
       <GenericItems
-        value={item.value}
+        value={handleGenerateCustomerName(item, templateItem)}
         value1={item.fromValue}
         value2={item.toValue}
         label={templateItem.keywordName}
@@ -379,7 +393,7 @@ const CaseSearch = () => {
             if (value.keywordId === item.keywordId) {
               return {
                 ...value,
-                value: customer ? customer.label : "",
+                value: customer ? customer.id : "",
               };
             } else return { ...value };
           });
@@ -454,7 +468,7 @@ const CaseSearch = () => {
         handleFunction={confirmCloseCase}
         typeDialog="案件削除の確認"
       />
-      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+      <ContentDialog open={showDialog} closeDialog={(e) => closeDialog(e)}>
         <CaseDetail caseId={caseId}></CaseDetail>
       </ContentDialog>
     </section>

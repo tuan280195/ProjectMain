@@ -14,11 +14,9 @@ const Users = () => {
 
     const getUsers = async () => {
       try {
-        console.log("getUsers");
         const response = await axiosPrivate.get("/api/Customer/getAll", {
           signal: controller.signal,
         });
-        console.log(response.data);
         isMounted && setUsers(response.data);
       } catch (err) {
         console.error(err);

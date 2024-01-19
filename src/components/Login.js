@@ -61,13 +61,10 @@ const Login = () => {
       setAuth({ username, password, roles, accessToken });
       setUser("");
       setPwd("");
-      console.log("from");
-      console.log(from);
       navigate(from, { replace: true });
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      console.log(err.response);
       if (!err?.response) {
         setErrMsg("サーバーから応答がありません");
       } else if (err.response?.status === 400) {

@@ -65,7 +65,6 @@ const DialogHandle = ({
         validateStatus: () => true,
       })
       .then((response) => {
-        console.log(response);
         setListItem(response.data);
         return response;
       })
@@ -73,7 +72,6 @@ const DialogHandle = ({
         console.log(JSON.stringify(error));
       });
     if (status === 404) {
-      console.log("validateStatus", status);
       setListItem([]);
     }
 
@@ -95,7 +93,6 @@ const DialogHandle = ({
       .post("/api/FileUpload/Upload", formData)
       .then(async (response) => {
         await getFilesOfCase();
-        console.log(response);
       })
       .catch((error) => {
         console.error(error);
@@ -231,17 +228,15 @@ const DialogHandle = ({
                         style={{ padding: "10px" }}
                       />
                       <div className="search-action">
-                       <Button
+                        <Button
                           className="search-delete"
                           onClick={async () => {
                             await viewOrDownloadFile(item);
                           }}
-                          startIcon={
-                            <Icons.Image />
-                          }
+                          startIcon={<Icons.Image />}
                           disabled={!item.isImage}
                         >
-                        表示
+                          表示
                         </Button>
                         <Button
                           startIcon={<Icons.Download />}
@@ -279,11 +274,19 @@ const DialogHandle = ({
             </ul>
           </Grid>
           {urlPreviewImg.blobUrl && (
-            <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+            <ContentDialog
+              open={showDialog}
+              closeDialog={() => setShowDialog(false)}
+            >
               <Grid item xs={12} className="preview-file">
-                <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>
+                <a
+                  href={urlPreviewImg.blobUrl}
+                  download={urlPreviewImg.fileName}
+                >
                   <IconButton size="small" aria-label="download">
-                    <Icons.CloudDownload sx={{ color: "green", fontSize: 40 }} />
+                    <Icons.CloudDownload
+                      sx={{ color: "green", fontSize: 40 }}
+                    />
                   </IconButton>
                   書類のダウンロード
                 </a>

@@ -9,7 +9,7 @@ import GenericItems from "../until/GenericItems.js";
 import ContentDialog from "../until/ContentDialog.js";
 import commonState from "../../stories/commonState.ts";
 import commonActions from "../../actions/commonAction.ts";
-import * as _ from 'lodash';
+import * as _ from "lodash";
 import {
   Button,
   Grid,
@@ -47,14 +47,15 @@ const DocumentSearch = () => {
   });
   const [showDialog, setShowDialog] = useState(false);
   const [showDialogPreview, setShowDialogPreview] = useState(false);
-  
+
   const [showDialogCase, setShowDialogCase] = useState(false);
   const [caseId, setCaseId] = useState();
 
   useEffect(async () => {
-    commonActions.setPaginationState({...commonState.paginationState, 
-        totalCount: 0
-      });
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      totalCount: 0,
+    });
     setListItem([]);
     setUrlPreviewImg({ blobUrl: "", fileName: "" });
     await getDocumentTemplate();
@@ -74,7 +75,7 @@ const DocumentSearch = () => {
       (x) => x.fromTo && x.typeValue === "decimal" && (x.fromValue || x.toValue)
     );
     keywordValues.forEach((item) => {
-      if(item.keywordName === '取引先名') {
+      if (item.keywordName === "取引先名") {
         item.value = item.customerId;
       }
     });
@@ -93,8 +94,9 @@ const DocumentSearch = () => {
       })
       .then((response) => {
         setListItem(response.data);
-        commonActions.setPaginationState({...commonState.paginationState, 
-          totalCount: response.data.totalCount
+        commonActions.setPaginationState({
+          ...commonState.paginationState,
+          totalCount: response.data.totalCount,
         });
       })
       .catch((error) => {
@@ -102,7 +104,6 @@ const DocumentSearch = () => {
         setListItem([]);
       });
     if (status === 404) {
-      console.log("validateStatus", status);
       setListItem([]);
     }
     setLoading(false);
@@ -323,7 +324,6 @@ const DocumentSearch = () => {
       typeValue = "daterange";
     } else if (templateItem.keywordName === "取引先名") {
       typeValue = "list";
-      console.log("item customer", item)
     }
     return (
       <GenericItems
@@ -423,7 +423,10 @@ const DocumentSearch = () => {
           </Grid>
         ) : null}
       </Grid>
-      <ContentDialog open={showDialogPreview} closeDialog={() => setShowDialogPreview(false)}>
+      <ContentDialog
+        open={showDialogPreview}
+        closeDialog={() => setShowDialogPreview(false)}
+      >
         <Grid container columnSpacing={5} rowSpacing={5}>
           {urlPreviewImg.blobUrl && (
             <Grid

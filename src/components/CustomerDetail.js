@@ -63,7 +63,6 @@ const CustomerDetail = ({ customerId }) => {
       return;
     } else {
       // Form is invalid, display error messages
-      console.log("OK.");
     }
 
     if (dataId) {
@@ -95,8 +94,6 @@ const CustomerDetail = ({ customerId }) => {
             status: "success",
             message: "取引先の登録は正常に完成しました！",
           });
-
-          console.log(response.data);
           setDataId(response.data);
           return response;
         })

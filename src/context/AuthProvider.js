@@ -4,10 +4,8 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   let currentAuthToken = localStorage.getItem("AuthToken") ?? {};
-  console.log('currentAuthToken === typeof(string)11111111')
-  if(typeof currentAuthToken === "string"){
-    console.log('currentAuthToken === typeof(string)')
-    currentAuthToken = JSON.parse(currentAuthToken)
+  if (typeof currentAuthToken === "string") {
+    currentAuthToken = JSON.parse(currentAuthToken);
   }
   const [auth, setAuth] = useState(currentAuthToken);
 
