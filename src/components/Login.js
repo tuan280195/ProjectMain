@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import axios from "../api/axios";
 import FormButton from "./until/FormButton";
+import LoadingSpinner from "./until/LoadingSpinner";
 const LOGIN_URL = "/api/Account/login";
 
 const Login = () => {
@@ -12,6 +13,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
+  const [loading, setLoading] = useState(false);
 
   const userRef = useRef();
   const errRef = useRef();
@@ -21,6 +23,7 @@ const Login = () => {
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
+    setLoading(false);
     userRef.current.focus();
   }, []);
 
@@ -29,6 +32,7 @@ const Login = () => {
   }, [username, password]);
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
     try {
@@ -57,7 +61,9 @@ const Login = () => {
       console.log("from");
       console.log(from);
       navigate(from, { replace: true });
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.log(err.response);
       if (!err?.response) {
         setErrMsg("サーバーから応答がありません");
@@ -118,6 +124,7 @@ const Login = () => {
           <Link to="/register">Sign Up</Link>
         </span>
       </p> */}
+      <LoadingSpinner loading={loading}></LoadingSpinner>
     </section>
   );
 };

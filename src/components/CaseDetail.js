@@ -12,6 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Truncate from "./until/Truncate";
 import ConfirmDialog from "./until/ConfirmBox";
 import * as Icons from "@mui/icons-material";
+import ContentDialog from "./until/ContentDialog.js";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
@@ -31,7 +32,7 @@ const CaseDetail = ({ caseId }) => {
   });
   const [fileDelete, setFileDelete] = useState({});
   const [showAlert, setShowAlert] = useState(false);
-
+  const [showDialogPreivew, setShowDialogPreivew] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [snackbar, setSnackbar] = useState({
     isOpen: false,
@@ -49,6 +50,8 @@ const CaseDetail = ({ caseId }) => {
   const [customerList, setCustomerList] = useState([]);
 
   useEffect(async () => {
+    setShowDialogPreivew(false);
+    setShowDialog(false);
     setLoading(true);
     await getCaseTemplate();
     setLoading(false);
@@ -189,6 +192,7 @@ const CaseDetail = ({ caseId }) => {
           link.download = item.fileName;
           link.click();
         } else {
+          setShowDialogPreivew(true);
           setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.fileName });
         }
       })
@@ -316,6 +320,11 @@ const handleClickDeleteFile = async (e) => {
   const handleAttach = async () => {
     await getFileTypes();
     setShowDialog(true);
+  };
+
+  const closeDialogAttach = async () => {
+    setShowDialog(false);
+    await getFilesOfCase();
   };
 
   const dynamicGenerate = (item, templateItem) => {
@@ -490,10 +499,22 @@ const handleClickDeleteFile = async (e) => {
                             await viewOrDownloadFile(item);
                           }}
                           startIcon={
-                            item.isImage ? <Icons.Image /> : <Icons.Download />
+                            <Icons.Image />
                           }
+                          disabled={!item.isImage}
                         >
-                          {item.isImage ? "表示" : "ダウンロード"}
+                        表示
+                        </Button>
+                        <Button
+                          startIcon={<Icons.Download />}
+                          className="search-edit"
+                          onClick={() => {
+                            setFileDelete(item);
+                            setShowAlert(true);
+                          }}
+                          disabled={item.isImage}
+                        >
+                          ダウンロード
                         </Button>
                         <Button
                           startIcon={<Icons.Delete />}
@@ -521,22 +542,24 @@ const handleClickDeleteFile = async (e) => {
             </ul>
         </Grid>
         {urlPreviewImg.blobUrl && (
-          <Grid item xs={12} className="preview-file">
-            <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>
-              <IconButton size="small" aria-label="download">
-                <Icons.CloudDownload sx={{ color: "green", fontSize: 40 }} />
-              </IconButton>
-              書類のダウンロード
-            </a>
-            <img
-              src={urlPreviewImg.blobUrl}
-              style={{
-                width: "100%",
-                marginTop: "10px",
-                border: "3px solid #11596F",
-              }}
-            />
-          </Grid>
+          <ContentDialog open={showDialogPreivew} closeDialog={() => setShowDialogPreivew(false)}>
+            <Grid item xs={12} className="preview-file">
+              <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>
+                <IconButton size="small" aria-label="download">
+                  <Icons.CloudDownload sx={{ color: "green", fontSize: 40 }} />
+                </IconButton>
+                書類のダウンロード
+              </a>
+              <img
+                src={urlPreviewImg.blobUrl}
+                style={{
+                  width: "100%",
+                  marginTop: "10px",
+                  border: "3px solid #11596F",
+                }}
+              />
+            </Grid>
+          </ContentDialog>
         )}
         </>
         <ConfirmDialog
@@ -552,7 +575,7 @@ const handleClickDeleteFile = async (e) => {
 
       <DialogHandle
         open={showDialog}
-        closeDialog={() => setShowDialog(false)}
+        closeDialog={async () => await closeDialogAttach()}
         title="関連書類の添付"
         optionFileType={optionFileType}
         caseId={caseId || caseIdName.id}

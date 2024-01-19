@@ -15,7 +15,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import CircularProgress from "@mui/material/CircularProgress";
 import ConfirmDialog from "./ConfirmBox";
 import * as Icons from "@mui/icons-material";
-
+import ContentDialog from "../until/ContentDialog.js";
 const DialogHandle = ({
   title,
   open,
@@ -36,11 +36,14 @@ const DialogHandle = ({
   });
   const [fileDelete, setFileDelete] = useState({});
   const [showAlert, setShowAlert] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+
   const [dataUpload, setDataUpload] = useState({
     fileTypeId: null,
     fileName: "",
   });
   useEffect(async () => {
+    setShowDialog(false);
     setListItem([]);
     setLoading(false);
     setLoadingFile(false);
@@ -141,6 +144,7 @@ const DialogHandle = ({
           link.download = item.fileName;
           link.click();
         } else {
+          setShowDialog(true);
           setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.fileName });
         }
       })
@@ -227,16 +231,27 @@ const DialogHandle = ({
                         style={{ padding: "10px" }}
                       />
                       <div className="search-action">
-                        <Button
+                       <Button
                           className="search-delete"
                           onClick={async () => {
                             await viewOrDownloadFile(item);
                           }}
                           startIcon={
-                            item.isImage ? <Icons.Image /> : <Icons.Download />
+                            <Icons.Image />
                           }
+                          disabled={!item.isImage}
                         >
-                          {item.isImage ? "表示" : "ダウンロード"}
+                        表示
+                        </Button>
+                        <Button
+                          startIcon={<Icons.Download />}
+                          className="search-edit"
+                          onClick={async () => {
+                            await viewOrDownloadFile(item);
+                          }}
+                          disabled={item.isImage}
+                        >
+                          ダウンロード
                         </Button>
                         <Button
                           startIcon={<Icons.Delete />}
@@ -264,22 +279,24 @@ const DialogHandle = ({
             </ul>
           </Grid>
           {urlPreviewImg.blobUrl && (
-            <Grid item xs={12} className="preview-file">
-              <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>
-                <IconButton size="small" aria-label="download">
-                  <Icons.CloudDownload sx={{ color: "green", fontSize: 40 }} />
-                </IconButton>
-                書類のダウンロード
-              </a>
-              <img
-                src={urlPreviewImg.blobUrl}
-                style={{
-                  width: "100%",
-                  marginTop: "10px",
-                  border: "3px solid #11596F",
-                }}
-              />
-            </Grid>
+            <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+              <Grid item xs={12} className="preview-file">
+                <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>
+                  <IconButton size="small" aria-label="download">
+                    <Icons.CloudDownload sx={{ color: "green", fontSize: 40 }} />
+                  </IconButton>
+                  書類のダウンロード
+                </a>
+                <img
+                  src={urlPreviewImg.blobUrl}
+                  style={{
+                    width: "100%",
+                    marginTop: "10px",
+                    border: "3px solid #11596F",
+                  }}
+                />
+              </Grid>
+            </ContentDialog>
           )}
         </Grid>
         <ConfirmDialog
