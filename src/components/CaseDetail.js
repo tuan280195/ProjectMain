@@ -141,7 +141,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
 
   const getFilesOfCase = async () => {
     setLoadingFile(true);
-    let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseId}`;
+    let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseIdName.id}`;
     var { status } = await axiosPrivate
       .get(getFilesUploadURL, {
         signal: controller.signal,
@@ -214,6 +214,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
       });
     setLoading(false);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
