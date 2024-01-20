@@ -126,7 +126,7 @@ const CustomerSearch = () => {
             isOpen: true,
             status: "error",
             message:
-              "この顧客は 1 つの未解決のケースでまだ使用されているため、削除できません。",
+              "この取引先はまだ進行中の案件が存在しているため、削除できません。",
           });
         } else {
           setSnackbar({
