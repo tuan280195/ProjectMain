@@ -81,7 +81,7 @@ const CustomerDetail = ({ customerId }) => {
             setSnackbar({
               isOpen: true,
               status: "error",
-              message: "顧客はすでに存在します。",
+              message: "取引先はすでに存在します。重複作成はできません。",
             });
           }
         });
@@ -102,7 +102,7 @@ const CustomerDetail = ({ customerId }) => {
             setSnackbar({
               isOpen: true,
               status: "error",
-              message: "顧客はすでに存在します。",
+              message: "取引先はすでに存在します。重複作成はできません。",
             });
           }
         });
