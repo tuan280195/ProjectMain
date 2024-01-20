@@ -138,7 +138,8 @@ const DocumentSearch = () => {
     setLoading(false);
   };
 
-  const viewOrDownloadFile = async (item) => {
+  const viewOrDownloadFile = async (item, type) => {
+    // type = download / view
     setLoading(true);
     let getFileUrl = `/api/FileUpload/Download`;
     let payload = {
@@ -157,7 +158,7 @@ const DocumentSearch = () => {
           type: response.headers["content-type"],
         });
         const blobUrl = window.URL.createObjectURL(blob);
-        if (!item.isImage) {
+        if (type === "download") {
           const link = document.createElement("a");
           link.href = blobUrl;
           link.download = item.keywordName;
@@ -258,7 +259,7 @@ const DocumentSearch = () => {
                             startIcon={<Icons.Image />}
                             style={{ marginRight: "5px" }}
                             onClick={() => {
-                              viewOrDownloadFile(item);
+                              viewOrDownloadFile(item, "view");
                             }}
                             disabled={!item.isImage}
                           >
@@ -271,9 +272,9 @@ const DocumentSearch = () => {
                             startIcon={<Icons.Download />}
                             style={{ marginRight: "5px" }}
                             onClick={async () => {
-                              await viewOrDownloadFile(item);
+                              await viewOrDownloadFile(item, "download");
                             }}
-                            disabled={item.isImage}
+                            // disabled={item.isImage}
                           >
                             ダウンロード
                           </Button>
@@ -477,7 +478,7 @@ const DocumentSearch = () => {
         open={showDialogCase}
         closeDialog={() => setShowDialogCase(false)}
       >
-        <CaseDetail caseId={caseId}></CaseDetail>
+        <CaseDetail caseId={caseId} createType={false} />
       </ContentDialog>
     </section>
   );

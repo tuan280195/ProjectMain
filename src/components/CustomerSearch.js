@@ -38,7 +38,6 @@ const CustomerSearch = () => {
     name: null,
     phoneNumber: null,
   });
-  const [condition, setCondition] = useState({ width: "400px", xs: 12 });
   const [showDialog, setShowDialog] = useState(false);
   const [customerId, setCustomerId] = useState();
   const axiosPrivate = useAxiosPrivate();
@@ -114,7 +113,6 @@ const CustomerSearch = () => {
       .then(async (res) => {
         setShowAlert(false);
         await getCustomers(e);
-        setCondition({ width: "1440px", xs: 4 });
         setShowList(true);
       })
       .catch((error) => {
@@ -141,7 +139,6 @@ const CustomerSearch = () => {
 
   const handleClickSearch = async (e) => {
     await getCustomers(e);
-    setCondition({ width: "1440px", xs: 4 });
     setShowList(true);
   };
 
@@ -223,7 +220,7 @@ const CustomerSearch = () => {
             </TableHead>
             <TableBody>
               {listItem && listItem.items && listItem.items.length > 0 ? (
-                listItem.items.map((item, index) => {
+                listItem.items.map((item) => {
                   return (
                     <TableRow>
                       <TableCell>
@@ -275,9 +272,9 @@ const CustomerSearch = () => {
   };
 
   return (
-    <section style={{ width: condition.width }}>
-      <Grid container columnSpacing={5} rowSpacing={5}>
-        <Grid item xs={condition.xs}>
+    <section>
+      <Grid container spacing={5}>
+        <Grid item xs={6}>
           <div className="section-item">
             <label className="section-label">取引先名</label>
             <input
@@ -287,6 +284,8 @@ const CustomerSearch = () => {
               onChange={(e) => handleChange(e, "customerName")}
             ></input>
           </div>
+        </Grid>
+        <Grid item xs={6}>
           <div className="section-item">
             <label className="section-label">電話番号</label>
             <input
@@ -295,20 +294,21 @@ const CustomerSearch = () => {
               type="text"
               maxLength={11}
               onChange={(e) => handleChange(e, "phoneNumber")}
-            ></input>
+            />
             {/* Display phone number error message */}
             {phoneNumberError && (
               <span style={{ color: "red" }}>{phoneNumberError}</span>
             )}
           </div>
-          <br />
-          <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
-            {/* Search Button */}
-            <FormButton itemName="検索" onClick={handleClickSearch} />
-          </Grid>
         </Grid>
+        <br />
+        <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+          {/* Search Button */}
+          <FormButton itemName="検索" onClick={handleClickSearch} />
+        </Grid>
+
         {showList ? (
-          <Grid item xs={8}>
+          <Grid item xs={12}>
             <Results />
           </Grid>
         ) : null}

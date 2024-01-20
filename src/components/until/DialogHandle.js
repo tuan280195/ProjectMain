@@ -116,7 +116,7 @@ const DialogHandle = ({
     var newState = { ...dataUpload, fileToUpload: e.target.files[0] };
     setDataUpload(newState);
   };
-  const viewOrDownloadFile = async (item) => {
+  const viewOrDownloadFile = async (item, type) => {
     setLoading(true);
     let getFileUrl = `/api/FileUpload/Download`;
     let payload = {
@@ -135,7 +135,7 @@ const DialogHandle = ({
           type: response.headers["content-type"],
         });
         const blobUrl = window.URL.createObjectURL(blob);
-        if (!item.isImage) {
+        if (type === "download") {
           const link = document.createElement("a");
           link.href = blobUrl;
           link.download = item.fileName;
@@ -231,7 +231,7 @@ const DialogHandle = ({
                         <Button
                           className="search-delete"
                           onClick={async () => {
-                            await viewOrDownloadFile(item);
+                            await viewOrDownloadFile(item, "view");
                           }}
                           startIcon={<Icons.Image />}
                           disabled={!item.isImage}
@@ -242,9 +242,8 @@ const DialogHandle = ({
                           startIcon={<Icons.Download />}
                           className="search-edit"
                           onClick={async () => {
-                            await viewOrDownloadFile(item);
+                            await viewOrDownloadFile(item, "download");
                           }}
-                          disabled={item.isImage}
                         >
                           ダウンロード
                         </Button>

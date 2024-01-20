@@ -475,7 +475,7 @@ const CaseSearch = () => {
         typeDialog="案件削除の確認"
       />
       <ContentDialog open={showDialog} closeDialog={(e) => closeDialog(e)}>
-        <CaseDetail caseId={caseId}></CaseDetail>
+        <CaseDetail caseId={caseId} createType={false} />
       </ContentDialog>
     </section>
   );

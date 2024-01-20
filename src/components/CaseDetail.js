@@ -15,7 +15,7 @@ import ContentDialog from "./until/ContentDialog.js";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
-const CaseDetail = ({ caseId }) => {
+const CaseDetail = ({ caseId, createType = true }) => {
   const [loading, setLoading] = useState(false);
   const [loadingFile, setLoadingFile] = useState(false);
   const { auth } = useAuth();
@@ -162,7 +162,7 @@ const CaseDetail = ({ caseId }) => {
     setLoadingFile(false);
   };
 
-  const viewOrDownloadFile = async (item) => {
+  const viewOrDownloadFile = async (item, type) => {
     setLoading(true);
     let getFileUrl = `/api/FileUpload/Download`;
     let payload = {
@@ -181,7 +181,7 @@ const CaseDetail = ({ caseId }) => {
           type: response.headers["content-type"],
         });
         const blobUrl = window.URL.createObjectURL(blob);
-        if (!item.isImage) {
+        if (type === "download") {
           const link = document.createElement("a");
           link.href = blobUrl;
           link.download = item.fileName;
@@ -477,7 +477,9 @@ const CaseDetail = ({ caseId }) => {
               />
               {/* Save Button */}
               <FormButton itemName="保存" type="submit" />
-              <FormButton itemName="新規作成" onClick={handleClear} />
+              {createType ? (
+                <FormButton itemName="新規作成" onClick={handleClear} />
+              ) : undefined}
             </div>
           </Grid>
         </Grid>
@@ -498,7 +500,7 @@ const CaseDetail = ({ caseId }) => {
                       <Button
                         className="search-delete"
                         onClick={async () => {
-                          await viewOrDownloadFile(item);
+                          await viewOrDownloadFile(item, "view");
                         }}
                         startIcon={<Icons.Image />}
                         disabled={!item.isImage}
@@ -509,9 +511,8 @@ const CaseDetail = ({ caseId }) => {
                         startIcon={<Icons.Download />}
                         className="search-edit"
                         onClick={async () => {
-                          await viewOrDownloadFile(item);
+                          await viewOrDownloadFile(item, "download");
                         }}
-                        disabled={item.isImage}
                       >
                         ダウンロード
                       </Button>
