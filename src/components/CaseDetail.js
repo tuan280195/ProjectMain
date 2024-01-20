@@ -508,9 +508,8 @@ const CaseDetail = ({ caseId }) => {
                       <Button
                         startIcon={<Icons.Download />}
                         className="search-edit"
-                        onClick={() => {
-                          setFileDelete(item);
-                          setShowAlert(true);
+                        onClick={async () => {
+                          await viewOrDownloadFile(item);
                         }}
                         disabled={item.isImage}
                       >
