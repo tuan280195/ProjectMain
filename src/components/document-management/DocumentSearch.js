@@ -287,6 +287,8 @@ const DocumentSearch = () => {
                           >
                             削除
                           </Button>
+                          {/* Add line break to bring the View Case button to next line*/}
+                          <br />{" "}
                           <Button
                             variant="contained"
                             startIcon={<Icons.Assignment />}
