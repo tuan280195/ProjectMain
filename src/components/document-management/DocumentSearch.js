@@ -182,7 +182,7 @@ const DocumentSearch = () => {
       .then(async (res) => {
         setShowAlert(false);
         await getFiles(e);
-        setCondition({ width: "1080px", xs: 4 });
+        setCondition({ width: "1440px", xs: 4 });
         setShowList(true);
       })
       .catch((error) => {
