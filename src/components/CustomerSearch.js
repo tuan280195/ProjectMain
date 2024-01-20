@@ -214,7 +214,9 @@ const CustomerSearch = () => {
                 >
                   電話番号
                 </TableCell>
-                <TableCell style={{ textAlign: "center", width: "25%" }}>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
                   操作
                 </TableCell>
               </TableRow>
@@ -231,13 +233,13 @@ const CustomerSearch = () => {
                         <Truncate str={item.phoneNumber} maxLength={20} />
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Button
                           variant="contained"
                           color="success"
                           startIcon={<Icons.Edit />}
                           onClick={() => handleClickEdit(item.id)}
-                          style={{ marginRight: "5px" }}
+                          style={{ margin: "1px 5px" }}
                         >
                           編集
                         </Button>
@@ -246,6 +248,7 @@ const CustomerSearch = () => {
                           variant="contained"
                           color="success"
                           startIcon={<Icons.Delete />}
+                          style={{ margin: "1px 5px" }}
                           onClick={() => {
                             setShowAlert(true);
                             setDeleteItem(item);

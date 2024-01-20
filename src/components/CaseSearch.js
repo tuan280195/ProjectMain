@@ -261,7 +261,13 @@ const CaseSearch = () => {
                         </TableCell>
                       );
                     })}
-                  <TableCell style={{ position: "relative" }}>
+                  <TableCell
+                    style={{
+                      position: "relative",
+                      width: "110px",
+                      textAlign: "center",
+                    }}
+                  >
                     {row.caseKeywordValues
                       .filter((n) => n.isShowOnCaseList)
                       .map((item, index) => (
