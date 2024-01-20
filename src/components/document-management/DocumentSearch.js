@@ -246,28 +246,36 @@ const DocumentSearch = () => {
                 listItem.items.map((item, index) => {
                   return (
                     <TableRow>
-                      <TableCell style={{ width: "65%" }}>
+                      <TableCell style={{ width: "50%" }}>
                         <Truncate str={item.keywordName} maxLength={20} />
                       </TableCell>
-                      <TableCell style={{ width: "35%", textAlign: "right" }}>
+                      <TableCell style={{ width: "50%", textAlign: "right" }}>
                         <div>
                           <Button
                             variant="contained"
                             color="success"
                             to=""
+                            startIcon={<Icons.Image />}
+                            style={{ marginRight: "5px" }}
                             onClick={() => {
                               viewOrDownloadFile(item);
                             }}
-                            style={{ marginRight: "5px" }}
-                            startIcon={
-                              item.isImage ? (
-                                <Icons.Image />
-                              ) : (
-                                <Icons.Download />
-                              )
-                            }
+                            disabled={!item.isImage}
                           >
-                            {item.isImage ? "表示" : "ダウンロード"}
+                            表示
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            to=""
+                            startIcon={<Icons.Download />}
+                            style={{ marginRight: "5px" }}
+                            onClick={async () => {
+                              await viewOrDownloadFile(item);
+                            }}
+                            disabled={item.isImage}
+                          >
+                            ダウンロード
                           </Button>
                           <Button
                             variant="contained"
@@ -281,7 +289,6 @@ const DocumentSearch = () => {
                                 caseId: item.caseId,
                                 fileName: item.keywordName,
                               };
-
                               setDeleteItem(itemDelete);
                             }}
                           >
