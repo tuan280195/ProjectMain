@@ -24,6 +24,7 @@ import caseSearchActions from "../actions/caseSearchActions.ts";
 import ContentDialog from "./until/ContentDialog.js";
 import CaseDetail from "./CaseDetail.js";
 import * as Icons from "@mui/icons-material";
+import FormSnackbar from "./until/FormSnackbar.js";
 
 const CaseSearch = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -43,7 +44,11 @@ const CaseSearch = () => {
   const [caseIdClose, setCloseCase] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   const [caseId, setCaseId] = useState();
-  // const tableClassCustomize = useStyles();
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
 
   useEffect(async () => {
     commonActions.setPaginationState({
@@ -155,9 +160,18 @@ const CaseSearch = () => {
       .post(closeCaseUrl, payload)
       .then(async () => {
         await getCaseList(e);
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "この案件は無事に完了しました。",
+        });
       })
       .catch((error) => {
-        console.log(error);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     setLoading(false);
   };
@@ -477,6 +491,7 @@ const CaseSearch = () => {
       <ContentDialog open={showDialog} closeDialog={(e) => closeDialog(e)}>
         <CaseDetail caseId={caseId} createType={false} />
       </ContentDialog>
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>
   );
 };

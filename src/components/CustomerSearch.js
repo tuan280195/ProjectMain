@@ -113,6 +113,11 @@ const CustomerSearch = () => {
       .then(async (res) => {
         setShowAlert(false);
         await getCustomers(e);
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "このアカウントは正常に削除されました。",
+        });
         setShowList(true);
       })
       .catch((error) => {
