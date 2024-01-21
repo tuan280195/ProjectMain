@@ -39,7 +39,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
     message: "Successfully!",
   });
   const [caseIdName, setCaseIdName] = useState({
-    id: null,
+    id: caseId,
     name: "",
   });
   const [optionFileType, setOptionFileType] = useState([]);
@@ -55,9 +55,9 @@ const CaseDetail = ({ caseId, createType = true }) => {
     await getCaseTemplate();
     setLoading(false);
     if (caseId) {
-      setCaseIdName((caseIdName) => ({ ...caseIdName, id: caseId }));
       setDisableAttach(false);
       await getCaseByCaseId();
+      console.log("caseIdName.id", caseIdName.id);
       await getFilesOfCase();
     } else {
       setDisableAttach(true);
@@ -196,6 +196,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
       });
     setLoading(false);
   };
+
   const handleClickDeleteFile = async (e) => {
     setLoading(true);
     e.preventDefault();
