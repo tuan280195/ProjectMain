@@ -36,11 +36,6 @@ const CaseSearch = () => {
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [deleteItem, setDeleteItem] = useState({
-    id: null,
-    customerName: null,
-    phoneNumber: null,
-  });
   const [caseIdClose, setCloseCase] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   const [caseId, setCaseId] = useState();
@@ -58,7 +53,6 @@ const CaseSearch = () => {
     caseSearchActions.setPaginationState(0, 10, 1);
     caseSearchActions.setKeywordsSearchState([]);
     caseSearchActions.setCaseDataSearchState([]);
-    // setSearchData([]);
     setShowList(false);
     setKeyWordSearch([]);
     await getCaseTemplate();
@@ -83,8 +77,12 @@ const CaseSearch = () => {
         setTemplate(response.data.caseKeywordValues);
         setKeyWordSearch(response.data.caseKeywordValues);
       })
-      .catch((error) => {
-        console.log(error.response);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
 
     setLoading(false);
@@ -115,9 +113,13 @@ const CaseSearch = () => {
         caseSearchActions.setCaseDataSearchState(response.data.items);
         setShowList(true);
       })
-      .catch((error) => {
+      .catch(() => {
         caseSearchActions.setCaseDataSearchState([]);
-        console.log(error);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     setLoading(false);
   };
@@ -484,7 +486,6 @@ const CaseSearch = () => {
       <ConfirmDialog
         open={showAlert}
         closeDialog={() => setShowAlert(false)}
-        item={deleteItem.customerName}
         handleFunction={confirmCloseCase}
         typeDialog="案件削除の確認"
       />

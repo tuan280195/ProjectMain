@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import * as Icons from "@mui/icons-material";
 import CaseDetail from "../CaseDetail.js";
+import FormSnackbar from "../until/FormSnackbar.js";
 
 const DocumentSearch = () => {
   const [showList, setShowList] = useState(true);
@@ -38,7 +39,6 @@ const DocumentSearch = () => {
     caseId: null,
     fileName: "",
   });
-  const [condition, setCondition] = useState({ minWidth: "400px", xs: 4 });
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [urlPreviewImg, setUrlPreviewImg] = useState({
@@ -50,6 +50,11 @@ const DocumentSearch = () => {
 
   const [showDialogCase, setShowDialogCase] = useState(false);
   const [caseId, setCaseId] = useState();
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
 
   useEffect(async () => {
     commonActions.setPaginationState({
@@ -99,9 +104,13 @@ const DocumentSearch = () => {
           totalCount: response.data.totalCount,
         });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         setListItem([]);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     if (status === 404) {
       setListItem([]);
@@ -132,8 +141,12 @@ const DocumentSearch = () => {
         setTemplate(response.data.keywords);
         setCustomerList(response.data.customers);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     setLoading(false);
   };
@@ -168,8 +181,12 @@ const DocumentSearch = () => {
           setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.keywordName });
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     setLoading(false);
   };
@@ -183,11 +200,14 @@ const DocumentSearch = () => {
       .then(async (res) => {
         setShowAlert(false);
         await getFiles(e);
-        setCondition({ width: "1440px", xs: 4 });
         setShowList(true);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     setLoading(false);
   };
@@ -201,7 +221,6 @@ const DocumentSearch = () => {
 
   const handleClickSearch = async (e) => {
     await getFiles(e);
-    setCondition({ width: "1440px", xs: 4 });
     setShowList(true);
   };
 
@@ -247,10 +266,16 @@ const DocumentSearch = () => {
                 listItem.items.map((item, index) => {
                   return (
                     <TableRow>
-                      <TableCell style={{ width: "50%" }}>
+                      <TableCell>
                         <Truncate str={item.keywordName} maxLength={20} />
                       </TableCell>
-                      <TableCell style={{ width: "50%", textAlign: "right" }}>
+                      <TableCell
+                        style={{
+                          minWidth: "230px",
+                          maxWidth: "250px",
+                          textAlign: "right",
+                        }}
+                      >
                         <div>
                           {item.isImage && (
                             <Button
@@ -396,7 +421,7 @@ const DocumentSearch = () => {
     }
     return (
       <>
-        <Grid item xs={condition.xs}>
+        <Grid item xs={4}>
           <GenericItems
             label={"書類種類"}
             type={"list"}
@@ -425,7 +450,7 @@ const DocumentSearch = () => {
   };
 
   return (
-    <section style={{ width: condition.width }}>
+    <section>
       <Grid container columnSpacing={5} rowSpacing={5}>
         {generateTemplate()}
 
@@ -482,6 +507,7 @@ const DocumentSearch = () => {
       >
         <CaseDetail caseId={caseId} createType={false} />
       </ContentDialog>
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>
   );
 };

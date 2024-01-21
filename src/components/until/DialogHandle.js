@@ -16,15 +16,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ConfirmDialog from "./ConfirmBox";
 import * as Icons from "@mui/icons-material";
 import ContentDialog from "../until/ContentDialog.js";
-const DialogHandle = ({
-  title,
-  open,
-  closeDialog,
-  item,
-  optionFileType,
-  handleFunction,
-  caseId,
-}) => {
+import FormSnackbar from "./FormSnackbar.js";
+
+const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [loading, setLoading] = useState(false);
@@ -42,6 +36,12 @@ const DialogHandle = ({
     fileTypeId: null,
     fileName: "",
   });
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
+
   useEffect(async () => {
     setShowDialog(false);
     setListItem([]);
@@ -50,7 +50,6 @@ const DialogHandle = ({
     setUrlPreviewImg({ blobUrl: "", fileName: "" });
     setFileDelete({});
     setShowAlert(false);
-    console.log("caseID---dialog----------------", caseId);
     if (caseId) {
       await getFilesOfCase();
     }
@@ -68,8 +67,12 @@ const DialogHandle = ({
         setListItem(response.data);
         return response;
       })
-      .catch((error) => {
-        console.log(JSON.stringify(error));
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     if (status === 404) {
       setListItem([]);
@@ -93,9 +96,25 @@ const DialogHandle = ({
       .post("/api/FileUpload/Upload", formData)
       .then(async (response) => {
         await getFilesOfCase();
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "ファイルは正常に添付されました。",
+        });
       })
       .catch((error) => {
-        console.error(error);
+        if (error.response.data === "Your file is not supported")
+          setSnackbar({
+            isOpen: true,
+            status: "error",
+            message: "あなたのファイルはサポートされていません。",
+          });
+        else
+          setSnackbar({
+            isOpen: true,
+            status: "error",
+            message: "何か問題が発生しました。",
+          });
       });
     setLoading(false);
     controller.abort();
@@ -145,8 +164,12 @@ const DialogHandle = ({
           setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.fileName });
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     setLoading(false);
   };
@@ -162,9 +185,18 @@ const DialogHandle = ({
         setUrlPreviewImg({ ...urlPreviewImg, blobUrl: "", fileName: "" });
         await getFilesOfCase();
         setShowAlert(false);
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "アイテムは正常に削除されました。",
+        });
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     setLoading(false);
   };
@@ -191,7 +223,7 @@ const DialogHandle = ({
         <Icons.Close sx={{ color: "red" }} />
       </IconButton>
       <DialogContent
-        sx={{ px: 4, py: 6, position: "relative", minHeight: 960 }}
+        sx={{ px: 4, py: 6, position: "relative" }}
         style={{ paddingTop: "5px" }}
       >
         <DialogContentText style={{ color: "red", marginBottom: "20px" }}>
@@ -227,7 +259,14 @@ const DialogHandle = ({
                         maxLength={20}
                         style={{ padding: "10px" }}
                       />
-                      <div className="search-action">
+                      <div
+                        className="search-action"
+                        style={{
+                          minWidth: 350,
+                          display: "flex",
+                          justifyContent: "flex-end",
+                        }}
+                      >
                         {item.isImage && (
                           <Button
                             className="search-delete"
@@ -315,6 +354,7 @@ const DialogHandle = ({
         ></ConfirmDialog>
         <LoadingSpinner loading={loading}></LoadingSpinner>
       </DialogContent>
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </Dialog>
   );
 };

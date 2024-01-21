@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import GenericItems from "./until/GenericItems";
 import DialogHandle from "./until/DialogHandle";
 import FormButton from "./until/FormButton";
-import useAuth from "../hooks/useAuth";
+// import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FormSnackbar from "./until/FormSnackbar";
 import LoadingSpinner from "./until/LoadingSpinner";
@@ -18,7 +18,7 @@ window.Buffer = window.Buffer || require("buffer").Buffer;
 const CaseDetail = ({ caseId, createType = true }) => {
   const [loading, setLoading] = useState(false);
   const [loadingFile, setLoadingFile] = useState(false);
-  const { auth } = useAuth();
+  // const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
@@ -45,7 +45,6 @@ const CaseDetail = ({ caseId, createType = true }) => {
   const [optionFileType, setOptionFileType] = useState([]);
   const [disableAttach, setDisableAttach] = useState(false);
   const [errors, setErrors] = useState([]);
-  const [isFormValid, setIsFormValid] = useState(false);
   const [customerList, setCustomerList] = useState([]);
 
   useEffect(async () => {
@@ -57,7 +56,6 @@ const CaseDetail = ({ caseId, createType = true }) => {
     if (caseId) {
       setDisableAttach(false);
       await getCaseByCaseId();
-      console.log("caseIdName.id", caseIdName.id);
       await getFilesOfCase();
     } else {
       setDisableAttach(true);
@@ -108,8 +106,12 @@ const CaseDetail = ({ caseId, createType = true }) => {
         setTemplate(response.data.keywords);
         setData(response.data.keywords);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
 
     setLoading(false);
@@ -131,9 +133,13 @@ const CaseDetail = ({ caseId, createType = true }) => {
           name: response.data.caseName,
         });
       })
-      .catch((error) => {
+      .catch(() => {
         setData([]);
-        console.log(error);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
 
     setLoading(false);
@@ -148,12 +154,16 @@ const CaseDetail = ({ caseId, createType = true }) => {
         validateStatus: () => true,
       })
       .then((response) => {
-        console.log(response);
         setListItemFile(response.data);
         return response;
       })
-      .catch((error) => {
+      .catch(() => {
         setListItemFile([]);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     if (status === 404) {
       setListItemFile([]);
@@ -191,8 +201,12 @@ const CaseDetail = ({ caseId, createType = true }) => {
           setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.fileName });
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     setLoading(false);
   };
@@ -209,9 +223,18 @@ const CaseDetail = ({ caseId, createType = true }) => {
         setUrlPreviewImg({ ...urlPreviewImg, blobUrl: "", fileName: "" });
         await getFilesOfCase();
         setShowAlert(false);
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "アイテムは正常に削除されました。",
+        });
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     setLoading(false);
   };
@@ -219,7 +242,6 @@ const CaseDetail = ({ caseId, createType = true }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setIsFormValid(true);
     validateForm();
     if (!validateForm()) {
       // Form is valid, perform the submission logic
@@ -280,8 +302,12 @@ const CaseDetail = ({ caseId, createType = true }) => {
           setDisableAttach(false);
           return response;
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          setSnackbar({
+            isOpen: true,
+            status: "error",
+            message: "何か問題が発生しました。",
+          });
         });
     }
     setLoading(false);
@@ -312,8 +338,12 @@ const CaseDetail = ({ caseId, createType = true }) => {
         setOptionFileType(options);
         return response;
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
   };
 
@@ -498,7 +528,14 @@ const CaseDetail = ({ caseId, createType = true }) => {
                       maxLength={20}
                       style={{ padding: "10px" }}
                     />
-                    <div className="search-action">
+                    <div
+                      className="search-action"
+                      style={{
+                        minWidth: 350,
+                        display: "flex",
+                        justifyContent: "flex-end",
+                      }}
+                    >
                       {item.isImage && (
                         <Button
                           className="search-delete"
@@ -506,7 +543,6 @@ const CaseDetail = ({ caseId, createType = true }) => {
                             await viewOrDownloadFile(item, "view");
                           }}
                           startIcon={<Icons.Image />}
-                          disabled={!item.isImage}
                         >
                           表示
                         </Button>

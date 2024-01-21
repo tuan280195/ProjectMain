@@ -87,9 +87,13 @@ const CustomerSearch = () => {
           totalCount: response.data.totalCount,
         });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         setListItem([]);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
     if (status == 404) {
       setListItem([]);

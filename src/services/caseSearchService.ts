@@ -7,7 +7,5 @@ export const GetCaseList = async (payload) => {
     .then((response) => {
       return response.data;
     })
-    .catch((error) => {
-      console.log(error);
-    });
+    .catch(() => {});
 };

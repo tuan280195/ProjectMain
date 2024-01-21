@@ -124,8 +124,12 @@ const CustomerDetail = ({ customerId }) => {
     setLoading(true);
     const response = await axios
       .get(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${getPostCode}`)
-      .catch(function (error) {
-        console.log(error);
+      .catch(function () {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message: "何か問題が発生しました。",
+        });
       });
 
     if (response?.data.results != null) {
@@ -153,7 +157,11 @@ const CustomerDetail = ({ customerId }) => {
         setLatestData(response.data);
       }
     } catch (error) {
-      console.log(error);
+      setSnackbar({
+        isOpen: true,
+        status: "error",
+        message: "何か問題が発生しました。",
+      });
     }
     setLoading(false);
   };
