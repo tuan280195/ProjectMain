@@ -252,19 +252,21 @@ const DocumentSearch = () => {
                       </TableCell>
                       <TableCell style={{ width: "50%", textAlign: "right" }}>
                         <div>
-                          <Button
-                            variant="contained"
-                            color="success"
-                            to=""
-                            startIcon={<Icons.Image />}
-                            style={{ marginRight: "5px" }}
-                            onClick={() => {
-                              viewOrDownloadFile(item, "view");
-                            }}
-                            disabled={!item.isImage}
-                          >
-                            表示
-                          </Button>
+                          {item.isImage && (
+                            <Button
+                              variant="contained"
+                              color="success"
+                              to=""
+                              startIcon={<Icons.Image />}
+                              style={{ marginRight: "5px" }}
+                              onClick={() => {
+                                viewOrDownloadFile(item, "view");
+                              }}
+                              disabled={!item.isImage}
+                            >
+                              表示
+                            </Button>
+                          )}
                           <Button
                             variant="contained"
                             color="success"

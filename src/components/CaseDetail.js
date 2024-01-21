@@ -498,16 +498,18 @@ const CaseDetail = ({ caseId, createType = true }) => {
                       style={{ padding: "10px" }}
                     />
                     <div className="search-action">
-                      <Button
-                        className="search-delete"
-                        onClick={async () => {
-                          await viewOrDownloadFile(item, "view");
-                        }}
-                        startIcon={<Icons.Image />}
-                        disabled={!item.isImage}
-                      >
-                        表示
-                      </Button>
+                      {item.isImage && (
+                        <Button
+                          className="search-delete"
+                          onClick={async () => {
+                            await viewOrDownloadFile(item, "view");
+                          }}
+                          startIcon={<Icons.Image />}
+                          disabled={!item.isImage}
+                        >
+                          表示
+                        </Button>
+                      )}
                       <Button
                         startIcon={<Icons.Download />}
                         className="search-edit"
