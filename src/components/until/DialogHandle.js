@@ -50,24 +50,31 @@ const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
     setUrlPreviewImg({ blobUrl: "", fileName: "" });
     setFileDelete({});
     setShowAlert(false);
-    if (caseId) {
+  }, []);
+
+  useEffect(async () => {
+    if (open) {
       await getFilesOfCase();
     }
-  }, []);
+  }, [open]);
 
   const getFilesOfCase = async () => {
     setLoadingFile(true);
     let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseId}`;
-    var { status } = await axiosPrivate
+    await axiosPrivate
       .get(getFilesUploadURL, {
         signal: controller.signal,
         validateStatus: () => true,
       })
       .then((response) => {
-        setListItem(response.data);
+        if (response.data.status === 404) {
+          setListItem([]);
+        } else {
+          setListItem(response.data);
+        }
         return response;
       })
-      .catch(() => {
+      .catch((error) => {
         setSnackbar({
           isOpen: true,
           status: "error",
@@ -75,10 +82,6 @@ const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
             "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
-    if (status === 404) {
-      setListItem([]);
-    }
-
     setLoadingFile(false);
   };
 
