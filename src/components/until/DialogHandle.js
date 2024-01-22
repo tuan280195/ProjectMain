@@ -50,12 +50,7 @@ const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
     setUrlPreviewImg({ blobUrl: "", fileName: "" });
     setFileDelete({});
     setShowAlert(false);
-  }, []);
-
-  useEffect(async () => {
-    if (open) {
-      await getFilesOfCase();
-    }
+    await getFilesOfCase();
   }, [open]);
 
   const getFilesOfCase = async () => {
