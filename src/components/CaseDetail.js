@@ -180,7 +180,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
     let getFileUrl = `/api/FileUpload/Download`;
     let payload = {
       fileName: item.fileName,
-      caseId: caseId,
+      caseId: caseIdName.id,
     };
     await axiosPrivate
       .post(getFileUrl, payload)
@@ -220,7 +220,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
     e.preventDefault();
     let deleteFileUrl = `/api/FileUpload/Delete`;
     let payload = fileDelete;
-    payload.caseId = caseId;
+    payload.caseId = caseIdName.id;
     await axiosPrivate
       .put(deleteFileUrl, payload)
       .then(async (response) => {
