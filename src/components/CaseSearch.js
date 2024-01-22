@@ -467,11 +467,7 @@ const CaseSearch = () => {
     <section>
       <Grid container spacing={5}>
         {generateCode()}
-        <Grid
-          item
-          xs={12}
-          //style={{ display: "flex", justifyContent: "center" }}
-        >
+        <Grid item xs={12}>
           <div className="handle-button">
             {/* Search and Clear Button */}
             <FormButton onClick={handleClickSearch} itemName="検索" />

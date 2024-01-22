@@ -153,6 +153,13 @@ const CustomerSearch = () => {
     setShowList(true);
   };
 
+  const handleClickClear = () => {
+    setData({
+      customerName: "",
+      phoneNumber: "",
+    });
+  };
+
   const handleChange = (event, item) => {
     if (item === "customerName") {
       setData({ ...data, customerName: event.target.value });
@@ -313,9 +320,15 @@ const CustomerSearch = () => {
           </div>
         </Grid>
         <br />
-        <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
-          {/* Search Button */}
-          <FormButton itemName="検索" onClick={handleClickSearch} />
+        <Grid item xs={12}>
+          <div className="handle-button">
+            {/* Search Button */}
+            <FormButton itemName="検索" onClick={handleClickSearch} />
+            <FormButton
+              itemName="検索条件の初期化"
+              onClick={handleClickClear}
+            />
+          </div>
         </Grid>
 
         {showList ? (

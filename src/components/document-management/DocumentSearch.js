@@ -228,6 +228,22 @@ const DocumentSearch = () => {
     setShowList(true);
   };
 
+  const handleClickClear = () => {
+    console.log(keyWordSearch);
+    console.log("fileTypeSearch ", fileTypeSearch);
+    setKeyWordSearch((prevKeyWordSearch) =>
+      prevKeyWordSearch.map((item) => ({
+        ...item,
+        value: "",
+        fromValue: "",
+        toValue: "",
+        customerId: "",
+      }))
+    );
+    setFileTypeSearch({ ...fileTypeSearch, value: "" });
+    console.log("fileTypeSearch ", fileTypeSearch);
+  };
+
   const handleChangePageSize = async (e) => {
     commonActions.setPaginationState({
       ...commonState.paginationState,
@@ -444,9 +460,21 @@ const DocumentSearch = () => {
             });
           })}
           <br />
-          <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
+          <Grid
+            item
+            xs="12"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              rowGap: 2,
+            }}
+          >
             {/* Search Button */}
             <FormButton itemName="検索" onClick={handleClickSearch} />
+            <FormButton
+              itemName="検索条件の初期化"
+              onClick={handleClickClear}
+            />
           </Grid>
         </Grid>
       </>
