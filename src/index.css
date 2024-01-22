@@ -196,6 +196,7 @@ li.search-result {
 .MuiTableRow-root:hover {
   background-color: #004862;
 }
+
 .MuiTableRow-root:not(:hover) .container-search-actions {
   display: none;
 }
@@ -215,9 +216,6 @@ input:invalid[focused="true"] {
   column-gap: 10px;
   justify-content: right;
   margin: 10px 0 10px 0;
-}
-button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
-  background-color: #004862;
 }
 
 .select-option {
@@ -250,7 +248,7 @@ button.css-1pi9rcw-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
 .search-action .Mui-disabled {
   color: white !important;
   background-color: grey !important;
-};
+}
 .container-search-actions {
   position: absolute;
   top: 50%;

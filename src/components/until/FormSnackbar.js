@@ -1,6 +1,18 @@
 import { Alert, Snackbar } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+  cookieAlert: {
+    "& .MuiAlert-icon": {
+      fontSize: 24,
+      paddingTop: 10,
+      paddingRight: 10,
+    },
+  },
+});
 
 const FormSnackbar = ({ item, setItem }) => {
+  const classes = useStyles();
   return (
     //severity =  success || error || warning || info
     <>
@@ -12,6 +24,7 @@ const FormSnackbar = ({ item, setItem }) => {
         }}
       >
         <Alert
+          className={classes.cookieAlert}
           variant="filled"
           onClose={() => {
             return setItem({ ...item, isOpen: false });

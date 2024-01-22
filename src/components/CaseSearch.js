@@ -24,39 +24,36 @@ import caseSearchActions from "../actions/caseSearchActions.ts";
 import ContentDialog from "./until/ContentDialog.js";
 import CaseDetail from "./CaseDetail.js";
 import * as Icons from "@mui/icons-material";
+import FormSnackbar from "./until/FormSnackbar.js";
 
 const CaseSearch = () => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [template, setTemplate] = useState([]);
-  const [data, setData] = useState([]);
   const [keyWordSearch, setKeyWordSearch] = useState([]);
-  const [keyWordDateSearch, setKeyWordDateSearch] = useState([]);
 
   const [customerList, setCustomerList] = useState([]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [deleteItem, setDeleteItem] = useState({
-    id: null,
-    customerName: null,
-    phoneNumber: null,
-  });
   const [caseIdClose, setCloseCase] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   const [caseId, setCaseId] = useState();
-  // const tableClassCustomize = useStyles();
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
 
   useEffect(async () => {
-    commonActions.setPaginationState({...commonState.paginationState, 
-        totalCount: 0
-      });
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      totalCount: 0,
+    });
     caseSearchActions.setPaginationState(0, 10, 1);
     caseSearchActions.setKeywordsSearchState([]);
     caseSearchActions.setCaseDataSearchState([]);
-    // setSearchData([]);
     setShowList(false);
-    setData([]);
     setKeyWordSearch([]);
     await getCaseTemplate();
   }, []);
@@ -80,8 +77,13 @@ const CaseSearch = () => {
         setTemplate(response.data.caseKeywordValues);
         setKeyWordSearch(response.data.caseKeywordValues);
       })
-      .catch((error) => {
-        console.log(error.response);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
 
     setLoading(false);
@@ -105,15 +107,21 @@ const CaseSearch = () => {
     await axiosPrivate
       .post(searchCaseUrl, payload)
       .then((response) => {
-        commonActions.setPaginationState({...commonState.paginationState, 
+        commonActions.setPaginationState({
+          ...commonState.paginationState,
           totalCount: response.data.totalCount,
         });
         caseSearchActions.setCaseDataSearchState(response.data.items);
         setShowList(true);
       })
-      .catch((error) => {
+      .catch(() => {
         caseSearchActions.setCaseDataSearchState([]);
-        console.log(error);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     setLoading(false);
   };
@@ -156,9 +164,19 @@ const CaseSearch = () => {
       .post(closeCaseUrl, payload)
       .then(async () => {
         await getCaseList(e);
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "案件情報が正常に削除されました。",
+        });
       })
       .catch((error) => {
-        console.log(error);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     setLoading(false);
   };
@@ -177,6 +195,12 @@ const CaseSearch = () => {
     });
     await getCaseList(e);
   };
+
+  const closeDialog = (e) => {
+    setShowDialog(false);
+    handleClickSearch(e);
+  };
+
   const Results = () => {
     let totalCount = 0;
     if (
@@ -194,9 +218,9 @@ const CaseSearch = () => {
         return customerList.filter((a) => a.id === item.value)[0]?.name;
       } else return item.value;
     };
-    
+
     return commonState.paginationState &&
-          commonState.paginationState.totalCount > 0 ? (
+      commonState.paginationState.totalCount > 0 ? (
       <>
         <Pagination
           totalCount={totalCount}
@@ -256,7 +280,13 @@ const CaseSearch = () => {
                         </TableCell>
                       );
                     })}
-                  <TableCell style={{ position: "relative" }}>
+                  <TableCell
+                    style={{
+                      position: "relative",
+                      width: "110px",
+                      textAlign: "center",
+                    }}
+                  >
                     {row.caseKeywordValues
                       .filter((n) => n.isShowOnCaseList)
                       .map((item, index) => (
@@ -304,6 +334,15 @@ const CaseSearch = () => {
     );
   };
 
+  const handleGenerateCustomerName = (item, templateItem) => {
+    if (templateItem.keywordName === "取引先名") {
+      if (customerList.filter((a) => a.id === item.value)[0]?.name) {
+        return customerList.filter((a) => a.id === item.value)[0]?.name;
+      }
+    }
+    return item.value;
+  };
+
   const dynamicGenerate = (item, templateItem) => {
     let typeValue = templateItem.typeValue;
     if (templateItem.fromTo) {
@@ -313,7 +352,7 @@ const CaseSearch = () => {
     }
     return (
       <GenericItems
-        value={item.value}
+        value={handleGenerateCustomerName(item, templateItem)}
         value1={item.fromValue}
         value2={item.toValue}
         label={templateItem.keywordName}
@@ -379,7 +418,7 @@ const CaseSearch = () => {
             if (value.keywordId === item.keywordId) {
               return {
                 ...value,
-                value: customer ? customer.label : "",
+                value: customer ? customer.id : "",
               };
             } else return { ...value };
           });
@@ -428,11 +467,7 @@ const CaseSearch = () => {
     <section>
       <Grid container spacing={5}>
         {generateCode()}
-        <Grid
-          item
-          xs={12}
-          //style={{ display: "flex", justifyContent: "center" }}
-        >
+        <Grid item xs={12}>
           <div className="handle-button">
             {/* Search and Clear Button */}
             <FormButton onClick={handleClickSearch} itemName="検索" />
@@ -450,13 +485,13 @@ const CaseSearch = () => {
       <ConfirmDialog
         open={showAlert}
         closeDialog={() => setShowAlert(false)}
-        item={deleteItem.customerName}
         handleFunction={confirmCloseCase}
         typeDialog="案件削除の確認"
       />
-      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
-        <CaseDetail caseId={caseId}></CaseDetail>
+      <ContentDialog open={showDialog} closeDialog={(e) => closeDialog(e)}>
+        <CaseDetail caseId={caseId} createType={false} />
       </ContentDialog>
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>
   );
 };

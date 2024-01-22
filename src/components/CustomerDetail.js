@@ -63,7 +63,6 @@ const CustomerDetail = ({ customerId }) => {
       return;
     } else {
       // Form is invalid, display error messages
-      console.log("OK.");
     }
 
     if (dataId) {
@@ -82,7 +81,7 @@ const CustomerDetail = ({ customerId }) => {
             setSnackbar({
               isOpen: true,
               status: "error",
-              message: "顧客はすでに存在します。",
+              message: "取引先はすでに存在します。重複作成はできません。",
             });
           }
         });
@@ -95,8 +94,6 @@ const CustomerDetail = ({ customerId }) => {
             status: "success",
             message: "取引先の登録は正常に完成しました！",
           });
-
-          console.log(response.data);
           setDataId(response.data);
           return response;
         })
@@ -105,7 +102,7 @@ const CustomerDetail = ({ customerId }) => {
             setSnackbar({
               isOpen: true,
               status: "error",
-              message: "顧客はすでに存在します。",
+              message: "取引先はすでに存在します。重複作成はできません。",
             });
           }
         });
@@ -127,8 +124,13 @@ const CustomerDetail = ({ customerId }) => {
     setLoading(true);
     const response = await axios
       .get(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${getPostCode}`)
-      .catch(function (error) {
-        console.log(error);
+      .catch(function () {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
 
     if (response?.data.results != null) {
@@ -156,7 +158,12 @@ const CustomerDetail = ({ customerId }) => {
         setLatestData(response.data);
       }
     } catch (error) {
-      console.log(error);
+      setSnackbar({
+        isOpen: true,
+        status: "error",
+        message:
+          "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+      });
     }
     setLoading(false);
   };

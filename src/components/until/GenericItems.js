@@ -66,6 +66,7 @@ function GenericItems({ label, type, options, children, ...props }) {
               type="date"
               onChange={props.handleInput2}
               className="section-input"
+              min={props.value1}
             ></input>
           </div>
         </div>

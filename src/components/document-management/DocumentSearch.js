@@ -9,7 +9,7 @@ import GenericItems from "../until/GenericItems.js";
 import ContentDialog from "../until/ContentDialog.js";
 import commonState from "../../stories/commonState.ts";
 import commonActions from "../../actions/commonAction.ts";
-import * as _ from 'lodash';
+import * as _ from "lodash";
 import {
   Button,
   Grid,
@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import * as Icons from "@mui/icons-material";
 import CaseDetail from "../CaseDetail.js";
+import FormSnackbar from "../until/FormSnackbar.js";
 
 const DocumentSearch = () => {
   const [showList, setShowList] = useState(true);
@@ -38,7 +39,6 @@ const DocumentSearch = () => {
     caseId: null,
     fileName: "",
   });
-  const [condition, setCondition] = useState({ minWidth: "400px", xs: 4 });
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [urlPreviewImg, setUrlPreviewImg] = useState({
@@ -47,14 +47,20 @@ const DocumentSearch = () => {
   });
   const [showDialog, setShowDialog] = useState(false);
   const [showDialogPreview, setShowDialogPreview] = useState(false);
-  
+
   const [showDialogCase, setShowDialogCase] = useState(false);
   const [caseId, setCaseId] = useState();
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
 
   useEffect(async () => {
-    commonActions.setPaginationState({...commonState.paginationState, 
-        totalCount: 0
-      });
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      totalCount: 0,
+    });
     setListItem([]);
     setUrlPreviewImg({ blobUrl: "", fileName: "" });
     await getDocumentTemplate();
@@ -74,7 +80,7 @@ const DocumentSearch = () => {
       (x) => x.fromTo && x.typeValue === "decimal" && (x.fromValue || x.toValue)
     );
     keywordValues.forEach((item) => {
-      if(item.keywordName === '取引先名') {
+      if (item.keywordName === "取引先名") {
         item.value = item.customerId;
       }
     });
@@ -93,16 +99,21 @@ const DocumentSearch = () => {
       })
       .then((response) => {
         setListItem(response.data);
-        commonActions.setPaginationState({...commonState.paginationState, 
-          totalCount: response.data.totalCount
+        commonActions.setPaginationState({
+          ...commonState.paginationState,
+          totalCount: response.data.totalCount,
         });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         setListItem([]);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     if (status === 404) {
-      console.log("validateStatus", status);
       setListItem([]);
     }
     setLoading(false);
@@ -131,13 +142,19 @@ const DocumentSearch = () => {
         setTemplate(response.data.keywords);
         setCustomerList(response.data.customers);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     setLoading(false);
   };
 
-  const viewOrDownloadFile = async (item) => {
+  const viewOrDownloadFile = async (item, type) => {
+    // type = download / view
     setLoading(true);
     let getFileUrl = `/api/FileUpload/Download`;
     let payload = {
@@ -156,7 +173,7 @@ const DocumentSearch = () => {
           type: response.headers["content-type"],
         });
         const blobUrl = window.URL.createObjectURL(blob);
-        if (!item.isImage) {
+        if (type === "download") {
           const link = document.createElement("a");
           link.href = blobUrl;
           link.download = item.keywordName;
@@ -166,8 +183,13 @@ const DocumentSearch = () => {
           setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.keywordName });
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     setLoading(false);
   };
@@ -181,11 +203,15 @@ const DocumentSearch = () => {
       .then(async (res) => {
         setShowAlert(false);
         await getFiles(e);
-        setCondition({ width: "1080px", xs: 4 });
         setShowList(true);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     setLoading(false);
   };
@@ -199,8 +225,23 @@ const DocumentSearch = () => {
 
   const handleClickSearch = async (e) => {
     await getFiles(e);
-    setCondition({ width: "1440px", xs: 4 });
     setShowList(true);
+  };
+
+  const handleClickClear = () => {
+    console.log(keyWordSearch);
+    console.log("fileTypeSearch ", fileTypeSearch);
+    setKeyWordSearch((prevKeyWordSearch) =>
+      prevKeyWordSearch.map((item) => ({
+        ...item,
+        value: "",
+        fromValue: "",
+        toValue: "",
+        customerId: "",
+      }))
+    );
+    setFileTypeSearch({ ...fileTypeSearch, value: "" });
+    console.log("fileTypeSearch ", fileTypeSearch);
   };
 
   const handleChangePageSize = async (e) => {
@@ -245,28 +286,44 @@ const DocumentSearch = () => {
                 listItem.items.map((item, index) => {
                   return (
                     <TableRow>
-                      <TableCell style={{ width: "65%" }}>
+                      <TableCell>
                         <Truncate str={item.keywordName} maxLength={20} />
                       </TableCell>
-                      <TableCell style={{ width: "35%", textAlign: "right" }}>
+                      <TableCell
+                        style={{
+                          minWidth: "230px",
+                          maxWidth: "250px",
+                          textAlign: "right",
+                        }}
+                      >
                         <div>
+                          {item.isImage && (
+                            <Button
+                              variant="contained"
+                              color="success"
+                              to=""
+                              startIcon={<Icons.Image />}
+                              style={{ marginRight: "5px" }}
+                              onClick={() => {
+                                viewOrDownloadFile(item, "view");
+                              }}
+                              disabled={!item.isImage}
+                            >
+                              表示
+                            </Button>
+                          )}
                           <Button
                             variant="contained"
                             color="success"
                             to=""
-                            onClick={() => {
-                              viewOrDownloadFile(item);
-                            }}
+                            startIcon={<Icons.Download />}
                             style={{ marginRight: "5px" }}
-                            startIcon={
-                              item.isImage ? (
-                                <Icons.Image />
-                              ) : (
-                                <Icons.Download />
-                              )
-                            }
+                            onClick={async () => {
+                              await viewOrDownloadFile(item, "download");
+                            }}
+                            // disabled={item.isImage}
                           >
-                            {item.isImage ? "表示" : "ダウンロード"}
+                            ダウンロード
                           </Button>
                           <Button
                             variant="contained"
@@ -280,12 +337,13 @@ const DocumentSearch = () => {
                                 caseId: item.caseId,
                                 fileName: item.keywordName,
                               };
-
                               setDeleteItem(itemDelete);
                             }}
                           >
                             削除
                           </Button>
+                          {/* Add line break to bring the View Case button to next line*/}
+                          <br />{" "}
                           <Button
                             variant="contained"
                             startIcon={<Icons.Assignment />}
@@ -323,7 +381,6 @@ const DocumentSearch = () => {
       typeValue = "daterange";
     } else if (templateItem.keywordName === "取引先名") {
       typeValue = "list";
-      console.log("item customer", item)
     }
     return (
       <GenericItems
@@ -384,7 +441,7 @@ const DocumentSearch = () => {
     }
     return (
       <>
-        <Grid item xs={condition.xs}>
+        <Grid item xs={4}>
           <GenericItems
             label={"書類種類"}
             type={"list"}
@@ -403,9 +460,21 @@ const DocumentSearch = () => {
             });
           })}
           <br />
-          <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
+          <Grid
+            item
+            xs="12"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              rowGap: 2,
+            }}
+          >
             {/* Search Button */}
             <FormButton itemName="検索" onClick={handleClickSearch} />
+            <FormButton
+              itemName="検索条件の初期化"
+              onClick={handleClickClear}
+            />
           </Grid>
         </Grid>
       </>
@@ -413,7 +482,7 @@ const DocumentSearch = () => {
   };
 
   return (
-    <section style={{ width: condition.width }}>
+    <section>
       <Grid container columnSpacing={5} rowSpacing={5}>
         {generateTemplate()}
 
@@ -423,7 +492,10 @@ const DocumentSearch = () => {
           </Grid>
         ) : null}
       </Grid>
-      <ContentDialog open={showDialogPreview} closeDialog={() => setShowDialogPreview(false)}>
+      <ContentDialog
+        open={showDialogPreview}
+        closeDialog={() => setShowDialogPreview(false)}
+      >
         <Grid container columnSpacing={5} rowSpacing={5}>
           {urlPreviewImg.blobUrl && (
             <Grid
@@ -465,8 +537,9 @@ const DocumentSearch = () => {
         open={showDialogCase}
         closeDialog={() => setShowDialogCase(false)}
       >
-        <CaseDetail caseId={caseId}></CaseDetail>
+        <CaseDetail caseId={caseId} createType={false} />
       </ContentDialog>
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </section>
   );
 };

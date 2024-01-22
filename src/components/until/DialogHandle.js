@@ -16,15 +16,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ConfirmDialog from "./ConfirmBox";
 import * as Icons from "@mui/icons-material";
 import ContentDialog from "../until/ContentDialog.js";
-const DialogHandle = ({
-  title,
-  open,
-  closeDialog,
-  item,
-  optionFileType,
-  handleFunction,
-  caseId,
-}) => {
+import FormSnackbar from "./FormSnackbar.js";
+
+const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
   const [loading, setLoading] = useState(false);
@@ -42,6 +36,12 @@ const DialogHandle = ({
     fileTypeId: null,
     fileName: "",
   });
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    status: "success",
+    message: "Successfully!",
+  });
+
   useEffect(async () => {
     setShowDialog(false);
     setListItem([]);
@@ -50,33 +50,33 @@ const DialogHandle = ({
     setUrlPreviewImg({ blobUrl: "", fileName: "" });
     setFileDelete({});
     setShowAlert(false);
-    console.log("caseID---dialog----------------", caseId);
-    if (caseId) {
-      await getFilesOfCase();
-    }
-  }, []);
+    await getFilesOfCase();
+  }, [open]);
 
   const getFilesOfCase = async () => {
     setLoadingFile(true);
     let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseId}`;
-    var { status } = await axiosPrivate
+    await axiosPrivate
       .get(getFilesUploadURL, {
         signal: controller.signal,
         validateStatus: () => true,
       })
       .then((response) => {
-        console.log(response);
-        setListItem(response.data);
+        if (response.data.status === 404) {
+          setListItem([]);
+        } else {
+          setListItem(response.data);
+        }
         return response;
       })
       .catch((error) => {
-        console.log(JSON.stringify(error));
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
-    if (status === 404) {
-      console.log("validateStatus", status);
-      setListItem([]);
-    }
-
     setLoadingFile(false);
   };
 
@@ -95,10 +95,26 @@ const DialogHandle = ({
       .post("/api/FileUpload/Upload", formData)
       .then(async (response) => {
         await getFilesOfCase();
-        console.log(response);
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "書類は正常に添付されました。",
+        });
       })
       .catch((error) => {
-        console.error(error);
+        if (error.response.data === "Your file is not supported")
+          setSnackbar({
+            isOpen: true,
+            status: "error",
+            message: "選択されたファイルの拡張子は利用できません。",
+          });
+        else
+          setSnackbar({
+            isOpen: true,
+            status: "error",
+            message:
+              "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+          });
       });
     setLoading(false);
     controller.abort();
@@ -119,7 +135,7 @@ const DialogHandle = ({
     var newState = { ...dataUpload, fileToUpload: e.target.files[0] };
     setDataUpload(newState);
   };
-  const viewOrDownloadFile = async (item) => {
+  const viewOrDownloadFile = async (item, type) => {
     setLoading(true);
     let getFileUrl = `/api/FileUpload/Download`;
     let payload = {
@@ -138,7 +154,7 @@ const DialogHandle = ({
           type: response.headers["content-type"],
         });
         const blobUrl = window.URL.createObjectURL(blob);
-        if (!item.isImage) {
+        if (type === "download") {
           const link = document.createElement("a");
           link.href = blobUrl;
           link.download = item.fileName;
@@ -148,8 +164,13 @@ const DialogHandle = ({
           setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.fileName });
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     setLoading(false);
   };
@@ -165,9 +186,19 @@ const DialogHandle = ({
         setUrlPreviewImg({ ...urlPreviewImg, blobUrl: "", fileName: "" });
         await getFilesOfCase();
         setShowAlert(false);
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "書類は正常に削除されました。",
+        });
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     setLoading(false);
   };
@@ -194,7 +225,7 @@ const DialogHandle = ({
         <Icons.Close sx={{ color: "red" }} />
       </IconButton>
       <DialogContent
-        sx={{ px: 4, py: 6, position: "relative", minHeight: 960 }}
+        sx={{ px: 4, py: 6, position: "relative" }}
         style={{ paddingTop: "5px" }}
       >
         <DialogContentText style={{ color: "red", marginBottom: "20px" }}>
@@ -230,26 +261,32 @@ const DialogHandle = ({
                         maxLength={20}
                         style={{ padding: "10px" }}
                       />
-                      <div className="search-action">
-                       <Button
-                          className="search-delete"
-                          onClick={async () => {
-                            await viewOrDownloadFile(item);
-                          }}
-                          startIcon={
-                            <Icons.Image />
-                          }
-                          disabled={!item.isImage}
-                        >
-                        表示
-                        </Button>
+                      <div
+                        className="search-action"
+                        style={{
+                          minWidth: 350,
+                          display: "flex",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        {item.isImage && (
+                          <Button
+                            className="search-delete"
+                            onClick={async () => {
+                              await viewOrDownloadFile(item, "view");
+                            }}
+                            startIcon={<Icons.Image />}
+                            disabled={!item.isImage}
+                          >
+                            表示
+                          </Button>
+                        )}
                         <Button
                           startIcon={<Icons.Download />}
                           className="search-edit"
                           onClick={async () => {
-                            await viewOrDownloadFile(item);
+                            await viewOrDownloadFile(item, "download");
                           }}
-                          disabled={item.isImage}
                         >
                           ダウンロード
                         </Button>
@@ -279,11 +316,19 @@ const DialogHandle = ({
             </ul>
           </Grid>
           {urlPreviewImg.blobUrl && (
-            <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+            <ContentDialog
+              open={showDialog}
+              closeDialog={() => setShowDialog(false)}
+            >
               <Grid item xs={12} className="preview-file">
-                <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>
+                <a
+                  href={urlPreviewImg.blobUrl}
+                  download={urlPreviewImg.fileName}
+                >
                   <IconButton size="small" aria-label="download">
-                    <Icons.CloudDownload sx={{ color: "green", fontSize: 40 }} />
+                    <Icons.CloudDownload
+                      sx={{ color: "green", fontSize: 40 }}
+                    />
                   </IconButton>
                   書類のダウンロード
                 </a>
@@ -311,6 +356,7 @@ const DialogHandle = ({
         ></ConfirmDialog>
         <LoadingSpinner loading={loading}></LoadingSpinner>
       </DialogContent>
+      <FormSnackbar item={snackbar} setItem={setSnackbar} />
     </Dialog>
   );
 };

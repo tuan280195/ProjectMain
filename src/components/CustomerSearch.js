@@ -38,7 +38,6 @@ const CustomerSearch = () => {
     name: null,
     phoneNumber: null,
   });
-  const [condition, setCondition] = useState({ width: "400px", xs: 12 });
   const [showDialog, setShowDialog] = useState(false);
   const [customerId, setCustomerId] = useState();
   const axiosPrivate = useAxiosPrivate();
@@ -52,15 +51,15 @@ const CustomerSearch = () => {
   });
 
   useEffect(async () => {
-    commonActions.setPaginationState({...commonState.paginationState, 
-        totalCount: 0
-      });
-    }, []);
+    commonActions.setPaginationState({
+      ...commonState.paginationState,
+      totalCount: 0,
+    });
+  }, []);
 
   const getCustomers = async (e) => {
     setLoading(true);
     e.preventDefault();
-    console.log("commonState.paginationState", commonState.paginationState)
     let searchURL = "/api/Customer/getAll";
     let pagination = `pageSize=${commonState.paginationState.pageSize}&pageNumber=${commonState.paginationState.currentPage}`;
     if (data.customerName && data.phoneNumber) {
@@ -76,18 +75,27 @@ const CustomerSearch = () => {
       searchURL = searchURL + `?${pagination}`;
     }
 
-    const status = await axiosPrivate.get(searchURL, {
-      signal: controller.signal,
-      validateStatus: () => true
-    }).then((response) => {
-      setListItem(response.data);
-      commonActions.setPaginationState({...commonState.paginationState, 
-        totalCount: response.data.totalCount,
+    const status = await axiosPrivate
+      .get(searchURL, {
+        signal: controller.signal,
+        validateStatus: () => true,
+      })
+      .then((response) => {
+        setListItem(response.data);
+        commonActions.setPaginationState({
+          ...commonState.paginationState,
+          totalCount: response.data.totalCount,
+        });
+      })
+      .catch(() => {
+        setListItem([]);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
-    }).catch((error) => {
-      console.log(error);
-      setListItem([]);
-    });
     if (status == 404) {
       setListItem([]);
     }
@@ -110,7 +118,11 @@ const CustomerSearch = () => {
       .then(async (res) => {
         setShowAlert(false);
         await getCustomers(e);
-        setCondition({ width: "1440px", xs: 4 });
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "取引先情報が正常に削除されました。",
+        });
         setShowList(true);
       })
       .catch((error) => {
@@ -122,13 +134,14 @@ const CustomerSearch = () => {
             isOpen: true,
             status: "error",
             message:
-              "この顧客は 1 つの未解決のケースでまだ使用されているため、削除できません。",
+              "この取引先はまだ進行中の案件が存在しているため、削除できません。",
           });
         } else {
           setSnackbar({
             isOpen: true,
             status: "error",
-            message: "何か問題が発生しました。",
+            message:
+              "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
           });
         }
       });
@@ -137,8 +150,14 @@ const CustomerSearch = () => {
 
   const handleClickSearch = async (e) => {
     await getCustomers(e);
-    setCondition({ width: "1440px", xs: 4 });
     setShowList(true);
+  };
+
+  const handleClickClear = () => {
+    setData({
+      customerName: "",
+      phoneNumber: "",
+    });
   };
 
   const handleChange = (event, item) => {
@@ -170,6 +189,12 @@ const CustomerSearch = () => {
     });
     await getCustomers(e);
   };
+
+  const closeDialog = (e) => {
+    setShowDialog(false);
+    handleClickSearch(e);
+  };
+
   const Results = () => {
     let totalCount = 0;
     if (
@@ -204,14 +229,16 @@ const CustomerSearch = () => {
                 >
                   電話番号
                 </TableCell>
-                <TableCell style={{ textAlign: "center", width: "25%" }}>
+                <TableCell
+                  style={{ textAlign: "center", width: "fit-content" }}
+                >
                   操作
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {listItem && listItem.items && listItem.items.length > 0 ? (
-                listItem.items.map((item, index) => {
+                listItem.items.map((item) => {
                   return (
                     <TableRow>
                       <TableCell>
@@ -221,13 +248,13 @@ const CustomerSearch = () => {
                         <Truncate str={item.phoneNumber} maxLength={20} />
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Button
                           variant="contained"
                           color="success"
                           startIcon={<Icons.Edit />}
                           onClick={() => handleClickEdit(item.id)}
-                          style={{ marginRight: "5px" }}
+                          style={{ margin: "1px 5px" }}
                         >
                           編集
                         </Button>
@@ -236,6 +263,7 @@ const CustomerSearch = () => {
                           variant="contained"
                           color="success"
                           startIcon={<Icons.Delete />}
+                          style={{ margin: "1px 5px" }}
                           onClick={() => {
                             setShowAlert(true);
                             setDeleteItem(item);
@@ -262,9 +290,9 @@ const CustomerSearch = () => {
   };
 
   return (
-    <section style={{ width: condition.width }}>
-      <Grid container columnSpacing={5} rowSpacing={5}>
-        <Grid item xs={condition.xs}>
+    <section>
+      <Grid container spacing={5}>
+        <Grid item xs={6}>
           <div className="section-item">
             <label className="section-label">取引先名</label>
             <input
@@ -274,6 +302,8 @@ const CustomerSearch = () => {
               onChange={(e) => handleChange(e, "customerName")}
             ></input>
           </div>
+        </Grid>
+        <Grid item xs={6}>
           <div className="section-item">
             <label className="section-label">電話番号</label>
             <input
@@ -282,20 +312,27 @@ const CustomerSearch = () => {
               type="text"
               maxLength={11}
               onChange={(e) => handleChange(e, "phoneNumber")}
-            ></input>
+            />
             {/* Display phone number error message */}
             {phoneNumberError && (
               <span style={{ color: "red" }}>{phoneNumberError}</span>
             )}
           </div>
-          <br />
-          <Grid item xs="12" sx={{ display: "flex", justifyContent: "center" }}>
+        </Grid>
+        <br />
+        <Grid item xs={12}>
+          <div className="handle-button">
             {/* Search Button */}
             <FormButton itemName="検索" onClick={handleClickSearch} />
-          </Grid>
+            <FormButton
+              itemName="検索条件の初期化"
+              onClick={handleClickClear}
+            />
+          </div>
         </Grid>
+
         {showList ? (
-          <Grid item xs={8}>
+          <Grid item xs={12}>
             <Results />
           </Grid>
         ) : null}
@@ -312,7 +349,7 @@ const CustomerSearch = () => {
         cancelBtnDialog="いいえ"
         confirmBtnDialog="はい"
       ></ConfirmDialog>
-      <ContentDialog open={showDialog} closeDialog={() => setShowDialog(false)}>
+      <ContentDialog open={showDialog} closeDialog={(e) => closeDialog(e)}>
         <CustomerDetail customerId={customerId}></CustomerDetail>
       </ContentDialog>
       <FormSnackbar item={snackbar} setItem={setSnackbar} />

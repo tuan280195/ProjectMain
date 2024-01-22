@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import GenericItems from "./until/GenericItems";
 import DialogHandle from "./until/DialogHandle";
 import FormButton from "./until/FormButton";
-import useAuth from "../hooks/useAuth";
+// import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FormSnackbar from "./until/FormSnackbar";
 import LoadingSpinner from "./until/LoadingSpinner";
@@ -15,10 +15,10 @@ import ContentDialog from "./until/ContentDialog.js";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
-const CaseDetail = ({ caseId }) => {
+const CaseDetail = ({ caseId, createType = true }) => {
   const [loading, setLoading] = useState(false);
   const [loadingFile, setLoadingFile] = useState(false);
-  const { auth } = useAuth();
+  // const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const controller = new AbortController();
 
@@ -39,13 +39,12 @@ const CaseDetail = ({ caseId }) => {
     message: "Successfully!",
   });
   const [caseIdName, setCaseIdName] = useState({
-    id: null,
+    id: caseId,
     name: "",
   });
   const [optionFileType, setOptionFileType] = useState([]);
   const [disableAttach, setDisableAttach] = useState(false);
   const [errors, setErrors] = useState([]);
-  const [isFormValid, setIsFormValid] = useState(false);
   const [customerList, setCustomerList] = useState([]);
 
   useEffect(async () => {
@@ -55,7 +54,6 @@ const CaseDetail = ({ caseId }) => {
     await getCaseTemplate();
     setLoading(false);
     if (caseId) {
-      setCaseIdName((caseIdName) => ({ ...caseIdName, id: caseId }));
       setDisableAttach(false);
       await getCaseByCaseId();
       await getFilesOfCase();
@@ -108,8 +106,13 @@ const CaseDetail = ({ caseId }) => {
         setTemplate(response.data.keywords);
         setData(response.data.keywords);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
 
     setLoading(false);
@@ -131,9 +134,14 @@ const CaseDetail = ({ caseId }) => {
           name: response.data.caseName,
         });
       })
-      .catch((error) => {
+      .catch(() => {
         setData([]);
-        console.log(error);
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
 
     setLoading(false);
@@ -141,20 +149,24 @@ const CaseDetail = ({ caseId }) => {
 
   const getFilesOfCase = async () => {
     setLoadingFile(true);
-    let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseId}`;
+    let getFilesUploadURL = `/api/Case/file/getall?caseId=${caseIdName.id}`;
     var { status } = await axiosPrivate
       .get(getFilesUploadURL, {
         signal: controller.signal,
         validateStatus: () => true,
       })
       .then((response) => {
-        console.log(response);
         setListItemFile(response.data);
         return response;
       })
-      .catch((error) => {
+      .catch(() => {
         setListItemFile([]);
-        console.log(JSON.stringify(error));
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     if (status === 404) {
       setListItemFile([]);
@@ -163,12 +175,12 @@ const CaseDetail = ({ caseId }) => {
     setLoadingFile(false);
   };
 
-  const viewOrDownloadFile = async (item) => {
+  const viewOrDownloadFile = async (item, type) => {
     setLoading(true);
     let getFileUrl = `/api/FileUpload/Download`;
     let payload = {
       fileName: item.fileName,
-      caseId: caseId,
+      caseId: caseIdName.id,
     };
     await axiosPrivate
       .post(getFileUrl, payload)
@@ -182,7 +194,7 @@ const CaseDetail = ({ caseId }) => {
           type: response.headers["content-type"],
         });
         const blobUrl = window.URL.createObjectURL(blob);
-        if (!item.isImage) {
+        if (type === "download") {
           const link = document.createElement("a");
           link.href = blobUrl;
           link.download = item.fileName;
@@ -192,33 +204,49 @@ const CaseDetail = ({ caseId }) => {
           setUrlPreviewImg({ blobUrl: blobUrl, fileName: item.fileName });
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     setLoading(false);
   };
+
   const handleClickDeleteFile = async (e) => {
     setLoading(true);
     e.preventDefault();
     let deleteFileUrl = `/api/FileUpload/Delete`;
     let payload = fileDelete;
-    payload.caseId = caseId;
+    payload.caseId = caseIdName.id;
     await axiosPrivate
       .put(deleteFileUrl, payload)
       .then(async (response) => {
         setUrlPreviewImg({ ...urlPreviewImg, blobUrl: "", fileName: "" });
         await getFilesOfCase();
         setShowAlert(false);
+        setSnackbar({
+          isOpen: true,
+          status: "success",
+          message: "書類は正常に削除されました。",
+        });
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
     setLoading(false);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setIsFormValid(true);
     validateForm();
     if (!validateForm()) {
       // Form is valid, perform the submission logic
@@ -230,7 +258,6 @@ const CaseDetail = ({ caseId }) => {
       setLoading(false);
       return;
     } else {
-      console.log("OK.");
     }
 
     let caseCreateURL = "/api/Case";
@@ -256,7 +283,8 @@ const CaseDetail = ({ caseId }) => {
           setSnackbar({
             isOpen: true,
             status: "error",
-            message: "何か問題が発生しました。",
+            message:
+              "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
           });
         });
     } else {
@@ -280,18 +308,24 @@ const CaseDetail = ({ caseId }) => {
           setDisableAttach(false);
           return response;
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          setSnackbar({
+            isOpen: true,
+            status: "error",
+            message:
+              "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+          });
         });
     }
     setLoading(false);
   };
 
-  const handleClear = () => {
+  const handleClear = async () => {
     setCaseIdName({ name: "", id: null });
     const newState = data.map((value) => {
       return { ...value, value: "" };
     });
+    setListItemFile([]);
     setData(newState);
   };
 
@@ -312,8 +346,13 @@ const CaseDetail = ({ caseId }) => {
         setOptionFileType(options);
         return response;
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setSnackbar({
+          isOpen: true,
+          status: "error",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
+        });
       });
   };
 
@@ -478,75 +517,77 @@ const CaseDetail = ({ caseId }) => {
               />
               {/* Save Button */}
               <FormButton itemName="保存" type="submit" />
-              <FormButton itemName="新規作成" onClick={handleClear} />
+              {createType ? (
+                <FormButton itemName="新規作成" onClick={handleClear} />
+              ) : undefined}
             </div>
           </Grid>
         </Grid>
       </form>
       <>
         <Grid item xs={12}>
-            <ul
-              id="results"
-              className="search-results"
-              style={{ marginTop: 10 }}
-            >
-              {listItemFile && listItemFile[0] != null ? (
-                listItemFile.map((item, index) => {
-                  return (
-                    <li className="search-result" key={item.keywordId}>
-                      <Truncate
-                        str={item.fileName}
-                        maxLength={20}
-                        style={{ padding: "10px" }}
-                      />
-                      <div className="search-action">
+          <ul id="results" className="search-results" style={{ marginTop: 10 }}>
+            {listItemFile && listItemFile[0] != null ? (
+              listItemFile.map((item, index) => {
+                return (
+                  <li className="search-result" key={item.keywordId}>
+                    <Truncate
+                      str={item.fileName}
+                      maxLength={20}
+                      style={{ padding: "10px" }}
+                    />
+                    <div
+                      className="search-action"
+                      style={{
+                        minWidth: 350,
+                        display: "flex",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      {item.isImage && (
                         <Button
                           className="search-delete"
                           onClick={async () => {
-                            await viewOrDownloadFile(item);
+                            await viewOrDownloadFile(item, "view");
                           }}
-                          startIcon={
-                            <Icons.Image />
-                          }
-                          disabled={!item.isImage}
+                          startIcon={<Icons.Image />}
                         >
-                        表示
+                          表示
                         </Button>
-                        <Button
-                          startIcon={<Icons.Download />}
-                          className="search-edit"
-                          onClick={() => {
-                            setFileDelete(item);
-                            setShowAlert(true);
-                          }}
-                          disabled={item.isImage}
-                        >
-                          ダウンロード
-                        </Button>
-                        <Button
-                          startIcon={<Icons.Delete />}
-                          className="search-edit"
-                          onClick={() => {
-                            setFileDelete(item);
-                            setShowAlert(true);
-                          }}
-                        >
-                          削除
-                        </Button>
-                      </div>
-                    </li>
-                  );
-                })
-              ) : (
-                <li style={{ textAlign: "center" }}>
-                  {loadingFile ? (
-                    <CircularProgress />
-                  ) : (
-                    <p>表示する項目がありません。</p>
-                  )}
-                </li>
-              )}
-            </ul>
+                      )}
+                      <Button
+                        startIcon={<Icons.Download />}
+                        className="search-edit"
+                        onClick={async () => {
+                          await viewOrDownloadFile(item, "download");
+                        }}
+                      >
+                        ダウンロード
+                      </Button>
+                      <Button
+                        startIcon={<Icons.Delete />}
+                        className="search-edit"
+                        onClick={() => {
+                          setFileDelete(item);
+                          setShowAlert(true);
+                        }}
+                      >
+                        削除
+                      </Button>
+                    </div>
+                  </li>
+                );
+              })
+            ) : (
+              <li style={{ textAlign: "center" }}>
+                {loadingFile ? (
+                  <CircularProgress />
+                ) : (
+                  <p>表示する項目がありません。</p>
+                )}
+              </li>
+            )}
+          </ul>
         </Grid>
         {urlPreviewImg.blobUrl && (
           <ContentDialog open={showDialogPreivew} closeDialog={() => setShowDialogPreivew(false)}>
