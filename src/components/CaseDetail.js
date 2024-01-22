@@ -178,10 +178,9 @@ const CaseDetail = ({ caseId, createType = true }) => {
   const viewOrDownloadFile = async (item, type) => {
     setLoading(true);
     let getFileUrl = `/api/FileUpload/Download`;
-    console.log(caseIdName.id);
     let payload = {
       fileName: item.fileName,
-      caseId: caseIdName.id,
+      caseId: caseId,
     };
     await axiosPrivate
       .post(getFileUrl, payload)
@@ -221,10 +220,10 @@ const CaseDetail = ({ caseId, createType = true }) => {
     e.preventDefault();
     let deleteFileUrl = `/api/FileUpload/Delete`;
     let payload = fileDelete;
-    payload.caseId = caseIdName.id;
+    payload.caseId = caseId;
     await axiosPrivate
       .put(deleteFileUrl, payload)
-      .then(async () => {
+      .then(async (response) => {
         setUrlPreviewImg({ ...urlPreviewImg, blobUrl: "", fileName: "" });
         await getFilesOfCase();
         setShowAlert(false);
@@ -321,12 +320,12 @@ const CaseDetail = ({ caseId, createType = true }) => {
     setLoading(false);
   };
 
-  const handleClear = () => {
+  const handleClear = async () => {
     setCaseIdName({ name: "", id: null });
     const newState = data.map((value) => {
       return { ...value, value: "" };
     });
-    setOptionFileType([]);
+    await getFilesOfCase();
     setData(newState);
   };
 
