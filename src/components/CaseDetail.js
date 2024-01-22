@@ -60,7 +60,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
     } else {
       setDisableAttach(true);
     }
-  }, [caseId]);
+  }, []);
 
   const validateForm = () => {
     let errors = [];
