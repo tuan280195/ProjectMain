@@ -325,7 +325,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
     const newState = data.map((value) => {
       return { ...value, value: "" };
     });
-    await getFilesOfCase();
+    setListItemFile([]);
     setData(newState);
   };
 
