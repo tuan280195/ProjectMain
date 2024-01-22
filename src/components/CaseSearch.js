@@ -81,7 +81,8 @@ const CaseSearch = () => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
 
@@ -118,7 +119,8 @@ const CaseSearch = () => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     setLoading(false);
@@ -165,14 +167,15 @@ const CaseSearch = () => {
         setSnackbar({
           isOpen: true,
           status: "success",
-          message: "この案件は無事に完了しました。",
+          message: "案件情報が正常に削除されました。",
         });
       })
       .catch((error) => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     setLoading(false);

@@ -128,7 +128,8 @@ const CustomerDetail = ({ customerId }) => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
 
@@ -160,7 +161,8 @@ const CustomerDetail = ({ customerId }) => {
       setSnackbar({
         isOpen: true,
         status: "error",
-        message: "何か問題が発生しました。",
+        message:
+          "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
       });
     }
     setLoading(false);

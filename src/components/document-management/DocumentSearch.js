@@ -109,7 +109,8 @@ const DocumentSearch = () => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     if (status === 404) {
@@ -145,7 +146,8 @@ const DocumentSearch = () => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     setLoading(false);
@@ -185,7 +187,8 @@ const DocumentSearch = () => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     setLoading(false);
@@ -206,7 +209,8 @@ const DocumentSearch = () => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     setLoading(false);

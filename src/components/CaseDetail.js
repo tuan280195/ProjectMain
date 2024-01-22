@@ -110,7 +110,8 @@ const CaseDetail = ({ caseId, createType = true }) => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
 
@@ -138,7 +139,8 @@ const CaseDetail = ({ caseId, createType = true }) => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
 
@@ -162,7 +164,8 @@ const CaseDetail = ({ caseId, createType = true }) => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     if (status === 404) {
@@ -205,7 +208,8 @@ const CaseDetail = ({ caseId, createType = true }) => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     setLoading(false);
@@ -226,14 +230,15 @@ const CaseDetail = ({ caseId, createType = true }) => {
         setSnackbar({
           isOpen: true,
           status: "success",
-          message: "アイテムは正常に削除されました。",
+          message: "書類は正常に削除されました。",
         });
       })
       .catch(() => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     setLoading(false);
@@ -278,7 +283,8 @@ const CaseDetail = ({ caseId, createType = true }) => {
           setSnackbar({
             isOpen: true,
             status: "error",
-            message: "何か問題が発生しました。",
+            message:
+              "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
           });
         });
     } else {
@@ -306,7 +312,8 @@ const CaseDetail = ({ caseId, createType = true }) => {
           setSnackbar({
             isOpen: true,
             status: "error",
-            message: "何か問題が発生しました。",
+            message:
+              "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
           });
         });
     }
@@ -342,7 +349,8 @@ const CaseDetail = ({ caseId, createType = true }) => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
   };

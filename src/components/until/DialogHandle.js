@@ -71,7 +71,8 @@ const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     if (status === 404) {
@@ -99,7 +100,7 @@ const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
         setSnackbar({
           isOpen: true,
           status: "success",
-          message: "ファイルは正常に添付されました。",
+          message: "書類は正常に添付されました。",
         });
       })
       .catch((error) => {
@@ -107,13 +108,14 @@ const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
           setSnackbar({
             isOpen: true,
             status: "error",
-            message: "あなたのファイルはサポートされていません。",
+            message: "選択されたファイルの拡張子は利用できません。",
           });
         else
           setSnackbar({
             isOpen: true,
             status: "error",
-            message: "何か問題が発生しました。",
+            message:
+              "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
           });
       });
     setLoading(false);
@@ -168,7 +170,8 @@ const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     setLoading(false);
@@ -188,14 +191,15 @@ const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
         setSnackbar({
           isOpen: true,
           status: "success",
-          message: "アイテムは正常に削除されました。",
+          message: "書類は正常に削除されました。",
         });
       })
       .catch(() => {
         setSnackbar({
           isOpen: true,
           status: "error",
-          message: "何か問題が発生しました。",
+          message:
+            "エラーが発生しました。再試行するか、サポートにお問い合わせください。",
         });
       });
     setLoading(false);
