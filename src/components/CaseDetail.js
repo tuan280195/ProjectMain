@@ -1,5 +1,4 @@
-import { Grid,
-  IconButton,Button } from "@mui/material";
+import { Grid, IconButton, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import GenericItems from "./until/GenericItems";
 import DialogHandle from "./until/DialogHandle";
@@ -55,9 +54,6 @@ const CaseDetail = ({ caseId }) => {
     setLoading(true);
     await getCaseTemplate();
     setLoading(false);
-  }, []);
-
-  useEffect(async () => {
     if (caseId) {
       setCaseIdName((caseIdName) => ({ ...caseIdName, id: caseId }));
       setDisableAttach(false);
@@ -67,6 +63,7 @@ const CaseDetail = ({ caseId }) => {
       setDisableAttach(true);
     }
   }, [caseId]);
+
   const validateForm = () => {
     let errors = [];
 
@@ -159,9 +156,9 @@ const CaseDetail = ({ caseId }) => {
         setListItemFile([]);
         console.log(JSON.stringify(error));
       });
-      if (status === 404) {
-        setListItemFile([]);
-      }
+    if (status === 404) {
+      setListItemFile([]);
+    }
 
     setLoadingFile(false);
   };
@@ -200,7 +197,7 @@ const CaseDetail = ({ caseId }) => {
       });
     setLoading(false);
   };
-const handleClickDeleteFile = async (e) => {
+  const handleClickDeleteFile = async (e) => {
     setLoading(true);
     e.preventDefault();
     let deleteFileUrl = `/api/FileUpload/Delete`;
@@ -329,7 +326,6 @@ const handleClickDeleteFile = async (e) => {
     setShowDialog(false);
     await getFilesOfCase();
   };
-  
   const handleGenerateCustomerName = (item, templateItem) => {
     if (templateItem.keywordName === "取引先名") {
       if (customerList.filter((a) => a.id === item.value)[0]?.name) {
