@@ -60,7 +60,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
     } else {
       setDisableAttach(true);
     }
-  }, [caseId]);
+  }, []);
 
   const validateForm = () => {
     let errors = [];
@@ -365,7 +365,6 @@ const CaseDetail = ({ caseId, createType = true }) => {
     setShowDialog(false);
     await getFilesOfCase();
   };
-
   const handleGenerateCustomerName = (item, templateItem) => {
     if (templateItem.keywordName === "取引先名") {
       if (customerList.filter((a) => a.id === item.value)[0]?.name) {
@@ -591,10 +590,7 @@ const CaseDetail = ({ caseId, createType = true }) => {
           </ul>
         </Grid>
         {urlPreviewImg.blobUrl && (
-          <ContentDialog
-            open={showDialogPreivew}
-            closeDialog={() => setShowDialogPreivew(false)}
-          >
+          <ContentDialog open={showDialogPreivew} closeDialog={() => setShowDialogPreivew(false)}>
             <Grid item xs={12} className="preview-file">
               <a href={urlPreviewImg.blobUrl} download={urlPreviewImg.fileName}>
                 <IconButton size="small" aria-label="download">
@@ -613,17 +609,17 @@ const CaseDetail = ({ caseId, createType = true }) => {
             </Grid>
           </ContentDialog>
         )}
-      </>
-      <ConfirmDialog
-        open={showAlert}
-        closeDialog={() => setShowAlert(false)}
-        item={fileDelete.fileName}
-        handleFunction={handleClickDeleteFile}
-        typeDialog="書類削除の確認"
-        mainContent="書類を削除すると、案件から関連書類として参照できなくなります。本当に削除しますか"
-        cancelBtnDialog="いいえ"
-        confirmBtnDialog="はい"
-      ></ConfirmDialog>
+        </>
+        <ConfirmDialog
+          open={showAlert}
+          closeDialog={() => setShowAlert(false)}
+          item={fileDelete.fileName}
+          handleFunction={handleClickDeleteFile}
+          typeDialog="書類削除の確認"
+          mainContent="書類を削除すると、案件から関連書類として参照できなくなります。本当に削除しますか"
+          cancelBtnDialog="いいえ"
+          confirmBtnDialog="はい"
+        ></ConfirmDialog>
 
       <DialogHandle
         open={showDialog}

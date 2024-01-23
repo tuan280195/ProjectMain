@@ -120,7 +120,7 @@ const Login = () => {
         {/* <button>ログイン</button> */}
         <FormButton itemName="ログイン" type="submit" />
       </form>
-      <div class="version-info">Version 24.1.1000 Powered by ITFreee</div>
+      <div className="version-info">Version 24.1.1000 Powered by ITFreee</div>
       {/* <p>
         Need an Account?
         <br />

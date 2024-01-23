@@ -32,7 +32,12 @@ const DocumentSearch = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [template, setTemplate] = useState([]);
   const [keyWordSearch, setKeyWordSearch] = useState([]);
-  const [fileTypeSearch, setFileTypeSearch] = useState([]);
+  const [fileTypeSearch, setFileTypeSearch] = useState({
+    fileTypes: [],
+    name: "File Type",
+    value: null,
+    label: ""
+  });
   const [customerList, setCustomerList] = useState([]);
   const [deleteItem, setDeleteItem] = useState({
     keywordId: null,
@@ -127,6 +132,7 @@ const DocumentSearch = () => {
         signal: controller.signal,
       })
       .then((response) => {
+        response.data.fileType.value = null;
         response.data.fileType.fileTypes.forEach(function (item) {
           item.label = item.name;
         });
@@ -134,9 +140,8 @@ const DocumentSearch = () => {
           item.label = item.name;
         });
         response.data.keywords.forEach(function (item) {
-          item.customerId = "";
+          item.customerId = null;
         });
-        response.data.fileType.value = null;
         setFileTypeSearch(response.data.fileType);
         setKeyWordSearch(response.data.keywords);
         setTemplate(response.data.keywords);
@@ -229,8 +234,6 @@ const DocumentSearch = () => {
   };
 
   const handleClickClear = () => {
-    console.log(keyWordSearch);
-    console.log("fileTypeSearch ", fileTypeSearch);
     setKeyWordSearch((prevKeyWordSearch) =>
       prevKeyWordSearch.map((item) => ({
         ...item,
@@ -240,8 +243,7 @@ const DocumentSearch = () => {
         customerId: "",
       }))
     );
-    setFileTypeSearch({ ...fileTypeSearch, value: "" });
-    console.log("fileTypeSearch ", fileTypeSearch);
+    setFileTypeSearch({...fileTypeSearch, value: null, label: ""});
   };
 
   const handleChangePageSize = async (e) => {
@@ -443,13 +445,16 @@ const DocumentSearch = () => {
       <>
         <Grid item xs={4}>
           <GenericItems
+            value={fileTypeSearch.label}
             label={"書類種類"}
             type={"list"}
             options={fileTypeSearch.fileTypes}
             handleInput3={(e, item) => {
-              const newState = fileTypeSearch;
-              newState.value = item ? (item.id ? item.id : null) : null;
-              setFileTypeSearch(newState);
+              setFileTypeSearch({
+                ...fileTypeSearch,
+                value: item ? (item.id ? item.id : null) : null,
+                label: item ? (item.label ? item.label : "") : ""
+              });
             }}
           />
           {template.map((templateItem) => {
