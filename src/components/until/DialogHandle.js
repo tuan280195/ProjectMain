@@ -229,9 +229,7 @@ const DialogHandle = ({ title, open, closeDialog, optionFileType, caseId }) => {
         style={{ paddingTop: "5px" }}
       >
         <DialogContentText style={{ color: "red", marginBottom: "20px" }}>
-          利用可能なファイル拡張子： .jpeg, .jpg, .png, .gif, .tiff, .psd, .pdf,
-          .eps, .raw, .txt, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .dwg, .dxf,
-          .jww
+          利用可能なファイル拡張子：.jpeg,.jpg,.png,.gif,.tiff,.tif,.psd,.pdf,.eps,.raw,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.dwg,.dxf,.jww
         </DialogContentText>
         <Grid container spacing={5}>
           <Grid item xs={4}>
