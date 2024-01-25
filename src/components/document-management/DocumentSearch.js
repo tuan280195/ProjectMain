@@ -36,7 +36,7 @@ const DocumentSearch = () => {
     fileTypes: [],
     name: "File Type",
     value: null,
-    label: ""
+    label: "",
   });
   const [customerList, setCustomerList] = useState([]);
   const [deleteItem, setDeleteItem] = useState({
@@ -243,7 +243,7 @@ const DocumentSearch = () => {
         customerId: "",
       }))
     );
-    setFileTypeSearch({...fileTypeSearch, value: null, label: ""});
+    setFileTypeSearch({ ...fileTypeSearch, value: null, label: "" });
   };
 
   const handleChangePageSize = async (e) => {
@@ -288,13 +288,18 @@ const DocumentSearch = () => {
                 listItem.items.map((item, index) => {
                   return (
                     <TableRow>
-                      <TableCell>
+                      <TableCell
+                        style={{
+                          maxWidth: "900px",
+                          whiteSpace: "normal",
+                          wordWrap: "break-word",
+                        }}
+                      >
                         <Truncate str={item.keywordName} maxLength={20} />
                       </TableCell>
                       <TableCell
                         style={{
-                          minWidth: "230px",
-                          maxWidth: "250px",
+                          minWidth: "400px",
                           textAlign: "right",
                         }}
                       >
@@ -441,9 +446,10 @@ const DocumentSearch = () => {
         a.order > b.order ? 1 : b.order > a.order ? -1 : 0
       );
     }
+    const mid = Math.ceil((template.length + 1) / 2);
     return (
       <>
-        <Grid item xs={4}>
+        <Grid item xs={6}>
           <GenericItems
             value={fileTypeSearch.label}
             label={"書類種類"}
@@ -453,34 +459,32 @@ const DocumentSearch = () => {
               setFileTypeSearch({
                 ...fileTypeSearch,
                 value: item ? (item.id ? item.id : null) : null,
-                label: item ? (item.label ? item.label : "") : ""
+                label: item ? (item.label ? item.label : "") : "",
               });
             }}
           />
-          {template.map((templateItem) => {
-            return keyWordSearch.map((item) => {
-              if (item.keywordId === templateItem.keywordId) {
-                return dynamicGenerate(item, templateItem);
-              }
-            });
+
+          {template.map((templateItem, index) => {
+            if (index + 1 < mid) {
+              return keyWordSearch.map((item) => {
+                if (item.keywordId === templateItem.keywordId) {
+                  return dynamicGenerate(item, templateItem);
+                }
+              });
+            }
           })}
-          <br />
-          <Grid
-            item
-            xs="12"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              rowGap: 2,
-            }}
-          >
-            {/* Search Button */}
-            <FormButton itemName="検索" onClick={handleClickSearch} />
-            <FormButton
-              itemName="検索条件の初期化"
-              onClick={handleClickClear}
-            />
-          </Grid>
+        </Grid>
+        <Grid item xs={6}>
+          {/* Add the second half of the input fields here */}
+          {template.map((templateItem, index) => {
+            if (index + 1 >= mid) {
+              return keyWordSearch.map((item) => {
+                if (item.keywordId === templateItem.keywordId) {
+                  return dynamicGenerate(item, templateItem);
+                }
+              });
+            }
+          })}
         </Grid>
       </>
     );
@@ -488,11 +492,22 @@ const DocumentSearch = () => {
 
   return (
     <section>
-      <Grid container columnSpacing={5} rowSpacing={5}>
+      <Grid container spacing={5}>
         {generateTemplate()}
 
+        <Grid item xs={12}>
+          <div className="handle-button">
+            {/* Search and Clear Button */}
+            <FormButton itemName="検索" onClick={handleClickSearch} />
+            <FormButton
+              itemName="検索条件の初期化"
+              onClick={handleClickClear}
+            />
+          </div>
+        </Grid>
+
         {showList ? (
-          <Grid item xs={8}>
+          <Grid item xs={12}>
             <Results />
           </Grid>
         ) : null}
